@@ -1,73 +1,69 @@
-# Welcome to your Lovable project
+# AI-Powered Dynamic Healthcare & Data Analytics Dashboard
 
-## Project info
+A premium, immersive analytics platform designed for hospitals and healthcare organizations. This dashboard automatically analyzes any uploaded dataset (CSV, Excel, JSON) and generates high-fidelity, interactive visualizations powered by AI.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Live Deployment
+The project is deployed on Vercel and can be accessed here: **[Insert Vercel URL If Available]**
 
-## How can I edit this code?
+## ✨ Key Features
 
-There are several ways of editing your application.
+### 📊 Intelligent Visualization Engine
+The system automatically recommends and renders the most suitable charts based on your data structure:
+- **Donut Chart**: Featuring a circular layout with center labels showing total record counts.
+- **Pie Chart**: Displays percentage breakdown with interactive slices and gradient fills.
+- **Bar & Stacked Bar Charts**: For categorical vs numeric comparisons.
+- **Time Series (Line/Area)**: Automatically detects date columns for trend analysis.
+- **Advanced Charts**: Includes Funnel, Radar, Treemap, Scatter (Bubble), Histogram, Heatmap (Correlation), and Box Plots (Outlier Analysis).
 
-**Use Lovable**
+### 🤖 Smart AI Assistant
+- **Dataset-Aware Q&A**: Chat with an AI that understands your specific data statistics.
+- **Auto-Generated Insights**: Get immediate alerts on correlations, category performance, and data quality.
+- **Suggested Queries**: One-click questions to discover hidden patterns in your data.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 📁 Universal Dataset Upload
+- Supports **CSV**, **Excel (.xlsx, .xls)**, and **JSON** files.
+- Automatically detects schema: Numeric, Categorical, Datetime, and Text columns.
+- **Dynamic Branding**: The dashboard title automatically adapts to the name of your uploaded file (e.g., `sales_data.csv` -> "Sales Data Analytics Dashboard").
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- npm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### Installation
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Clone the repository
+git clone https://github.com/hariharan6551-crypto/heal-sense-nexus.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Running locally
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Usage
+1. Click the **"Upload Dataset"** button in the top navigation.
+2. Select your data file (CSV, Excel, or JSON).
+3. The dashboard will instantly re-render with your custom KPIs, charts, and analysis.
+4. Navigate through tabs: **Dashboard** (Visuals), **Dataset** (Raw Data), **AI Assistant** (Deep Insights).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🌍 Deployment
 
-**Use GitHub Codespaces**
+### Vercel
+The project is optimized for Vercel. Pushing to the `main` branch automatically triggers a new deployment.
+```sh
+# Trigger manual deployment
+git add .
+git commit -m "Your commit message"
+git push origin main
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🛠️ Technologies
+- **Vite** & **React**
+- **TypeScript**
+- **Tailwind CSS** & **shadcn/ui**
+- **Recharts** (Advanced Visualizations)
+- **Lucide React** (Iconography)
+- **TanStack Query** (State Management)
