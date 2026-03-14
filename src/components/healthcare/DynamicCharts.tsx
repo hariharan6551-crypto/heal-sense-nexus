@@ -264,34 +264,96 @@ function RenderChart({ chart, data, analysis }: {
     );
   }
 
-  // ─── PIE / DONUT ────────────────────────────────────────────────
-  if ((type === 'pie' || type === 'donut') && xColumn) {
+  // ─── DONUT CHART (with center label) ─────────────────────────────
+  if (type === 'donut' && xColumn) {
     const counts: Record<string, number> = {};
     for (const r of data) counts[String(r[xColumn] ?? '?')] = (counts[String(r[xColumn] ?? '?')] || 0) + 1;
-    const pieData = Object.entries(counts).map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value).slice(0, 8);
-    const total = pieData.reduce((s, p) => s + p.value, 0);
+    const donutData = Object.entries(counts).map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value).slice(0, 10);
+    const total = donutData.reduce((s, p) => s + p.value, 0);
+    const gradId = `donutGrad-${chart.id}`;
     return (
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={280}>
         <PieChart>
           <defs>
-            {pieData.map((_, i) => (
-              <linearGradient key={i} id={`pieGrad${i}`} x1="0" y1="0" x2="1" y2="1">
+            {donutData.map((_, i) => (
+              <linearGradient key={i} id={`${gradId}-${i}`} x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][0]} />
                 <stop offset="100%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][1]} />
               </linearGradient>
             ))}
           </defs>
-          <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%"
-            outerRadius={85} innerRadius={type === 'donut' ? 45 : 0}
-            label={({ name, value }) => `${name} ${((value / total) * 100).toFixed(0)}%`}
-            labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }} style={{ fontSize: 9 }}
-            animationDuration={900} animationBegin={100}
+          <Pie data={donutData} dataKey="value" nameKey="name" cx="50%" cy="45%"
+            outerRadius={90} innerRadius={52} paddingAngle={3}
+            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
+            style={{ fontSize: 9, fontWeight: 600 }}
+            animationDuration={1000} animationBegin={100}
           >
-            {pieData.map((_, i) => <Cell key={i} fill={`url(#pieGrad${i})`} stroke="#fff" strokeWidth={2} />)}
+            {donutData.map((_, i) => (
+              <Cell key={i} fill={`url(#${gradId}-${i})`} stroke="#fff" strokeWidth={3}
+                className="hover:opacity-80 transition-opacity cursor-pointer" />
+            ))}
+          </Pie>
+          {/* Center label */}
+          <text x="50%" y="42%" textAnchor="middle" dominantBaseline="central" className="fill-slate-800" style={{ fontSize: 22, fontWeight: 800 }}>
+            {total.toLocaleString()}
+          </text>
+          <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" className="fill-slate-400" style={{ fontSize: 10, fontWeight: 500 }}>
+            Total Records
+          </text>
+          <Tooltip content={<ChartTooltip />} />
+          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 8 }} />
+        </PieChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  // ─── PIE CHART (with percentage labels) ────────────────────────
+  if (type === 'pie' && xColumn) {
+    const counts: Record<string, number> = {};
+    for (const r of data) counts[String(r[xColumn] ?? '?')] = (counts[String(r[xColumn] ?? '?')] || 0) + 1;
+    const pieData = Object.entries(counts).map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value).slice(0, 8);
+    const total = pieData.reduce((s, p) => s + p.value, 0);
+    const gradId = `pieGrad-${chart.id}`;
+    const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
+      const RADIAN = Math.PI / 180;
+      const radius = outerRadius + 22;
+      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+      const y = cy + radius * Math.sin(-midAngle * RADIAN);
+      if (percent < 0.04) return null;
+      return (
+        <text x={x} y={y} fill="#334155" textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central" style={{ fontSize: 10, fontWeight: 600 }}>
+          {name} ({(percent * 100).toFixed(1)}%)
+        </text>
+      );
+    };
+    return (
+      <ResponsiveContainer width="100%" height={280}>
+        <PieChart>
+          <defs>
+            {pieData.map((_, i) => (
+              <linearGradient key={i} id={`${gradId}-${i}`} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][0]} />
+                <stop offset="100%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][1]} />
+              </linearGradient>
+            ))}
+          </defs>
+          <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="45%"
+            outerRadius={85} innerRadius={0} paddingAngle={2}
+            label={renderLabel}
+            labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
+            animationDuration={1000} animationBegin={100}
+          >
+            {pieData.map((_, i) => (
+              <Cell key={i} fill={`url(#${gradId}-${i})`} stroke="#fff" strokeWidth={2}
+                className="hover:opacity-80 transition-opacity cursor-pointer" />
+            ))}
           </Pie>
           <Tooltip content={<ChartTooltip />} />
-          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 10 }} />
+          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 8 }} />
         </PieChart>
       </ResponsiveContainer>
     );

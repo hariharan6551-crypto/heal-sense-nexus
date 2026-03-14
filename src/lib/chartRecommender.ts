@@ -17,194 +17,210 @@ export interface ChartRecommendation {
   priority: number;
 }
 
+/** Find the "best" categorical column with fewest unique values (≤ max) */
+function bestCatColumn(
+  data: Record<string, any>[],
+  catCols: string[],
+  max: number
+): string | null {
+  let best: string | null = null;
+  let bestUnique = Infinity;
+  for (const col of catCols) {
+    const u = new Set(data.map(r => String(r[col] ?? ""))).size;
+    if (u >= 2 && u <= max && u < bestUnique) {
+      bestUnique = u;
+      best = col;
+    }
+  }
+  return best;
+}
+
+function uniqueCount(data: Record<string, any>[], col: string): number {
+  return new Set(data.map(r => String(r[col] || ""))).size;
+}
+
 export function recommendCharts(dataset: DatasetInfo): ChartRecommendation[] {
   const { numericColumns, categoricalColumns, datetimeColumns, data } = dataset;
   const recs: ChartRecommendation[] = [];
-  let priority = 100;
+  let priority = 200;
 
-  // ── Categorical + Numeric combos ─────────────────────────────────
-  if (categoricalColumns.length > 0 && numericColumns.length > 0) {
-    const cat = categoricalColumns[0];
-    const num = numericColumns[0];
-    const uniqueValues = new Set(data.map(r => String(r[cat] || ""))).size;
+  // ─── Find ideal columns ──────────────────────────────────────────
+  const bestDonutCol = bestCatColumn(data, categoricalColumns, 10);
+  const bestPieCol = bestCatColumn(data, categoricalColumns, 8);
+  const bestBarCol = bestCatColumn(data, categoricalColumns, 25) || categoricalColumns[0];
+  const num = numericColumns[0];
 
-    // Bar chart — always useful for category vs numeric
+  // ═══ DONUT CHART ═════════════════════════════════════════════════
+  // Always show donut if any categorical column has ≤10 unique values
+  if (bestDonutCol && numericColumns.length > 0) {
     recs.push({
-      id: `bar-${cat}-${num}`,
+      id: `donut-${bestDonutCol}`,
+      type: "donut",
+      title: `${bestDonutCol} Distribution`,
+      description: `Proportional breakdown of ${bestDonutCol} categories`,
+      xColumn: bestDonutCol,
+      yColumn: num,
+      priority: priority--,
+    });
+  }
+
+  // ═══ PIE CHART ═══════════════════════════════════════════════════
+  // Always show pie if any categorical column has ≤8 unique values
+  if (bestPieCol) {
+    // Use a different column than donut if possible
+    let pieCol = bestPieCol;
+    if (pieCol === bestDonutCol) {
+      const alt = categoricalColumns.find(c => c !== bestDonutCol && uniqueCount(data, c) <= 8 && uniqueCount(data, c) >= 2);
+      if (alt) pieCol = alt;
+    }
+    recs.push({
+      id: `pie-${pieCol}`,
+      type: "pie",
+      title: `${pieCol} Breakdown`,
+      description: `Percentage breakdown of ${pieCol} categories`,
+      xColumn: pieCol,
+      yColumn: numericColumns.length > 0 ? num : undefined,
+      priority: priority--,
+    });
+  }
+
+  // ═══ BAR CHARTS ══════════════════════════════════════════════════
+  if (bestBarCol && numericColumns.length > 0) {
+    recs.push({
+      id: `bar-${bestBarCol}-${num}`,
       type: "bar",
-      title: `${num} by ${cat}`,
-      description: `Average ${num} across ${cat} categories`,
-      xColumn: cat, yColumn: num,
+      title: `${num} by ${bestBarCol}`,
+      description: `Average ${num} across ${bestBarCol} categories`,
+      xColumn: bestBarCol, yColumn: num,
       priority: priority--,
     });
 
-    // Donut — great for distribution with ≤10 categories
-    if (uniqueValues <= 10) {
+    // Stacked bar with two categoricals
+    if (categoricalColumns.length >= 2) {
+      const secondCat = categoricalColumns.find(c => c !== bestBarCol && uniqueCount(data, c) <= 8) || categoricalColumns[1];
       recs.push({
-        id: `donut-${cat}`,
-        type: "donut",
-        title: `${cat} Distribution`,
-        description: `Proportional breakdown of ${cat}`,
-        xColumn: cat,
-        priority: priority--,
-      });
-    }
-
-    // Pie — good for ≤6 categories
-    if (uniqueValues <= 6) {
-      recs.push({
-        id: `pie-${cat}`,
-        type: "pie",
-        title: `${cat} Breakdown`,
-        description: `Pie chart showing ${cat} proportions`,
-        xColumn: cat,
-        priority: priority--,
-      });
-    }
-
-    // Funnel — for process stages or ranked categories
-    if (uniqueValues >= 3 && uniqueValues <= 8) {
-      recs.push({
-        id: `funnel-${cat}-${num}`,
-        type: "funnel",
-        title: `${cat} Funnel`,
-        description: `Funnel view of ${num} across ${cat} stages`,
-        xColumn: cat, yColumn: num,
-        priority: priority--,
-      });
-    }
-
-    // Radar — multi-metric comparison
-    if (numericColumns.length >= 3 && uniqueValues <= 6) {
-      recs.push({
-        id: `radar-${cat}`,
-        type: "radar",
-        title: `${cat} Multi-Metric`,
-        description: `Radar comparison across metrics for ${cat}`,
-        xColumn: cat,
-        columns: numericColumns.slice(0, 5),
-        priority: priority--,
-      });
-    }
-
-    // Treemap — hierarchical view
-    if (uniqueValues >= 3 && uniqueValues <= 25) {
-      recs.push({
-        id: `treemap-${cat}-${num}`,
-        type: "treemap",
-        title: `${cat} Treemap`,
-        description: `Size-mapped view of ${num} by ${cat}`,
-        xColumn: cat, yColumn: num,
-        priority: priority--,
-      });
-    }
-
-    // Stacked bar — with second categorical or numeric
-    if (categoricalColumns.length >= 2 && numericColumns.length >= 1) {
-      recs.push({
-        id: `stacked-${categoricalColumns[0]}-${categoricalColumns[1]}`,
+        id: `stacked-${bestBarCol}-${secondCat}`,
         type: "stacked_bar",
-        title: `${num} by ${categoricalColumns[0]} & ${categoricalColumns[1]}`,
+        title: `${num} by ${bestBarCol} & ${secondCat}`,
         description: `Stacked comparison across two categories`,
-        xColumn: categoricalColumns[0],
-        yColumn: num,
-        sizeColumn: categoricalColumns[1],
+        xColumn: bestBarCol, yColumn: num, sizeColumn: secondCat,
         priority: priority--,
       });
     }
 
-    // Second bar chart with different columns
+    // Second bar with different numeric
     if (numericColumns.length >= 2) {
       recs.push({
-        id: `bar-${cat}-${numericColumns[1]}`,
+        id: `bar-${bestBarCol}-${numericColumns[1]}`,
         type: "bar",
-        title: `${numericColumns[1]} by ${cat}`,
-        description: `Average ${numericColumns[1]} across ${cat}`,
-        xColumn: cat, yColumn: numericColumns[1],
+        title: `${numericColumns[1]} by ${bestBarCol}`,
+        description: `Average ${numericColumns[1]} across ${bestBarCol}`,
+        xColumn: bestBarCol, yColumn: numericColumns[1],
         priority: priority--,
       });
     }
   }
 
-  // ── Time series ──────────────────────────────────────────────────
-  if (datetimeColumns.length > 0 && numericColumns.length > 0) {
-    const dateCol = datetimeColumns[0];
+  // ═══ FUNNEL ══════════════════════════════════════════════════════
+  const funnelCol = bestCatColumn(data, categoricalColumns, 8);
+  if (funnelCol && numericColumns.length > 0) {
     recs.push({
-      id: `line-${dateCol}-${numericColumns[0]}`,
-      type: "line",
-      title: `${numericColumns[0]} Over Time`,
-      description: `Trend of ${numericColumns[0]} across ${dateCol}`,
-      xColumn: dateCol, yColumn: numericColumns[0],
-      priority: priority--,
-    });
-    recs.push({
-      id: `area-${dateCol}-${numericColumns[0]}`,
-      type: "area",
-      title: `${numericColumns[0]} Area Trend`,
-      description: `Area trend of ${numericColumns[0]} over time`,
-      xColumn: dateCol, yColumn: numericColumns[0],
+      id: `funnel-${funnelCol}-${num}`,
+      type: "funnel",
+      title: `${funnelCol} Funnel`,
+      description: `Funnel view of ${num} across ${funnelCol} stages`,
+      xColumn: funnelCol, yColumn: num,
       priority: priority--,
     });
   }
 
-  // ── Numeric vs Numeric ───────────────────────────────────────────
+  // ═══ RADAR ═══════════════════════════════════════════════════════
+  const radarCol = bestCatColumn(data, categoricalColumns, 6);
+  if (radarCol && numericColumns.length >= 3) {
+    recs.push({
+      id: `radar-${radarCol}`,
+      type: "radar",
+      title: `${radarCol} Multi-Metric Radar`,
+      description: `Radar comparison across metrics for ${radarCol}`,
+      xColumn: radarCol, columns: numericColumns.slice(0, 5),
+      priority: priority--,
+    });
+  }
+
+  // ═══ TREEMAP ═════════════════════════════════════════════════════
+  const treemapCol = bestCatColumn(data, categoricalColumns, 20);
+  if (treemapCol && numericColumns.length > 0) {
+    recs.push({
+      id: `treemap-${treemapCol}-${num}`,
+      type: "treemap",
+      title: `${treemapCol} Treemap`,
+      description: `Size-mapped view of ${num} by ${treemapCol}`,
+      xColumn: treemapCol, yColumn: num,
+      priority: priority--,
+    });
+  }
+
+  // ═══ TIME SERIES ═════════════════════════════════════════════════
+  if (datetimeColumns.length > 0 && numericColumns.length > 0) {
+    const d = datetimeColumns[0];
+    recs.push({
+      id: `line-${d}-${num}`, type: "line",
+      title: `${num} Over Time`, description: `Trend of ${num} across ${d}`,
+      xColumn: d, yColumn: num, priority: priority--,
+    });
+    recs.push({
+      id: `area-${d}-${num}`, type: "area",
+      title: `${num} Area Trend`, description: `Area trend of ${num} over time`,
+      xColumn: d, yColumn: num, priority: priority--,
+    });
+  }
+
+  // ═══ SCATTER & BUBBLE ════════════════════════════════════════════
   if (numericColumns.length >= 2) {
     recs.push({
-      id: `scatter-${numericColumns[0]}-${numericColumns[1]}`,
-      type: "scatter",
+      id: `scatter-${numericColumns[0]}-${numericColumns[1]}`, type: "scatter",
       title: `${numericColumns[0]} vs ${numericColumns[1]}`,
-      description: `Relationship between ${numericColumns[0]} and ${numericColumns[1]}`,
-      xColumn: numericColumns[0], yColumn: numericColumns[1],
-      priority: priority--,
+      description: `Relationship between two numeric variables`,
+      xColumn: numericColumns[0], yColumn: numericColumns[1], priority: priority--,
     });
-
-    // Bubble chart with 3 numeric dimensions
     if (numericColumns.length >= 3) {
       recs.push({
-        id: `bubble-${numericColumns[0]}-${numericColumns[1]}`,
-        type: "bubble",
-        title: `${numericColumns[0]} vs ${numericColumns[1]} (sized by ${numericColumns[2]})`,
+        id: `bubble-${numericColumns[0]}-${numericColumns[1]}`, type: "bubble",
+        title: `${numericColumns[0]} vs ${numericColumns[1]} (size: ${numericColumns[2]})`,
         description: `Bubble chart with three numeric dimensions`,
-        xColumn: numericColumns[0], yColumn: numericColumns[1],
-        sizeColumn: numericColumns[2],
+        xColumn: numericColumns[0], yColumn: numericColumns[1], sizeColumn: numericColumns[2],
         priority: priority--,
       });
     }
   }
 
-  // ── Distribution ─────────────────────────────────────────────────
+  // ═══ HISTOGRAM ═══════════════════════════════════════════════════
   if (numericColumns.length > 0) {
     recs.push({
-      id: `histogram-${numericColumns[0]}`,
-      type: "histogram",
-      title: `Distribution of ${numericColumns[0]}`,
-      description: `Frequency distribution of ${numericColumns[0]} values`,
-      xColumn: numericColumns[0],
-      priority: priority--,
+      id: `histogram-${num}`, type: "histogram",
+      title: `Distribution of ${num}`,
+      description: `Frequency distribution of ${num}`,
+      xColumn: num, priority: priority--,
     });
   }
 
-  // ── Correlation heatmap ──────────────────────────────────────────
+  // ═══ HEATMAP ═════════════════════════════════════════════════════
   if (numericColumns.length >= 3) {
     recs.push({
-      id: "heatmap-correlation",
-      type: "heatmap",
+      id: "heatmap-corr", type: "heatmap",
       title: "Correlation Heatmap",
       description: `Pearson correlations between ${numericColumns.length} numeric columns`,
-      columns: numericColumns.slice(0, 10),
-      priority: priority--,
+      columns: numericColumns.slice(0, 10), priority: priority--,
     });
   }
 
-  // ── Box plot ─────────────────────────────────────────────────────
+  // ═══ BOX PLOT ════════════════════════════════════════════════════
   if (numericColumns.length > 0) {
     recs.push({
-      id: "boxplot-outliers",
-      type: "boxplot",
+      id: "boxplot-outliers", type: "boxplot",
       title: "Outlier Analysis",
       description: "Box plot showing quartiles and outliers",
-      columns: numericColumns.slice(0, 6),
-      priority: priority--,
+      columns: numericColumns.slice(0, 6), priority: priority--,
     });
   }
 
