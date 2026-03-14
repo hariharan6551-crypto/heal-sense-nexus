@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "service": "heal-sense-nexus-api",
+  "generatedAt": "2026-03-14T10:31:09.232Z",
+  "endpoints": [
+    {
+      "path": "/data/dashboard-data.json",
+      "description": "Full dataset as JSON for Power BI"
+    },
+    {
+      "path": "/data/metadata.json",
+      "description": "Dataset schema and column metadata"
+    },
+    {
+      "path": "/data/health.json",
+      "description": "Health check (this file)"
+    },
+    {
+      "path": "/data/summary.json",
+      "description": "Aggregated summary statistics"
+    }
+  ]
+}

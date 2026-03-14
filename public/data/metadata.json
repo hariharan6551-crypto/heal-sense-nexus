@@ -1,0 +1,112 @@
+{
+  "dataset": "heal-sense-nexus",
+  "fileName": "sample_data.csv",
+  "fileSizeBytes": 1838,
+  "lastModified": "2026-03-14T08:46:41.759Z",
+  "generatedAt": "2026-03-14T10:31:09.232Z",
+  "recordCount": 36,
+  "columnCount": 8,
+  "columns": [
+    {
+      "name": "Date",
+      "type": "datetime",
+      "sampleValues": [
+        "2024-01-15",
+        "2024-01-22",
+        "2024-02-01"
+      ],
+      "nullCount": 0,
+      "uniqueCount": 36
+    },
+    {
+      "name": "Region",
+      "type": "categorical",
+      "sampleValues": [
+        "North",
+        "South",
+        "East"
+      ],
+      "nullCount": 0,
+      "uniqueCount": 4
+    },
+    {
+      "name": "Product",
+      "type": "categorical",
+      "sampleValues": [
+        "Widget A",
+        "Widget B",
+        "Widget A"
+      ],
+      "nullCount": 0,
+      "uniqueCount": 3
+    },
+    {
+      "name": "Revenue",
+      "type": "numeric",
+      "sampleValues": [
+        12500,
+        8900,
+        15200
+      ],
+      "nullCount": 0,
+      "uniqueCount": 36
+    },
+    {
+      "name": "Units_Sold",
+      "type": "numeric",
+      "sampleValues": [
+        150,
+        95,
+        180
+      ],
+      "nullCount": 0,
+      "uniqueCount": 36
+    },
+    {
+      "name": "Customer_Rating",
+      "type": "numeric",
+      "sampleValues": [
+        4.2,
+        3.8,
+        4.5
+      ],
+      "nullCount": 0,
+      "uniqueCount": 17
+    },
+    {
+      "name": "Marketing_Spend",
+      "type": "numeric",
+      "sampleValues": [
+        3200,
+        2100,
+        4100
+      ],
+      "nullCount": 0,
+      "uniqueCount": 34
+    },
+    {
+      "name": "Profit_Margin",
+      "type": "numeric",
+      "sampleValues": [
+        28.5,
+        22.1,
+        32
+      ],
+      "nullCount": 0,
+      "uniqueCount": 36
+    }
+  ],
+  "powerBI": {
+    "connectionUrl": "https://heal-sense-nexus.vercel.app/data/dashboard-data.json",
+    "refreshSupported": true,
+    "instructions": [
+      "Open Power BI Desktop",
+      "Click Get Data → Web",
+      "Enter the connectionUrl above",
+      "Click OK → Power BI will load the JSON",
+      "In Power Query Editor, click \"Into Table\" on the data list",
+      "Expand all columns and set proper data types",
+      "Click Close & Apply to load data into your report"
+    ]
+  }
+}

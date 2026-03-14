@@ -1,0 +1,378 @@
+{
+  "dataset": "heal-sense-nexus",
+  "timestamp": "2026-03-14T10:31:09.232Z",
+  "recordCount": 36,
+  "format": "records",
+  "columns": [
+    "Date",
+    "Region",
+    "Product",
+    "Revenue",
+    "Units_Sold",
+    "Customer_Rating",
+    "Marketing_Spend",
+    "Profit_Margin"
+  ],
+  "data": [
+    {
+      "Date": "2024-01-15",
+      "Region": "North",
+      "Product": "Widget A",
+      "Revenue": 12500,
+      "Units_Sold": 150,
+      "Customer_Rating": 4.2,
+      "Marketing_Spend": 3200,
+      "Profit_Margin": 28.5
+    },
+    {
+      "Date": "2024-01-22",
+      "Region": "South",
+      "Product": "Widget B",
+      "Revenue": 8900,
+      "Units_Sold": 95,
+      "Customer_Rating": 3.8,
+      "Marketing_Spend": 2100,
+      "Profit_Margin": 22.1
+    },
+    {
+      "Date": "2024-02-01",
+      "Region": "East",
+      "Product": "Widget A",
+      "Revenue": 15200,
+      "Units_Sold": 180,
+      "Customer_Rating": 4.5,
+      "Marketing_Spend": 4100,
+      "Profit_Margin": 32
+    },
+    {
+      "Date": "2024-02-10",
+      "Region": "West",
+      "Product": "Widget C",
+      "Revenue": 6700,
+      "Units_Sold": 72,
+      "Customer_Rating": 3.5,
+      "Marketing_Spend": 1800,
+      "Profit_Margin": 18.9
+    },
+    {
+      "Date": "2024-02-18",
+      "Region": "North",
+      "Product": "Widget B",
+      "Revenue": 11300,
+      "Units_Sold": 125,
+      "Customer_Rating": 4,
+      "Marketing_Spend": 2900,
+      "Profit_Margin": 25.3
+    },
+    {
+      "Date": "2024-03-05",
+      "Region": "South",
+      "Product": "Widget A",
+      "Revenue": 14800,
+      "Units_Sold": 170,
+      "Customer_Rating": 4.6,
+      "Marketing_Spend": 3800,
+      "Profit_Margin": 30.5
+    },
+    {
+      "Date": "2024-03-12",
+      "Region": "East",
+      "Product": "Widget C",
+      "Revenue": 9200,
+      "Units_Sold": 98,
+      "Customer_Rating": 3.9,
+      "Marketing_Spend": 2400,
+      "Profit_Margin": 21.7
+    },
+    {
+      "Date": "2024-03-20",
+      "Region": "West",
+      "Product": "Widget B",
+      "Revenue": 7800,
+      "Units_Sold": 85,
+      "Customer_Rating": 3.7,
+      "Marketing_Spend": 2000,
+      "Profit_Margin": 19.8
+    },
+    {
+      "Date": "2024-04-01",
+      "Region": "North",
+      "Product": "Widget C",
+      "Revenue": 10500,
+      "Units_Sold": 112,
+      "Customer_Rating": 4.1,
+      "Marketing_Spend": 2700,
+      "Profit_Margin": 24.6
+    },
+    {
+      "Date": "2024-04-15",
+      "Region": "South",
+      "Product": "Widget A",
+      "Revenue": 16100,
+      "Units_Sold": 195,
+      "Customer_Rating": 4.7,
+      "Marketing_Spend": 4300,
+      "Profit_Margin": 33.2
+    },
+    {
+      "Date": "2024-04-22",
+      "Region": "East",
+      "Product": "Widget B",
+      "Revenue": 8500,
+      "Units_Sold": 90,
+      "Customer_Rating": 3.6,
+      "Marketing_Spend": 2200,
+      "Profit_Margin": 20.5
+    },
+    {
+      "Date": "2024-05-01",
+      "Region": "West",
+      "Product": "Widget A",
+      "Revenue": 13700,
+      "Units_Sold": 160,
+      "Customer_Rating": 4.3,
+      "Marketing_Spend": 3500,
+      "Profit_Margin": 29.1
+    },
+    {
+      "Date": "2024-05-10",
+      "Region": "North",
+      "Product": "Widget C",
+      "Revenue": 7200,
+      "Units_Sold": 78,
+      "Customer_Rating": 3.4,
+      "Marketing_Spend": 1900,
+      "Profit_Margin": 17.5
+    },
+    {
+      "Date": "2024-05-18",
+      "Region": "South",
+      "Product": "Widget B",
+      "Revenue": 12000,
+      "Units_Sold": 130,
+      "Customer_Rating": 4.2,
+      "Marketing_Spend": 3100,
+      "Profit_Margin": 26.8
+    },
+    {
+      "Date": "2024-06-01",
+      "Region": "East",
+      "Product": "Widget A",
+      "Revenue": 17500,
+      "Units_Sold": 210,
+      "Customer_Rating": 4.8,
+      "Marketing_Spend": 4500,
+      "Profit_Margin": 35
+    },
+    {
+      "Date": "2024-06-12",
+      "Region": "West",
+      "Product": "Widget C",
+      "Revenue": 6100,
+      "Units_Sold": 65,
+      "Customer_Rating": 3.3,
+      "Marketing_Spend": 1600,
+      "Profit_Margin": 16.2
+    },
+    {
+      "Date": "2024-06-20",
+      "Region": "North",
+      "Product": "Widget B",
+      "Revenue": 10800,
+      "Units_Sold": 118,
+      "Customer_Rating": 3.9,
+      "Marketing_Spend": 2800,
+      "Profit_Margin": 23.9
+    },
+    {
+      "Date": "2024-07-01",
+      "Region": "South",
+      "Product": "Widget A",
+      "Revenue": 15600,
+      "Units_Sold": 185,
+      "Customer_Rating": 4.4,
+      "Marketing_Spend": 4000,
+      "Profit_Margin": 31.5
+    },
+    {
+      "Date": "2024-07-15",
+      "Region": "East",
+      "Product": "Widget C",
+      "Revenue": 8800,
+      "Units_Sold": 94,
+      "Customer_Rating": 3.8,
+      "Marketing_Spend": 2300,
+      "Profit_Margin": 21
+    },
+    {
+      "Date": "2024-07-22",
+      "Region": "West",
+      "Product": "Widget B",
+      "Revenue": 9500,
+      "Units_Sold": 102,
+      "Customer_Rating": 4,
+      "Marketing_Spend": 2500,
+      "Profit_Margin": 22.5
+    },
+    {
+      "Date": "2024-08-01",
+      "Region": "North",
+      "Product": "Widget A",
+      "Revenue": 14200,
+      "Units_Sold": 168,
+      "Customer_Rating": 4.5,
+      "Marketing_Spend": 3600,
+      "Profit_Margin": 30
+    },
+    {
+      "Date": "2024-08-10",
+      "Region": "South",
+      "Product": "Widget C",
+      "Revenue": 7500,
+      "Units_Sold": 80,
+      "Customer_Rating": 3.6,
+      "Marketing_Spend": 2000,
+      "Profit_Margin": 18.2
+    },
+    {
+      "Date": "2024-08-18",
+      "Region": "East",
+      "Product": "Widget B",
+      "Revenue": 11500,
+      "Units_Sold": 128,
+      "Customer_Rating": 4.1,
+      "Marketing_Spend": 3000,
+      "Profit_Margin": 25.8
+    },
+    {
+      "Date": "2024-09-01",
+      "Region": "West",
+      "Product": "Widget A",
+      "Revenue": 16800,
+      "Units_Sold": 200,
+      "Customer_Rating": 4.7,
+      "Marketing_Spend": 4400,
+      "Profit_Margin": 34
+    },
+    {
+      "Date": "2024-09-12",
+      "Region": "North",
+      "Product": "Widget C",
+      "Revenue": 6800,
+      "Units_Sold": 73,
+      "Customer_Rating": 3.4,
+      "Marketing_Spend": 1700,
+      "Profit_Margin": 17
+    },
+    {
+      "Date": "2024-09-20",
+      "Region": "South",
+      "Product": "Widget B",
+      "Revenue": 10200,
+      "Units_Sold": 110,
+      "Customer_Rating": 3.8,
+      "Marketing_Spend": 2600,
+      "Profit_Margin": 23.4
+    },
+    {
+      "Date": "2024-10-01",
+      "Region": "East",
+      "Product": "Widget A",
+      "Revenue": 18000,
+      "Units_Sold": 215,
+      "Customer_Rating": 4.9,
+      "Marketing_Spend": 4700,
+      "Profit_Margin": 36.2
+    },
+    {
+      "Date": "2024-10-15",
+      "Region": "West",
+      "Product": "Widget C",
+      "Revenue": 7100,
+      "Units_Sold": 76,
+      "Customer_Rating": 3.5,
+      "Marketing_Spend": 1850,
+      "Profit_Margin": 17.8
+    },
+    {
+      "Date": "2024-10-22",
+      "Region": "North",
+      "Product": "Widget B",
+      "Revenue": 11800,
+      "Units_Sold": 132,
+      "Customer_Rating": 4.2,
+      "Marketing_Spend": 3050,
+      "Profit_Margin": 26
+    },
+    {
+      "Date": "2024-11-01",
+      "Region": "South",
+      "Product": "Widget A",
+      "Revenue": 15000,
+      "Units_Sold": 175,
+      "Customer_Rating": 4.4,
+      "Marketing_Spend": 3900,
+      "Profit_Margin": 30.8
+    },
+    {
+      "Date": "2024-11-10",
+      "Region": "East",
+      "Product": "Widget C",
+      "Revenue": 9000,
+      "Units_Sold": 96,
+      "Customer_Rating": 3.9,
+      "Marketing_Spend": 2350,
+      "Profit_Margin": 21.3
+    },
+    {
+      "Date": "2024-11-18",
+      "Region": "West",
+      "Product": "Widget B",
+      "Revenue": 8200,
+      "Units_Sold": 88,
+      "Customer_Rating": 3.7,
+      "Marketing_Spend": 2150,
+      "Profit_Margin": 19.5
+    },
+    {
+      "Date": "2024-12-01",
+      "Region": "North",
+      "Product": "Widget A",
+      "Revenue": 17200,
+      "Units_Sold": 205,
+      "Customer_Rating": 4.8,
+      "Marketing_Spend": 4600,
+      "Profit_Margin": 35.5
+    },
+    {
+      "Date": "2024-12-10",
+      "Region": "South",
+      "Product": "Widget C",
+      "Revenue": 6500,
+      "Units_Sold": 70,
+      "Customer_Rating": 3.3,
+      "Marketing_Spend": 1650,
+      "Profit_Margin": 16.5
+    },
+    {
+      "Date": "2024-12-18",
+      "Region": "East",
+      "Product": "Widget B",
+      "Revenue": 12200,
+      "Units_Sold": 135,
+      "Customer_Rating": 4.3,
+      "Marketing_Spend": 3200,
+      "Profit_Margin": 27
+    },
+    {
+      "Date": "2024-12-28",
+      "Region": "West",
+      "Product": "Widget A",
+      "Revenue": 19500,
+      "Units_Sold": 230,
+      "Customer_Rating": 4.9,
+      "Marketing_Spend": 5000,
+      "Profit_Margin": 38
+    }
+  ]
+}
