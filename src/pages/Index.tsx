@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity } from "lucide-react";
+import { Activity, LogOut } from "lucide-react";
 import FileUploader from "@/components/dashboard/FileUploader";
 import KPICards from "@/components/dashboard/KPICards";
 import IndicatorChart from "@/components/dashboard/IndicatorChart";
@@ -9,10 +9,12 @@ import SupportComparison from "@/components/dashboard/SupportComparison";
 import RecoveryForecast from "@/components/dashboard/RecoveryForecast";
 import AIAssistant from "@/components/dashboard/AIAssistant";
 import DatasetViewer from "@/components/dashboard/DatasetViewer";
+import LoginPage from "@/components/dashboard/LoginPage";
 import { parseFile, type DatasetInfo } from "@/lib/parseData";
 import { toast } from "sonner";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -31,6 +33,10 @@ const Index = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return <LoginPage onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -42,14 +48,22 @@ const Index = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">AI Healthcare Analytics</h1>
-              <p className="text-xs text-muted-foreground">Dashboard</p>
+              <p className="text-xs text-muted-foreground">Welcome, Delulu</p>
             </div>
           </div>
-          {fileName && (
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              {fileName}
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {fileName && (
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                {fileName}
+              </span>
+            )}
+            <button
+              onClick={() => { setIsAuthenticated(false); setDataset(null); setFileName(""); }}
+              className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Logout
+            </button>
+          </div>
         </div>
       </header>
 
