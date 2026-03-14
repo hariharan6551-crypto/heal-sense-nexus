@@ -26,6 +26,33 @@ export default function HealthcareDashboard() {
   const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
   const insights = useMemo(() => dataset && analysis ? generateInsights(dataset, analysis) : [], [dataset, analysis]);
 
+  // Derived Title Generation Rule
+  const dashboardTitle = useMemo(() => {
+    if (!dataset) return '';
+    let base = dataset.fileName.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+    base = base.replace(/([a-z])([A-Z])/g, '$1 $2');
+    let words = base.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    
+    // Check columns to infer subjects if the title is too generic
+    const allCols = dataset.columns.join(' ').toLowerCase();
+    if (words.length < 2) {
+      if (allCols.includes('patient') || allCols.includes('health') || allCols.includes('diagnosis')) {
+        words.unshift('Healthcare');
+      } else if (allCols.includes('sale') || allCols.includes('revenue') || allCols.includes('price')) {
+        words.unshift('Sales');
+      } else if (allCols.includes('student') || allCols.includes('grade') || allCols.includes('school')) {
+        words.unshift('Education');
+      }
+    }
+    
+    // Add context padding
+    const titleString = words.join(' ');
+    if (titleString.toLowerCase().includes('dashboard') || titleString.toLowerCase().includes('analytics')) {
+      return titleString;
+    }
+    return `${titleString} Analytics Dashboard`;
+  }, [dataset]);
+
   const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
     setIsLoading(true);
     setTimeout(() => {
@@ -129,7 +156,15 @@ export default function HealthcareDashboard() {
         </div>
       )}
 
-      <main className="max-w-[1600px] mx-auto p-4 space-y-4">
+      <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-8">
+        {/* Dynamic Dashboard Title */}
+        <div className="text-center w-full mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+          <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-cyan-600 tracking-tight pb-1">
+            {dashboardTitle}
+          </h2>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full mt-3 opacity-80" />
+        </div>
+
         {/* Dataset info bar */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600">

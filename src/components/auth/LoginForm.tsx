@@ -52,8 +52,8 @@ export default function LoginForm() {
         <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md mx-auto mb-4 border border-white/20">
           <Building2 className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight">Post-Discharge Tracker</h2>
-        <p className="text-blue-200 mt-2 text-sm">Secure Provider Login Portal</p>
+        <h2 className="text-2xl font-bold tracking-tight">Secure Login</h2>
+        <p className="text-blue-200 mt-2 text-sm">Provider Portal</p>
       </div>
 
       <div className="p-8">

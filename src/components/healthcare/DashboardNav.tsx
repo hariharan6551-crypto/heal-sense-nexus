@@ -21,22 +21,10 @@ const NAV_ITEMS = [
   { icon: Settings, label: 'Settings' },
 ];
 
-/** Convert a filename like "sales_data.csv" → "Sales Data Analytics Dashboard" */
-function deriveDashboardTitle(fileName: string): string {
-  if (fileName === 'Healthcare Patient Dataset') return 'Post-Discharge Social Support & Recovery Tracker';
-  const base = fileName.replace(/\.[^.]+$/, '');
-  const words = base
-    .replace(/[_-]+/g, ' ')
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .split(/\s+/)
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
-  return words.join(' ') + ' Analytics Dashboard';
-}
+
 
 export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, datasetName }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const title = deriveDashboardTitle(datasetName);
-  const isCustom = datasetName !== 'Healthcare Patient Dataset';
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -55,12 +43,12 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, 
       <div className="max-w-[1600px] mx-auto flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/10">
-            {isCustom ? <Sparkles className="h-5 w-5 text-cyan-300" /> : <Building2 className="h-5 w-5 text-white" />}
+            <Sparkles className="h-5 w-5 text-cyan-300" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight">{title}</h1>
+            <h1 className="text-lg font-bold tracking-tight">Analytics Studio</h1>
             <p className="text-[10px] text-blue-200/80 uppercase tracking-widest">
-              {isCustom ? `Powered by AI • ${datasetName}` : 'Monitor & Analyze Patient Recovery Data'}
+              Data Insights Platform
             </p>
           </div>
         </div>
