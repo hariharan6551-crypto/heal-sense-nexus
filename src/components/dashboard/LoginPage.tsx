@@ -107,7 +107,7 @@ const LoginPage = ({ onAuthenticated }: LoginPageProps) => {
 
     if (otp === generatedOtp) {
       clearTimers();
-      toast.success("Verification successful! Welcome, Delulu.");
+      toast.success("Verification successful! Welcome, Admin.");
       onAuthenticated();
     } else {
       const newAttempts = otpAttempts + 1;

@@ -48,7 +48,7 @@ const Index = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">AI Healthcare Analytics</h1>
-              <p className="text-xs text-muted-foreground">Welcome, Delulu</p>
+              <p className="text-xs text-muted-foreground">Welcome, Admin</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
