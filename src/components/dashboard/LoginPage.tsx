@@ -17,8 +17,8 @@ const simpleHash = (str: string): string => {
   return hash.toString(36);
 };
 
-const VALID_USERNAME = "Delulu";
-const VALID_PASSWORD_HASH = simpleHash("Hari@7845");
+const VALID_USERNAME = "Admin";
+const VALID_PASSWORD_HASH = simpleHash("Health2026");
 const PHONE_NUMBER = "7845606004";
 const MAX_OTP_ATTEMPTS = 3;
 const OTP_EXPIRY_MS = 2 * 60 * 1000; // 2 minutes
