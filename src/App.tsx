@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ApiDataPage from "./pages/ApiData.tsx";
+import Login from "./pages/Login.tsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
 
@@ -16,8 +18,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/api/data" element={<ApiDataPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/api/data" element={<ProtectedRoute><ApiDataPage /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

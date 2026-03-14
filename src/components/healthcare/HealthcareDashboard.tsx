@@ -1,9 +1,9 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type { DatasetInfo } from '@/lib/parseData';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import { generateInsights } from '@/lib/insightEngine';
-import { getDefaultDataset } from '@/lib/healthcareToDataset';
+import { parseFile } from '@/lib/parseData';
 import DashboardNav from './DashboardNav';
 import DynamicKPIs from './DynamicKPIs';
 import DynamicCharts from './DynamicCharts';
@@ -11,30 +11,104 @@ import DashboardTable from './DashboardTable';
 import AIPanel from './AIPanel';
 import DashboardFilters from './DashboardFilters';
 import DataProfilePanel from './DataProfilePanel';
+import { UploadCloud, FileType2, Database } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function HealthcareDashboard() {
-  const [dataset, setDataset] = useState<DatasetInfo>(() => getDefaultDataset());
+  const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const analysis = useMemo(() => analyzeDataset(dataset), [dataset]);
-  const charts = useMemo(() => recommendCharts(dataset), [dataset]);
-  const insights = useMemo(() => generateInsights(dataset, analysis), [dataset, analysis]);
+  const analysis = useMemo(() => dataset ? analyzeDataset(dataset) : null, [dataset]);
+  const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
+  const insights = useMemo(() => dataset && analysis ? generateInsights(dataset, analysis) : [], [dataset, analysis]);
 
   const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
     setIsLoading(true);
-    // Small delay for visual loading transition
     setTimeout(() => {
       setDataset(ds);
       setFilters({});
       setIsLoading(false);
+      toast.success('Dataset processed successfully');
     }, 300);
   }, []);
+
+  const handleFile = async (file: File) => {
+    try {
+      setIsLoading(true);
+      const ds = await parseFile(file);
+      handleDatasetLoaded(ds);
+    } catch (err: any) {
+      toast.error('Failed to parse file', { description: err.message });
+      setIsLoading(false);
+    }
+  };
+
+  const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+  const onDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files?.length) handleFile(e.dataTransfer.files[0]);
+  };
 
   const handleFilterChange = useCallback((col: string, value: string) => {
     setFilters(prev => ({ ...prev, [col]: value }));
   }, []);
+
+  if (!dataset || !analysis) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-xl w-full">
+          <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl mb-4 shadow-inner">
+              <Database className="w-8 h-8" />
+            </div>
+            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Data Upload Center</h1>
+            <p className="text-slate-500 mt-2">Upload your healthcare dataset to generate the analytics dashboard.</p>
+          </div>
+
+          <div
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all cursor-pointer bg-white group ${isDragging ? 'border-blue-500 bg-blue-50/50 shadow-lg scale-[1.02]' : 'border-slate-200 hover:border-blue-400 hover:shadow-md'}`}
+          >
+            <input type="file" ref={fileInputRef} className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={(e) => { if (e.target.files?.length) handleFile(e.target.files[0]); }} />
+            
+            <div className="relative w-20 h-20 mx-auto mb-6">
+              <div className="absolute inset-0 bg-blue-100 rounded-full scale-150 opacity-20 group-hover:animate-ping" />
+              <div className="relative bg-gradient-to-br from-blue-500 to-cyan-500 text-white w-full h-full rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-300">
+                <UploadCloud className="w-10 h-10" />
+              </div>
+            </div>
+
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">Drag & Drop Dataset</h3>
+            <p className="text-sm text-slate-500 mb-6 max-w-sm mx-auto">
+              or click anywhere to browse from your computer
+            </p>
+
+            <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-400">
+              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> CSV</span>
+              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> Excel</span>
+              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> JSON</span>
+            </div>
+          </div>
+          
+          {isLoading && (
+            <div className="mt-8 text-center animate-pulse">
+              <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-2" />
+              <p className="text-sm text-slate-600 font-medium">Processing dataset...</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
