@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity } from "lucide-react";
+import { Activity, LogOut } from "lucide-react";
 import FileUploader from "@/components/dashboard/FileUploader";
 import KPICards from "@/components/dashboard/KPICards";
 import IndicatorChart from "@/components/dashboard/IndicatorChart";
@@ -9,10 +9,12 @@ import SupportComparison from "@/components/dashboard/SupportComparison";
 import RecoveryForecast from "@/components/dashboard/RecoveryForecast";
 import AIAssistant from "@/components/dashboard/AIAssistant";
 import DatasetViewer from "@/components/dashboard/DatasetViewer";
+import LoginPage from "@/components/dashboard/LoginPage";
 import { parseFile, type DatasetInfo } from "@/lib/parseData";
 import { toast } from "sonner";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState("");

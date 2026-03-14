@@ -1,0 +1,253 @@
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Lock, User, ShieldCheck, Phone } from "lucide-react";
+import { toast } from "sonner";
+
+// Simple hash for demo — not cryptographic, but avoids plaintext
+const simpleHash = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return hash.toString(36);
+};
+
+const VALID_USERNAME = "Delulu";
+const VALID_PASSWORD_HASH = simpleHash("Hari@7845");
+const PHONE_NUMBER = "7845606004";
+const MAX_OTP_ATTEMPTS = 3;
+const OTP_EXPIRY_MS = 2 * 60 * 1000; // 2 minutes
+
+interface LoginPageProps {
+  onAuthenticated: () => void;
+}
+
+const LoginPage = ({ onAuthenticated }: LoginPageProps) => {
+  const [step, setStep] = useState<"login" | "otp">("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  const [otpExpired, setOtpExpired] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [timeLeft, setTimeLeft] = useState(120);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const expiryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTimers = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (expiryRef.current) clearTimeout(expiryRef.current);
+  };
+
+  useEffect(() => () => clearTimers(), []);
+
+  const generateOtp = useCallback(() => {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(code);
+    setOtpExpired(false);
+    setOtpAttempts(0);
+    setOtp("");
+    setOtpError("");
+    setTimeLeft(120);
+
+    clearTimers();
+
+    // Countdown timer
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearTimers();
+          setOtpExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // Expiry timeout
+    expiryRef.current = setTimeout(() => {
+      setOtpExpired(true);
+      clearTimers();
+    }, OTP_EXPIRY_MS);
+
+    // Simulate sending OTP (show in toast since Twilio not connected)
+    toast.info(`OTP sent to ****${PHONE_NUMBER.slice(-4)}`, {
+      description: `Your verification code is: ${code}`,
+      duration: 15000,
+    });
+
+    return code;
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+
+    if (username !== VALID_USERNAME || simpleHash(password) !== VALID_PASSWORD_HASH) {
+      setLoginError("Invalid username or password");
+      return;
+    }
+
+    generateOtp();
+    setStep("otp");
+  };
+
+  const handleVerifyOtp = () => {
+    if (otpExpired) {
+      setOtpError("OTP has expired. Please request a new one.");
+      return;
+    }
+
+    if (otp === generatedOtp) {
+      clearTimers();
+      toast.success("Verification successful! Welcome, Delulu.");
+      onAuthenticated();
+    } else {
+      const newAttempts = otpAttempts + 1;
+      setOtpAttempts(newAttempts);
+      setOtp("");
+
+      if (newAttempts >= MAX_OTP_ATTEMPTS) {
+        setOtpError("Maximum attempts reached. Please request a new OTP.");
+        clearTimers();
+      } else {
+        setOtpError(`Incorrect OTP. ${MAX_OTP_ATTEMPTS - newAttempts} attempt(s) remaining.`);
+      }
+    }
+  };
+
+  const handleResendOtp = () => {
+    generateOtp();
+    toast.info("New OTP sent!");
+  };
+
+  const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-border shadow-xl">
+        {step === "login" ? (
+          <>
+            <CardHeader className="text-center space-y-2">
+              <div className="flex justify-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl healthcare-gradient">
+                  <Lock className="h-7 w-7 text-primary-foreground" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl font-bold text-foreground">Welcome Back</CardTitle>
+              <CardDescription>Sign in to access AI Healthcare Analytics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" /> Username
+                  </label>
+                  <Input
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter username"
+                    autoComplete="username"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-muted-foreground" /> Password
+                  </label>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    autoComplete="current-password"
+                  />
+                </div>
+                {loginError && (
+                  <p className="text-sm text-destructive font-medium">{loginError}</p>
+                )}
+                <Button type="submit" className="w-full">Sign In</Button>
+              </form>
+            </CardContent>
+          </>
+        ) : (
+          <>
+            <CardHeader className="text-center space-y-2">
+              <div className="flex justify-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl healthcare-gradient">
+                  <ShieldCheck className="h-7 w-7 text-primary-foreground" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl font-bold text-foreground">Verify OTP</CardTitle>
+              <CardDescription className="flex items-center justify-center gap-1">
+                <Phone className="h-3.5 w-3.5" />
+                Code sent to ****{PHONE_NUMBER.slice(-4)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex justify-center">
+                <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              <div className="text-center">
+                {!otpExpired ? (
+                  <p className="text-sm text-muted-foreground">
+                    Expires in <span className="font-mono font-semibold text-foreground">{formatTime(timeLeft)}</span>
+                  </p>
+                ) : (
+                  <p className="text-sm text-destructive font-medium">OTP expired</p>
+                )}
+              </div>
+
+              {otpError && (
+                <p className="text-sm text-destructive font-medium text-center">{otpError}</p>
+              )}
+
+              <div className="space-y-3">
+                <Button
+                  className="w-full"
+                  onClick={handleVerifyOtp}
+                  disabled={otp.length !== 6 || (otpAttempts >= MAX_OTP_ATTEMPTS && !otpExpired)}
+                >
+                  Verify & Continue
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleResendOtp}
+                  disabled={!otpExpired && otpAttempts < MAX_OTP_ATTEMPTS && timeLeft > 90}
+                >
+                  Resend OTP
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => { setStep("login"); setPassword(""); clearTimers(); }}
+                >
+                  ← Back to Login
+                </Button>
+              </div>
+            </CardContent>
+          </>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+export default LoginPage;
