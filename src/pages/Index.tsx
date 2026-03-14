@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { Activity, Upload as UploadIcon } from "lucide-react";
+import { Activity, Upload as UploadIcon, LogOut } from "lucide-react";
+import LoginPage from "@/components/dashboard/LoginPage";
 import FileUploader from "@/components/dashboard/FileUploader";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import KPICards from "@/components/dashboard/KPICards";
@@ -19,12 +20,41 @@ import { recommendCharts, type ChartRecommendation } from "@/lib/chartRecommende
 import { toast } from "sonner";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [analysis, setAnalysis] = useState<DataAnalysis | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [chartRecs, setChartRecs] = useState<ChartRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<FilterState>({ categoryFilters: {}, numericRanges: {} });
+
+  // Apply filters to data — this hook MUST be before any conditional return
+  const filteredData = useMemo(() => {
+    if (!dataset) return [];
+    let data = dataset.data;
+
+    // Category filters
+    for (const [col, values] of Object.entries(filters.categoryFilters)) {
+      if (values.length > 0) {
+        data = data.filter(row => values.includes(String(row[col] || "")));
+      }
+    }
+
+    // Numeric range filters
+    for (const [col, [min, max]] of Object.entries(filters.numericRanges)) {
+      data = data.filter(row => {
+        const v = Number(row[col]);
+        return !isNaN(v) && v >= min && v <= max;
+      });
+    }
+
+    return data;
+  }, [dataset, filters]);
+
+  // --- Auth gate (AFTER all hooks to satisfy Rules of Hooks) ---
+  if (!isAuthenticated) {
+    return <LoginPage onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
 
   const handleFile = async (file: File) => {
     setIsLoading(true);
@@ -50,29 +80,6 @@ const Index = () => {
     }
   };
 
-  // Apply filters to data
-  const filteredData = useMemo(() => {
-    if (!dataset) return [];
-    let data = dataset.data;
-
-    // Category filters
-    for (const [col, values] of Object.entries(filters.categoryFilters)) {
-      if (values.length > 0) {
-        data = data.filter(row => values.includes(String(row[col] || "")));
-      }
-    }
-
-    // Numeric range filters
-    for (const [col, [min, max]] of Object.entries(filters.numericRanges)) {
-      data = data.filter(row => {
-        const v = Number(row[col]);
-        return !isNaN(v) && v >= min && v <= max;
-      });
-    }
-
-    return data;
-  }, [dataset, filters]);
-
   // Charts that don't need a custom renderer
   const standardCharts = chartRecs.filter(r => !["heatmap", "boxplot"].includes(r.type));
 
@@ -91,14 +98,22 @@ const Index = () => {
             </div>
           </div>
 
-          {dataset && (
+          <div className="flex items-center gap-2">
+            {dataset && (
+              <button
+                onClick={() => { setDataset(null); setAnalysis(null); setInsights([]); setChartRecs([]); }}
+                className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+              >
+                <UploadIcon className="h-3.5 w-3.5" /> New Dataset
+              </button>
+            )}
             <button
-              onClick={() => { setDataset(null); setAnalysis(null); setInsights([]); setChartRecs([]); }}
-              className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+              onClick={() => { setIsAuthenticated(false); setDataset(null); setAnalysis(null); setInsights([]); setChartRecs([]); }}
+              className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors"
             >
-              <UploadIcon className="h-3.5 w-3.5" /> New Dataset
+              <LogOut className="h-3.5 w-3.5" /> Logout
             </button>
-          )}
+          </div>
         </div>
       </header>
 
