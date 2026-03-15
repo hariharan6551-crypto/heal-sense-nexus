@@ -19,6 +19,7 @@ export default function HealthcareDashboard() {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
 
   const analysis = useMemo(() => dataset ? analyzeDataset(dataset) : null, [dataset]);
   const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
@@ -97,6 +98,25 @@ export default function HealthcareDashboard() {
     }, 300);
   }, []);
 
+  const handleFile = async (file: File) => {
+    try {
+      setIsLoading(true);
+      const ds = await parseFile(file);
+      handleDatasetLoaded(ds);
+    } catch (err: any) {
+      toast.error('Failed to parse file', { description: err.message });
+      setIsLoading(false);
+    }
+  };
+
+  const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+  const onDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files?.length) handleFile(e.dataTransfer.files[0]);
+  };
+
   const handleFilterChange = useCallback((col: string, value: string) => {
     setFilters(prev => ({ ...prev, [col]: value }));
   }, []);
@@ -156,6 +176,25 @@ export default function HealthcareDashboard() {
               ⚠️ {dataset.missingValueCount.toLocaleString()} missing values
             </div>
           )}
+        </div>
+
+        {/* Dataset Upload Center Feature */}
+        <div 
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+          className={`w-full p-8 rounded-2xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center text-center ${
+            isDragging ? 'border-blue-500 bg-blue-50/50 scale-[1.01]' : 'border-slate-200 bg-white hover:border-blue-400 hover:bg-slate-50'
+          }`}
+        >
+          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 shadow-sm border border-blue-100">
+            <UploadCloud className="w-8 h-8" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800 mb-2">Dataset Upload Center</h3>
+          <p className="text-sm text-slate-500 max-w-md">
+            Drag and drop your dataset here to instantly visualize it.
+            <br/><span className="text-xs text-slate-400 font-medium">Supports (.csv, .xlsx, .json) format.</span>
+          </p>
         </div>
 
         {/* Filters */}
