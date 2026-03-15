@@ -139,14 +139,6 @@ export default function LoginForm() {
 
             <div className="flex flex-col gap-3">
               <button
-                type="submit"
-                disabled={otp.length !== 6}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-lg shadow-blue-600/20"
-              >
-                Verify & Login
-              </button>
-              
-              <button
                 type="button"
                 onClick={() => setStep(1)}
                 className="text-sm text-slate-500 hover:text-slate-800 transition-colors"

@@ -11,6 +11,7 @@ import DashboardTable from './DashboardTable';
 import AIPanel from './AIPanel';
 import DashboardFilters from './DashboardFilters';
 import DataProfilePanel from './DataProfilePanel';
+import AIPhysicsLab from './AIPhysicsLab';
 import { FileType2, Database, BarChart3, Activity, PieChart } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -203,6 +204,13 @@ export default function HealthcareDashboard() {
             {/* Tab: Dataset */}
             {activeTab === 'Dataset' && (
               <DataProfilePanel dataset={dataset} analysis={analysis} />
+            )}
+
+            {/* Tab: Physics Lab */}
+            {activeTab === 'Physics Lab' && (
+              <div className="h-[700px]">
+                <AIPhysicsLab />
+              </div>
             )}
 
             {/* Tab: AI Assistant — show insights in main area too */}
