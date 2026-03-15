@@ -10,15 +10,6 @@
   ],
   "headers": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "frame-ancestors *"
-        }
-      ]
-    },
-    {
       "source": "/data/(.*)",
       "headers": [
         {

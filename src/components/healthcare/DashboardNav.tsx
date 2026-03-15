@@ -1,13 +1,9 @@
-import { useRef } from 'react';
 import {
   LayoutDashboard, Database, Bot, FileText, Settings,
-  Building2, Sparkles, Upload,
+  Building2, Sparkles,
 } from 'lucide-react';
-import { parseFile } from '@/lib/parseData';
-import type { DatasetInfo } from '@/lib/parseData';
 
 interface Props {
-  onDatasetLoaded: (ds: DatasetInfo) => void;
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
@@ -22,20 +18,7 @@ const NAV_ITEMS = [
 
 
 
-export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }: Props) {
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const ds = await parseFile(file);
-      onDatasetLoaded(ds);
-    } catch (err) {
-      console.error('Parse error', err);
-    }
-    e.target.value = '';
-  };
+export default function DashboardNav({ activeTab, onTabChange }: Props) {
 
   return (
     <header className="bg-gradient-to-r from-[#312e81] via-[#1e3a8a] to-[#0e7490] text-white shadow-xl sticky top-0 z-50">
@@ -70,14 +53,6 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }
             ))}
           </nav>
 
-          <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={handleFile} />
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-xs font-bold hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/20 border border-white/10"
-          >
-            <Upload className="h-3.5 w-3.5" />
-            Upload Dataset
-          </button>
         </div>
       </div>
     </header>
