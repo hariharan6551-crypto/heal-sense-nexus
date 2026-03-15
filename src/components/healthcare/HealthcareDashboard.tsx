@@ -30,6 +30,9 @@ export default function HealthcareDashboard() {
     const rawName = dataset.fileName.toLowerCase();
     
     // Explicit requested test cases
+    if (rawName.includes('hospital_readmission_dataset')) {
+      return 'Post Discharge social support and Recovery Tracker';
+    }
     if (rawName.includes('hospital_patient_data') || rawName.includes('hospital patient data')) {
       return 'Hospital Patient Analytics Dashboard';
     }
@@ -59,7 +62,7 @@ export default function HealthcareDashboard() {
     
     // Add context padding
     const titleString = words.join(' ');
-    if (titleString.toLowerCase().includes('dashboard') || titleString.toLowerCase().includes('analytics') || titleString.toLowerCase().includes('insights')) {
+    if (titleString.toLowerCase().includes('dashboard') || titleString.toLowerCase().includes('analytics') || titleString.toLowerCase().includes('insights') || titleString.toLowerCase().includes('tracker')) {
       return titleString;
     }
     return `${titleString} Analytics Dashboard`;
@@ -68,10 +71,10 @@ export default function HealthcareDashboard() {
   useEffect(() => {
     const loadDefaultData = async () => {
       try {
-        const response = await fetch('/sample_data.csv');
+        const response = await fetch('/hospital_readmission_dataset.csv');
         if (!response.ok) throw new Error('Failed to fetch default dataset');
         const text = await response.text();
-        const file = new File([text], 'sample_data.csv', { type: 'text/csv' });
+        const file = new File([text], 'hospital_readmission_dataset.csv', { type: 'text/csv' });
         const ds = await parseFile(file);
         setDataset(ds);
         setFilters({});
