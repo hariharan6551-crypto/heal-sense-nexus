@@ -69,6 +69,15 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }
               </button>
             ))}
           </nav>
+
+          <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={handleFile} />
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-xs font-bold hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/20 border border-white/10"
+          >
+            <Upload className="h-3.5 w-3.5" />
+            Upload Dataset
+          </button>
         </div>
       </div>
     </header>
