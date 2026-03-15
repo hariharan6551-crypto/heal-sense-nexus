@@ -84,6 +84,16 @@ export default function HealthcareDashboard() {
     loadDefaultData();
   }, []);
 
+  const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setDataset(ds);
+      setFilters({});
+      setIsLoading(false);
+      toast.success('Dataset processed successfully');
+    }, 300);
+  }, []);
+
   const handleFilterChange = useCallback((col: string, value: string) => {
     setFilters(prev => ({ ...prev, [col]: value }));
   }, []);
@@ -102,6 +112,7 @@ export default function HealthcareDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       <DashboardNav
+        onDatasetLoaded={handleDatasetLoaded}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
