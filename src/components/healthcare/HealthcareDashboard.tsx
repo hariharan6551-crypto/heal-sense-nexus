@@ -31,8 +31,8 @@ export default function HealthcareDashboard() {
     const rawName = dataset.fileName.toLowerCase();
     
     // Explicit requested test cases
-    if (rawName.includes('hospital_readmission_dataset')) {
-      return 'Post Discharge social support and Recovery Tracker';
+    if (rawName.includes('hospital_readmission') || rawName.includes('hospital readmission')) {
+      return 'Post Discharge Social Support and Recovery Tracker';
     }
     if (rawName.includes('hospital_patient_data') || rawName.includes('hospital patient data')) {
       return 'Hospital Patient Analytics Dashboard';
