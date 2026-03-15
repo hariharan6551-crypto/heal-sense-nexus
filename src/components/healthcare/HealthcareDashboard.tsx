@@ -99,51 +99,59 @@ export default function HealthcareDashboard() {
 
   if (!dataset || !analysis) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-xl w-full">
-          <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl mb-4 shadow-inner">
-              <Database className="w-8 h-8" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        <DashboardNav
+          onDatasetLoaded={handleDatasetLoaded}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          datasetName={""}
+        />
+        <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-8 h-full flex items-center justify-center">
+          <div className="w-full max-w-2xl mt-20">
+            <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl mb-4 shadow-inner">
+                <Database className="w-8 h-8" />
+              </div>
+              <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Data Upload Center</h1>
+              <p className="text-slate-500 mt-2">Upload your healthcare dataset to generate the analytics dashboard.</p>
             </div>
-            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Data Upload Center</h1>
-            <p className="text-slate-500 mt-2">Upload your healthcare dataset to generate the analytics dashboard.</p>
-          </div>
 
-          <div
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDrop={onDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all cursor-pointer bg-white group ${isDragging ? 'border-blue-500 bg-blue-50/50 shadow-lg scale-[1.02]' : 'border-slate-200 hover:border-blue-400 hover:shadow-md'}`}
-          >
-            <input type="file" ref={fileInputRef} className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={(e) => { if (e.target.files?.length) handleFile(e.target.files[0]); }} />
-            
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="absolute inset-0 bg-blue-100 rounded-full scale-150 opacity-20 group-hover:animate-ping" />
-              <div className="relative bg-gradient-to-br from-blue-500 to-cyan-500 text-white w-full h-full rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-300">
-                <UploadCloud className="w-10 h-10" />
+            <div
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all cursor-pointer bg-white group ${isDragging ? 'border-blue-500 bg-blue-50/50 shadow-lg scale-[1.02]' : 'border-slate-200 hover:border-blue-400 hover:shadow-md'}`}
+            >
+              <input type="file" ref={fileInputRef} className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={(e) => { if (e.target.files?.length) handleFile(e.target.files[0]); }} />
+              
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="absolute inset-0 bg-blue-100 rounded-full scale-150 opacity-20 group-hover:animate-ping" />
+                <div className="relative bg-gradient-to-br from-blue-500 to-cyan-500 text-white w-full h-full rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-300">
+                  <UploadCloud className="w-10 h-10" />
+                </div>
+              </div>
+
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">Drag & Drop Dataset</h3>
+              <p className="text-sm text-slate-500 mb-6 max-w-sm mx-auto">
+                or click anywhere to browse from your computer. Support large dataset uploads up to 10 GB file size.
+              </p>
+
+              <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-400">
+                <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> CSV</span>
+                <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> Excel</span>
+                <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> JSON</span>
               </div>
             </div>
-
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">Drag & Drop Dataset</h3>
-            <p className="text-sm text-slate-500 mb-6 max-w-sm mx-auto">
-              or click anywhere to browse from your computer
-            </p>
-
-            <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-400">
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> CSV</span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> Excel</span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg"><FileType2 className="w-4 h-4" /> JSON</span>
-            </div>
+            
+            {isLoading && (
+              <div className="mt-8 text-center animate-pulse">
+                <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-2" />
+                <p className="text-sm text-slate-600 font-medium">Processing dataset...</p>
+              </div>
+            )}
           </div>
-          
-          {isLoading && (
-            <div className="mt-8 text-center animate-pulse">
-              <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-2" />
-              <p className="text-sm text-slate-600 font-medium">Processing dataset...</p>
-            </div>
-          )}
-        </div>
+        </main>
       </div>
     );
   }
