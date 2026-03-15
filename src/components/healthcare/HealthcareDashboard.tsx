@@ -186,6 +186,27 @@ export default function HealthcareDashboard() {
         {/* KPI Row */}
         <DynamicKPIs dataset={dataset} columnStats={analysis.columnStats} />
 
+        {/* Tab: Dashboard (Upload Area) - Moved out of the narrow column for full width visibility */}
+        {activeTab === 'Dashboard' && (
+          <div 
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            className={`w-full mb-6 p-8 rounded-2xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center text-center ${
+              isDragging ? 'border-blue-500 bg-blue-50/50 scale-[1.01]' : 'border-slate-200 bg-white hover:border-blue-400 hover:bg-slate-50'
+            }`}
+          >
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 shadow-sm border border-blue-100">
+              <UploadCloud className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">Dataset Upload Center</h3>
+            <p className="text-sm text-slate-500 max-w-md">
+              Drag and drop your dataset here to instantly visualize it.
+              <br/><span className="text-xs text-slate-400 font-medium">Supports (.csv, .xlsx, .json) format.</span>
+            </p>
+          </div>
+        )}
+
         {/* Main grid: 3 cols left + sidebar right */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
           {/* Left 3 columns */}
@@ -193,25 +214,6 @@ export default function HealthcareDashboard() {
             {/* Tab: Dashboard */}
             {activeTab === 'Dashboard' && (
               <>
-                {/* Dataset Upload Center Feature */}
-                <div 
-                  onDragOver={onDragOver}
-                  onDragLeave={onDragLeave}
-                  onDrop={onDrop}
-                  className={`w-full mb-4 p-8 rounded-2xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center text-center ${
-                    isDragging ? 'border-blue-500 bg-blue-50/50 scale-[1.01]' : 'border-slate-200 bg-white hover:border-blue-400 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 shadow-sm border border-blue-100">
-                    <UploadCloud className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2">Dataset Upload Center</h3>
-                  <p className="text-sm text-slate-500 max-w-md">
-                    Drag and drop your dataset here to instantly visualize it.
-                    <br/><span className="text-xs text-slate-400 font-medium">Supports (.csv, .xlsx, .json) format.</span>
-                  </p>
-                </div>
-
                 <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={filters} />
                 <DashboardTable dataset={dataset} filters={filters} />
               </>
