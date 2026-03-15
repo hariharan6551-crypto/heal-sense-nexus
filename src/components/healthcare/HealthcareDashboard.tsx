@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { DatasetInfo } from '@/lib/parseData';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
@@ -18,9 +18,7 @@ export default function HealthcareDashboard() {
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const analysis = useMemo(() => dataset ? analyzeDataset(dataset) : null, [dataset]);
   const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
@@ -67,34 +65,24 @@ export default function HealthcareDashboard() {
     return `${titleString} Analytics Dashboard`;
   }, [dataset]);
 
-  const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setDataset(ds);
-      setFilters({});
-      setIsLoading(false);
-      toast.success('Dataset processed successfully');
-    }, 300);
+  useEffect(() => {
+    const loadDefaultData = async () => {
+      try {
+        const response = await fetch('/sample_data.csv');
+        if (!response.ok) throw new Error('Failed to fetch default dataset');
+        const text = await response.text();
+        const file = new File([text], 'sample_data.csv', { type: 'text/csv' });
+        const ds = await parseFile(file);
+        setDataset(ds);
+        setFilters({});
+      } catch (err: any) {
+        toast.error('Failed to load dataset', { description: err.message });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadDefaultData();
   }, []);
-
-  const handleFile = async (file: File) => {
-    try {
-      setIsLoading(true);
-      const ds = await parseFile(file);
-      handleDatasetLoaded(ds);
-    } catch (err: any) {
-      toast.error('Failed to parse file', { description: err.message });
-      setIsLoading(false);
-    }
-  };
-
-  const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
-  const onDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files?.length) handleFile(e.dataTransfer.files[0]);
-  };
 
   const handleFilterChange = useCallback((col: string, value: string) => {
     setFilters(prev => ({ ...prev, [col]: value }));
@@ -102,84 +90,11 @@ export default function HealthcareDashboard() {
 
   if (!dataset || !analysis) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex flex-col">
-        <DashboardNav
-          onDatasetLoaded={handleDatasetLoaded}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          datasetName={""}
-        />
-        <main className="max-w-[1600px] w-full mx-auto p-4 space-y-6 pt-8 flex-1">
-          {/* Dynamic Dashboard Title Fallback */}
-          <div className="text-center w-full mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
-            <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-cyan-600 tracking-tight pb-1">
-              AI-Powered Analytics Dashboard
-            </h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full mt-3 opacity-80" />
-            <p className="text-slate-500 mt-4 font-medium">Please upload a dataset using the <span className="text-blue-600 hidden md:inline">Upload Dataset</span> button in the top right to generate insights.</p>
-            <p className="text-xs text-slate-400 mt-2">Support large dataset uploads (.csv, .xlsx, .json) up to 10 GB file size.</p>
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
-            <div className="xl:col-span-3 space-y-4">
-              {/* Dummy KPI Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 opacity-50 select-none">
-                 {[1,2,3,4].map(i => (
-                   <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-center min-h-[120px]">
-                     <div className="text-center w-full">
-                       <div className="w-10 h-10 bg-slate-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                         <Activity className="w-5 h-5 text-slate-400" />
-                       </div>
-                       <div className="h-3 bg-slate-100 rounded w-16 mx-auto mb-2"></div>
-                       <div className="h-6 bg-slate-100 rounded w-24 mx-auto"></div>
-                     </div>
-                   </div>
-                 ))}
-              </div>
-
-              {/* Dummy Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 opacity-50 select-none">
-                 <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6 min-h-[350px] flex items-center justify-center">
-                    <div className="text-center">
-                      <BarChart3 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                      <div className="h-4 bg-slate-100 rounded w-32 mx-auto mb-2"></div>
-                      <div className="h-3 bg-slate-50 rounded w-24 mx-auto"></div>
-                    </div>
-                 </div>
-                 <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6 min-h-[350px] flex items-center justify-center">
-                    <div className="text-center">
-                      <PieChart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                      <div className="h-4 bg-slate-100 rounded w-32 mx-auto mb-2"></div>
-                      <div className="h-3 bg-slate-50 rounded w-24 mx-auto"></div>
-                    </div>
-                 </div>
-              </div>
-            </div>
-
-            {/* Dummy AI Panel */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 min-h-[500px] opacity-50 select-none flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 rounded-full bg-slate-100"></div>
-                  <div className="h-5 bg-slate-100 rounded w-32"></div>
-                </div>
-                <div className="space-y-4 flex-1">
-                  <div className="h-16 bg-slate-50 rounded-lg border border-slate-100 w-full animate-pulse"></div>
-                  <div className="h-20 bg-slate-50 rounded-lg border border-slate-100 w-full animate-pulse"></div>
-                  <div className="h-16 bg-slate-50 rounded-lg border border-slate-100 w-full animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-        
-        <footer className="bg-white border-t border-slate-200 py-3 mt-auto">
-          <div className="max-w-[1600px] mx-auto px-4 text-center">
-            <p className="text-[10px] text-slate-400">
-              AI-Powered Analytics Platform
-            </p>
-          </div>
-        </footer>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm font-medium text-slate-600">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -187,10 +102,8 @@ export default function HealthcareDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       <DashboardNav
-        onDatasetLoaded={handleDatasetLoaded}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        datasetName={dataset.fileName}
       />
 
       {/* Loading overlay */}
