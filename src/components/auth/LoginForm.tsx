@@ -34,7 +34,7 @@ export default function LoginForm() {
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (otp === generatedOtp || otp === '123456') { // Allow 123456 as a backup test code just in case
-      localStorage.setItem('isAuthenticated', 'true');
+      sessionStorage.setItem('isAuthenticated', 'true');
       toast.success('Authentication successful', {
         description: 'Welcome to the dashboard.',
       });

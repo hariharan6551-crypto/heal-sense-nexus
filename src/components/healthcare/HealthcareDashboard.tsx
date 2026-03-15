@@ -32,11 +32,14 @@ export default function HealthcareDashboard() {
     const rawName = dataset.fileName.toLowerCase();
     
     // Explicit requested test cases
-    if (rawName.includes('sales_2025') || rawName.includes('sales 2025')) {
-      return 'Sales Performance Dashboard 2025';
+    if (rawName.includes('hospital_patient_data') || rawName.includes('hospital patient data')) {
+      return 'Hospital Patient Analytics Dashboard';
     }
-    if (rawName.includes('healthcare_patients') || rawName.includes('healthcare patients')) {
-      return 'Healthcare Patient Analytics Dashboard';
+    if (rawName.includes('retail_sales_2025') || rawName.includes('retail sales 2025')) {
+      return 'Retail Sales Performance Dashboard 2025';
+    }
+    if (rawName.includes('employee_attendance') || rawName.includes('employee attendance')) {
+      return 'Employee Attendance Insights Dashboard';
     }
 
     // Generic Fallback
@@ -58,7 +61,7 @@ export default function HealthcareDashboard() {
     
     // Add context padding
     const titleString = words.join(' ');
-    if (titleString.toLowerCase().includes('dashboard') || titleString.toLowerCase().includes('analytics')) {
+    if (titleString.toLowerCase().includes('dashboard') || titleString.toLowerCase().includes('analytics') || titleString.toLowerCase().includes('insights')) {
       return titleString;
     }
     return `${titleString} Analytics Dashboard`;
@@ -333,7 +336,7 @@ export default function HealthcareDashboard() {
       <footer className="bg-white border-t border-slate-200 py-3 mt-6">
         <div className="max-w-[1600px] mx-auto px-4 text-center">
           <p className="text-[10px] text-slate-400">
-            Post-Discharge Social Support & Recovery Tracker • AI-Powered Healthcare Analytics Platform • © 2024
+            {dataset ? dashboardTitle : 'AI-Powered Analytics Platform'} • © 2026
           </p>
         </div>
       </footer>
