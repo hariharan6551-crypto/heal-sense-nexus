@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import {
   LayoutDashboard, Database, Bot, FileText, Settings,
-  Building2, Sparkles, Upload, Atom
+  Building2, Sparkles, Upload
 } from 'lucide-react';
 import { parseFile } from '@/lib/parseData';
 import type { DatasetInfo } from '@/lib/parseData';
@@ -16,7 +16,6 @@ const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard' },
   { icon: Database, label: 'Dataset' },
   { icon: Bot, label: 'AI Assistant' },
-  { icon: Atom, label: 'Physics Lab' },
   { icon: FileText, label: 'Reports' },
   { icon: Settings, label: 'Settings' },
 ];
