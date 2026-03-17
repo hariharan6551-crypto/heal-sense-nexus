@@ -188,6 +188,19 @@
     100% { background-position: -200% 0; }
   }
 
+  /* Floating orb (login page background blobs) */
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    33%       { transform: translateY(-24px) scale(1.04); }
+    66%       { transform: translateY(12px) scale(0.97); }
+  }
+
+  /* Login card entrance */
+  @keyframes cardEntrance {
+    from { opacity: 0; transform: translateY(32px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  }
+
   /* Glassmorphism */
   .glass {
     background: hsl(var(--card) / 0.6);
