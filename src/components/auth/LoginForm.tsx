@@ -236,7 +236,7 @@ export default function LoginForm() {
           <div className="mt-6 flex items-center justify-center gap-2">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
             <p className="text-xs text-slate-400">
-              256-bit encrypted · Session secured
+
             </p>
           </div>
         </div>
