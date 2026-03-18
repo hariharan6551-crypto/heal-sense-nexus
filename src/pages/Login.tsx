@@ -70,14 +70,6 @@ export default function Login() {
       >
         <LoginForm />
       </div>
-
-      {/* Footer */}
-      <p
-        className="mt-8 text-xs z-10"
-        style={{ color: 'rgba(255,255,255,0.35)', animation: 'fadeUp 0.8s ease 0.4s both' }}
-      >
-        © {new Date().getFullYear()} Heal Sense Nexus · Confidential &amp; Proprietary
-      </p>
     </div>
   );
 }
