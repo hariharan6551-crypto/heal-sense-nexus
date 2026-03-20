@@ -74,39 +74,55 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
 
   if (filterColumns.length === 0) return null;
 
+  const TIME_RANGES = [
+    { label: 'All Time', value: '__all__' },
+    { label: 'Today', value: 'today' },
+    { label: 'Last Week', value: 'last_week' },
+    { label: 'Last Month', value: 'last_month' },
+    { label: 'This Year', value: 'year' },
+  ];
+
+  const handleFilterChange = (col: string, val: string) => {
+    // Audit log (Phase 16 & 17)
+    if (val !== '__all__') {
+      console.log(`[AUDIT] User applied filter: ${col} = ${val}`);
+    }
+    onFilterChange(col, val);
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 hover-glow">
-      <div className="flex items-center justify-between mb-2">
+    <div className="apple-card p-4 transition-all duration-300">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Filter className="h-3.5 w-3.5 text-blue-600" />
-          <span className="text-xs font-bold text-slate-700">Filters</span>
+          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+            <Filter className="h-3 w-3 text-blue-600" />
+          </div>
+          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Filters & Date Range</span>
           {activeFilterCount > 0 && (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-indigo-100 text-indigo-600">
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[#007AFF] text-white shadow-sm">
               {activeFilterCount} active
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5">
-          {/* Save View */}
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowSaveModal(!showSaveModal)}
-            className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-500 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-slate-600 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
           >
             <Bookmark className="h-3 w-3" />
-            Save
+            Save View
           </button>
-          {/* Load saved views */}
-          {savedViews.length > 0 && savedViews.map((view, i) => (
+          {savedViews.map((view, i) => (
             <button
               key={i}
               onClick={() => loadView(view)}
-              className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors group"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-white bg-[#007AFF] rounded-full hover:bg-blue-600 transition-colors shadow-sm shadow-blue-500/20 group"
               title={`Load "${view.name}"`}
             >
               <BookmarkCheck className="h-3 w-3" />
               {view.name}
               <X
-                className="h-2.5 w-2.5 text-indigo-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="h-3 w-3 text-white/70 hover:text-white transition-opacity hidden group-hover:block ml-1"
                 onClick={(e) => { e.stopPropagation(); deleteView(i); }}
               />
             </button>
@@ -114,32 +130,50 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
         </div>
       </div>
 
-      {/* Save Modal */}
       {showSaveModal && (
-        <div className="mb-2 flex items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-100 animate-fade-up">
+        <div className="mb-3 flex items-center gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200 animate-fade-up">
           <input
             type="text"
             value={viewName}
             onChange={e => setViewName(e.target.value)}
-            placeholder="View name..."
-            className="flex-1 text-[11px] px-2 py-1 border border-blue-200 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Name your view..."
+            className="flex-1 text-xs px-3 py-1.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]"
             onKeyDown={e => e.key === 'Enter' && saveView()}
           />
-          <button onClick={saveView} className="px-2 py-1 text-[10px] font-bold bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Save</button>
-          <button onClick={() => setShowSaveModal(false)} className="p-1 text-blue-400 hover:text-blue-600"><X className="h-3 w-3" /></button>
+          <button onClick={saveView} className="px-3 py-1.5 text-xs font-bold bg-[#34C759] text-white rounded-lg shadow-sm hover:bg-green-600 transition-colors">Save</button>
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2.5">
+        {/* Time Range Filter */}
+        <div className="relative">
+          <select
+            value={filters['__time_range__'] || '__all__'}
+            onChange={e => handleFilterChange('__time_range__', e.target.value)}
+            className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#007AFF] transition-all font-medium min-w-[130px] appearance-none cursor-pointer ${
+              filters['__time_range__'] && filters['__time_range__'] !== '__all__'
+                ? 'border-[#007AFF] bg-blue-50 text-[#007AFF]'
+                : 'border-slate-200 bg-white text-slate-700'
+            }`}
+          >
+            {TIME_RANGES.map(tr => (
+              <option key={tr.value} value={tr.value}>🕒 Range: {tr.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="w-[1px] h-6 bg-slate-200 mx-1 hidden sm:block" />
+
+        {/* Dynamic Categorical Filters */}
         {filterColumns.map(col => (
           <div key={col} className="relative">
             <select
               value={filters[col] || '__all__'}
-              onChange={e => onFilterChange(col, e.target.value)}
-              className={`text-[11px] px-2.5 py-1.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[160px] transition-colors ${
+              onChange={e => handleFilterChange(col, e.target.value)}
+              className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#007AFF] max-w-[160px] transition-all font-medium appearance-none cursor-pointer ${
                 filters[col] && filters[col] !== '__all__'
-                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700 font-medium'
-                  : 'border-slate-200'
+                  ? 'border-[#007AFF] bg-blue-50 text-[#007AFF]'
+                  : 'border-slate-200 bg-white text-slate-700'
               }`}
             >
               <option value="__all__">{col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}: All</option>
@@ -150,28 +184,12 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
           </div>
         ))}
 
-        {/* Active filter pills */}
-        {Object.entries(filters)
-          .filter(([, v]) => v && v !== '__all__')
-          .map(([col, val]) => (
-            <div
-              key={col}
-              className="flex items-center gap-1 px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-medium animate-scale-in"
-            >
-              <span className="truncate max-w-[100px]">{col}: {val}</span>
-              <button onClick={() => onFilterChange(col, '__all__')} className="hover:text-red-600 transition-colors">
-                <X className="h-2.5 w-2.5" />
-              </button>
-            </div>
-          ))
-        }
-
         {activeFilterCount > 0 && (
           <button
             onClick={resetAllFilters}
-            className="flex items-center gap-1 text-[11px] px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
+            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[#FF3B30]/10 text-[#FF3B30] rounded-xl hover:bg-[#FF3B30]/20 transition-colors font-bold ml-auto"
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3.5 w-3.5" />
             Reset ({activeFilterCount})
           </button>
         )}

@@ -73,75 +73,52 @@ function useAnimatedValue(target: number, duration: number = 700) {
 function AnimatedKPICard({ k, i }: { k: any; i: number }) {
   const animatedValue = useAnimatedValue(k.rawValue, 700);
 
+  // Apple Color Palette for KPI Icons
+  const APPLE_COLORS = [
+    { bg: 'bg-[#FF2D55]', text: 'text-[#FF2D55]', shadow: 'shadow-[#FF2D55]/30' }, // Pink
+    { bg: 'bg-[#007AFF]', text: 'text-[#007AFF]', shadow: 'shadow-[#007AFF]/30' }, // Blue
+    { bg: 'bg-[#34C759]', text: 'text-[#34C759]', shadow: 'shadow-[#34C759]/30' }, // Green
+    { bg: 'bg-[#FF9500]', text: 'text-[#FF9500]', shadow: 'shadow-[#FF9500]/30' }, // Orange
+    { bg: 'bg-[#AF52DE]', text: 'text-[#AF52DE]', shadow: 'shadow-[#AF52DE]/30' }, // Purple
+    { bg: 'bg-[#FF3B30]', text: 'text-[#FF3B30]', shadow: 'shadow-[#FF3B30]/30' }, // Red
+  ];
+  const color = APPLE_COLORS[i % APPLE_COLORS.length];
+
   return (
     <div
-      className="relative bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 animate-fade-up overflow-hidden group hover-glow"
-      style={{ animationDelay: `${i * 80}ms` }}
+      className="apple-card p-4 relative group animate-fade-up flex flex-col justify-between"
+      style={{ animationDelay: `${i * 80}ms`, minHeight: '140px' }}
     >
-      {/* Top gradient accent with animation */}
-      <div className={`h-1 bg-gradient-to-r ${k.gradient} animate-gradient`} />
-
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate pr-2 leading-tight">
-            {k.label}
-          </span>
-          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${k.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-            <k.Icon className="h-4 w-4 text-white" />
-          </div>
+      <div className="flex items-start justify-between mb-3">
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest truncate pr-2">
+          {k.label}
+        </span>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${color.bg} shadow-md ${color.shadow} group-hover:scale-110 transition-transform duration-300`}>
+          <k.Icon className="h-4 w-4" strokeWidth={2.5} />
         </div>
+      </div>
 
+      <div>
         <div className="flex items-baseline gap-1.5 mb-1">
-          <span className="text-2xl font-extrabold text-slate-800 tracking-tight tabular-nums">
+          <span className="text-3xl font-black text-slate-900 tracking-tight tabular-nums">
             {formatVal(animatedValue)}
           </span>
-          <span className="text-[10px] text-slate-400 font-medium">avg</span>
-          {/* Trend indicator */}
-          {k.trend !== 0 && (
-            <span className={`flex items-center gap-0.5 text-[9px] font-bold ml-1 ${
-              k.trend > 0 ? 'text-emerald-600' : 'text-red-500'
-            }`}>
-              {k.trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-            </span>
-          )}
+          <span className="text-[10px] text-slate-400 font-semibold uppercase">avg</span>
         </div>
 
-        <div className="flex items-center gap-2 text-[9px] text-slate-400 mb-2">
+        <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium w-full">
           <span>Min: {k.min}</span>
-          <span>•</span>
           <span>Max: {k.max}</span>
         </div>
-
-        {/* Sparkline minibar */}
-        <div className="flex items-end gap-[2px] h-5 mb-2">
-          {k.sparkline.map((v: number, j: number) => (
-            <div
-              key={j}
-              className={`flex-1 rounded-t bg-gradient-to-t ${k.gradient} opacity-40 group-hover:opacity-70 transition-all duration-500`}
-              style={{
-                height: `${v}%`,
-                transitionDelay: `${j * 30}ms`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full bg-gradient-to-r ${k.gradient} transition-all duration-1000 ease-out`}
-            style={{ width: `${k.progress}%` }}
-          />
-        </div>
-
-        {/* AI insight badge */}
-        {k.insight && (
-          <div className="mt-2 flex items-center gap-1 text-[8px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full w-fit">
-            <Sparkles className="h-2.5 w-2.5" />
-            {k.insight}
-          </div>
-        )}
       </div>
+
+      {/* AI insight badge - Apple Style Pill */}
+      {k.insight && (
+        <div className="absolute -top-2 -right-2 bg-white border border-slate-100 shadow-sm text-slate-600 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <Sparkles className="h-3 w-3 text-[#FF9500]" />
+          {k.insight}
+        </div>
+      )}
     </div>
   );
 }
