@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
-import { Search, ChevronLeft, ChevronRight, Database } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { Search, ChevronLeft, ChevronRight, Database, Eye, EyeOff, User, AlertTriangle } from 'lucide-react';
 import type { DatasetInfo } from '@/lib/parseData';
 
 interface Props {
   dataset: DatasetInfo;
   filters: Record<string, string>;
+  onPatientClick?: (patient: Record<string, any>) => void;
 }
 
 function applyFilters(data: Record<string, any>[], filters: Record<string, string>): Record<string, any>[] {
@@ -15,14 +16,44 @@ function applyFilters(data: Record<string, any>[], filters: Record<string, strin
   return f;
 }
 
-export default function DashboardTable({ dataset, filters }: Props) {
+// Conditional highlighting rules
+function getCellHighlight(col: string, val: any, dataset: DatasetInfo): string | null {
+  if (typeof val !== 'number') return null;
+  const colLower = col.toLowerCase();
+
+  // discharge > 400 → red
+  if ((colLower.includes('discharge') || colLower.includes('count')) && val > 400) {
+    return 'bg-red-100 text-red-700 border-red-200';
+  }
+  // length_of_stay > 12 → amber
+  if ((colLower.includes('stay') || colLower.includes('los') || colLower.includes('length')) && val > 12) {
+    return 'bg-amber-100 text-amber-700 border-amber-200';
+  }
+  // home_care_visits = 0 → warning
+  if ((colLower.includes('home') || colLower.includes('visit') || colLower.includes('care')) && val === 0) {
+    return 'bg-orange-100 text-orange-700 border-orange-200';
+  }
+  // readmission risk > 70 → red
+  if ((colLower.includes('risk') || colLower.includes('readmission')) && val > 70) {
+    return 'bg-red-100 text-red-800 border-red-200';
+  }
+  if ((colLower.includes('risk') || colLower.includes('readmission')) && val > 40) {
+    return 'bg-amber-100 text-amber-700 border-amber-200';
+  }
+  return null;
+}
+
+export default function DashboardTable({ dataset, filters, onPatientClick }: Props) {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [sortCol, setSortCol] = useState('');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
-  const pageSize = 10;
+  const [hiddenCols, setHiddenCols] = useState<Set<string>>(new Set());
+  const [showColToggle, setShowColToggle] = useState(false);
+  const pageSize = 15;
 
-  const displayCols = dataset.columns.slice(0, 10);
+  const allCols = dataset.columns.slice(0, 12);
+  const displayCols = allCols.filter(c => !hiddenCols.has(c));
 
   const rows = useMemo(() => {
     let data = applyFilters(dataset.data, filters);
@@ -50,11 +81,47 @@ export default function DashboardTable({ dataset, filters }: Props) {
 
   const isNumeric = (col: string) => dataset.numericColumns.includes(col);
 
+  const toggleColumn = useCallback((col: string) => {
+    setHiddenCols(prev => {
+      const next = new Set(prev);
+      if (next.has(col)) next.delete(col);
+      else next.add(col);
+      return next;
+    });
+  }, []);
+
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-        <Database className="h-4 w-4 text-blue-600" />
-        <h3 className="text-sm font-bold text-slate-700">Dataset Explorer</h3>
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover-glow">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+        <div className="flex items-center gap-2">
+          <Database className="h-4 w-4 text-blue-600" />
+          <h3 className="text-sm font-bold text-slate-700">Dataset Explorer</h3>
+          <span className="px-2 py-0.5 text-[9px] font-bold rounded-full bg-blue-100 text-blue-600">{rows.length} records</span>
+        </div>
+        <div className="relative">
+          <button
+            onClick={() => setShowColToggle(!showColToggle)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+          >
+            <Eye className="h-3 w-3" />
+            Columns
+          </button>
+          {showColToggle && (
+            <div className="absolute right-0 top-full mt-1 bg-white rounded-xl border border-slate-200 shadow-xl p-2 z-30 min-w-[160px] max-h-[250px] overflow-y-auto">
+              {allCols.map(col => (
+                <label key={col} className="flex items-center gap-2 px-2 py-1.5 text-[10px] text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenCols.has(col)}
+                    onChange={() => toggleColumn(col)}
+                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="truncate">{col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="p-4">
         <div className="flex items-center gap-3 mb-3">
@@ -66,17 +133,19 @@ export default function DashboardTable({ dataset, filters }: Props) {
               className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <span className="text-[10px] text-slate-500">{rows.length} records</span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg border border-slate-100">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-slate-50">
+                {onPatientClick && (
+                  <th className="px-2 py-2 text-center font-semibold text-slate-400 w-8"></th>
+                )}
                 {displayCols.map(col => (
                   <th
                     key={col} onClick={() => handleSort(col)}
-                    className="px-3 py-2 text-left font-semibold text-slate-600 cursor-pointer hover:bg-slate-100 whitespace-nowrap"
+                    className="px-3 py-2 text-left font-semibold text-slate-600 cursor-pointer hover:bg-slate-100 whitespace-nowrap transition-colors"
                   >
                     {col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}
                     {sortCol === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
@@ -86,17 +155,33 @@ export default function DashboardTable({ dataset, filters }: Props) {
             </thead>
             <tbody>
               {paged.map((row, ri) => (
-                <tr key={ri} className={`border-t border-slate-100 hover:bg-blue-50/50 ${ri % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
+                <tr
+                  key={ri}
+                  className={`border-t border-slate-100 hover:bg-blue-50/50 transition-colors ${ri % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}
+                >
+                  {onPatientClick && (
+                    <td className="px-2 py-2 text-center">
+                      <button
+                        onClick={() => onPatientClick(row)}
+                        className="p-1 rounded hover:bg-indigo-100 transition-colors"
+                        title="View patient details"
+                      >
+                        <User className="h-3 w-3 text-indigo-500" />
+                      </button>
+                    </td>
+                  )}
                   {displayCols.map(col => {
                     const val = row[col];
                     const num = isNumeric(col) && typeof val === 'number';
+                    const highlight = num ? getCellHighlight(col, val, dataset) : null;
                     return (
                       <td key={col} className="px-3 py-2 whitespace-nowrap">
                         {num ? (
-                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                            val > 70 ? 'bg-red-100 text-red-700' : val > 40 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
+                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
+                            highlight || (val > 70 ? 'bg-red-100 text-red-700 border-red-200' : val > 40 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-green-100 text-green-700 border-green-200')
                           }`}>
                             {typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(2)) : val}
+                            {highlight && highlight.includes('red') && <AlertTriangle className="inline h-2.5 w-2.5 ml-1" />}
                           </span>
                         ) : (
                           <span className="text-slate-700">{String(val ?? '')}</span>
@@ -124,7 +209,7 @@ export default function DashboardTable({ dataset, filters }: Props) {
               if (pg >= totalPages || pg < 0) return null;
               return (
                 <button key={pg} onClick={() => setPage(pg)}
-                  className={`w-6 h-6 rounded text-[10px] font-medium ${pg === page ? 'bg-blue-600 text-white' : 'border border-slate-200 hover:bg-slate-100'}`}>
+                  className={`w-6 h-6 rounded text-[10px] font-medium transition-colors ${pg === page ? 'bg-blue-600 text-white' : 'border border-slate-200 hover:bg-slate-100'}`}>
                   {pg + 1}
                 </button>
               );

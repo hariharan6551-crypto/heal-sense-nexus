@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   ScatterChart as RechartsScatter, Scatter,
@@ -12,6 +12,7 @@ import {
   TrendingUp, Activity, PieChart as PieIcon, BarChart3,
   Layers, GitBranch, Target, Grid3X3, Gauge, Boxes,
 } from 'lucide-react';
+import ChartWrapper from './ChartWrapper';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { ChartRecommendation } from '@/lib/chartRecommender';
 import type { DataAnalysis } from '@/lib/analyzeData';
@@ -38,23 +39,39 @@ interface Props {
   charts: ChartRecommendation[];
   analysis: DataAnalysis;
   filters: Record<string, string>;
+  onDrilldown?: (chartId: string) => void;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
 // Section Card
 // ═══════════════════════════════════════════════════════════════════════
-function SectionCard({ title, icon: Icon, badge, children }: {
-  title: string; icon?: any; badge?: string; children: React.ReactNode;
+function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
+  title: string; icon?: any; badge?: string; children: React.ReactNode; index?: number;
 }) {
+  const [showTooltip, setShowTooltip] = useState(false);
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
+    <div
+      className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-xl hover:border-indigo-200/50 transition-all duration-300 group hover-glow animate-chart-in"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-        <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-4 w-4 text-indigo-500" />}
-          <h3 className="text-sm font-bold text-slate-700 truncate">{title}</h3>
+        <div className="flex items-center gap-2 min-w-0 flex-1 relative">
+          {Icon && <Icon className="h-4 w-4 text-indigo-500 flex-shrink-0" />}
+          <h3
+            className="text-sm font-bold text-slate-700 line-clamp-2 leading-tight cursor-default"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            {title}
+          </h3>
+          {showTooltip && title.length > 30 && (
+            <div className="absolute left-0 top-full mt-1 z-30 px-3 py-1.5 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl max-w-[250px] whitespace-normal">
+              {title}
+            </div>
+          )}
         </div>
         {badge && (
-          <span className="px-2 py-0.5 text-[9px] font-bold rounded-full bg-indigo-100 text-indigo-600 uppercase">{badge}</span>
+          <span className="px-2 py-0.5 text-[9px] font-bold rounded-full bg-indigo-100 text-indigo-600 uppercase flex-shrink-0 ml-2">{badge}</span>
         )}
       </div>
       <div className="p-4">{children}</div>
@@ -520,7 +537,7 @@ function RenderChart({ chart, data, analysis }: {
 // ═══════════════════════════════════════════════════════════════════════
 // Main Export
 // ═══════════════════════════════════════════════════════════════════════
-export default function DynamicCharts({ dataset, charts, analysis, filters }: Props) {
+export default function DynamicCharts({ dataset, charts, analysis, filters, onDrilldown }: Props) {
   const filteredData = useMemo(() => filterData(dataset.data, filters), [dataset.data, filters]);
   const displayCharts = charts.slice(0, 9); // Show up to 9 charts in 3x3
 
@@ -532,12 +549,14 @@ export default function DynamicCharts({ dataset, charts, analysis, filters }: Pr
   return (
     <div className="space-y-4">
       {rows.map((row, ri) => (
-        <div key={ri} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {row.map(chart => {
+        <div key={ri} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {row.map((chart, ci) => {
             const Icon = CHART_ICON_MAP[chart.type] || Activity;
             return (
-              <SectionCard key={chart.id} title={chart.title} icon={Icon} badge={chart.type.replace('_', ' ')}>
-                <RenderChart chart={chart} data={filteredData} analysis={analysis} />
+              <SectionCard key={chart.id} title={chart.title} icon={Icon} badge={chart.type.replace('_', ' ')} index={ri * 3 + ci}>
+                <ChartWrapper chart={chart} data={filteredData} onDrilldown={onDrilldown}>
+                  <RenderChart chart={chart} data={filteredData} analysis={analysis} />
+                </ChartWrapper>
               </SectionCard>
             );
           })}

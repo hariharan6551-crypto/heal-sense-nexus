@@ -1,7 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
   LayoutDashboard, Database, Bot, FileText, Settings,
-  Building2, Sparkles, Upload
+  Building2, Sparkles, Upload, Command, Clock
 } from 'lucide-react';
 import { parseFile } from '@/lib/parseData';
 import type { DatasetInfo } from '@/lib/parseData';
@@ -24,6 +24,12 @@ const NAV_ITEMS = [
 
 export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,6 +55,12 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }
             <p className="text-[10px] text-blue-200/80 uppercase tracking-widest">
               Data Insights Platform
             </p>
+          </div>
+          <div className="hidden md:flex items-center gap-1.5 text-[9px] text-blue-200/60">
+            <Clock className="h-3 w-3" />
+            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <span className="mx-1">•</span>
+            {time.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
           </div>
         </div>
 
@@ -78,6 +90,10 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }
             <Upload className="h-3.5 w-3.5" />
             Upload Dataset
           </button>
+          <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] text-blue-200/60">
+            <Command className="h-2.5 w-2.5" />
+            <span>K</span>
+          </div>
         </div>
       </div>
     </header>
