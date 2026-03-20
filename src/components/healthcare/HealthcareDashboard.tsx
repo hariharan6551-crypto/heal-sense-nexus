@@ -69,6 +69,16 @@ export default function HealthcareDashboard() {
   const [selectedPatient, setSelectedPatient] = useState<Record<string, any> | null>(null);
   const [patientPanelOpen, setPatientPanelOpen] = useState(false);
 
+  // Phase 16: Interactive Role-Based Access Control
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('dashboard-role') || 'Admin');
+  
+  const handleRoleChange = useCallback((role: string) => {
+    setUserRole(role);
+    localStorage.setItem('dashboard-role', role);
+    window.dispatchEvent(new Event('dashboard-role-changed')); // Signal to DashboardTable
+    toast.success(`Role instantly updated to ${role}`, { description: 'Data masking rules safely re-applied.' });
+  }, []);
+
   // Phase 18: Time-Based Filtering Layer
   // Since CSVs might lack explicit dates, we simulate deterministic time buckets via row index
   const timeFilteredDataset = useMemo(() => {
@@ -432,11 +442,21 @@ export default function HealthcareDashboard() {
                   <div className="bg-[#AF52DE]/5 rounded-xl border border-[#AF52DE]/20 p-5">
                     <h4 className="font-bold text-[#AF52DE] mb-3 text-sm">👤 Role-Based Access Control</h4>
                     <div className="flex gap-2 mb-3">
-                      <span className="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-[#AF52DE] text-white shadow-sm shadow-purple-500/20">Admin</span>
-                      <span className="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-white border border-slate-200 text-slate-600">Doctor</span>
-                      <span className="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-white border border-slate-200 text-slate-600">Analyst</span>
+                      {['Admin', 'Doctor', 'Analyst', 'Viewer'].map(role => (
+                        <button
+                          key={role}
+                          onClick={() => handleRoleChange(role)}
+                          className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${
+                            userRole === role 
+                              ? 'bg-[#AF52DE] text-white shadow-sm shadow-purple-500/20' 
+                              : 'bg-white border border-slate-200 text-slate-600 hover:bg-purple-50 hover:text-[#AF52DE] hover:border-[#AF52DE]/30 cursor-pointer'
+                          }`}
+                        >
+                          {role}
+                        </button>
+                      ))}
                     </div>
-                    <p className="text-[10px] font-medium text-slate-500">Configure access levels for different user roles in the enterprise suite. Active: Admin</p>
+                    <p className="text-[10px] font-medium text-slate-500">Configure access levels for different roles in the enterprise suite. Active: <strong>{userRole}</strong></p>
                   </div>
 
                   {/* API & Data Security */}

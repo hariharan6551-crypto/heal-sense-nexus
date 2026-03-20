@@ -50,10 +50,12 @@ export default function DashboardTable({ dataset, filters, onPatientClick }: Pro
   const [hiddenCols, setHiddenCols] = useState<Set<string>>(new Set());
   const [showColToggle, setShowColToggle] = useState(false);
   
-  // Phase 16: Role-based masking
-  const [userRole, setUserRole] = useState('Viewer');
+  // Phase 16: Role-based masking with real-time sync
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('dashboard-role') || 'Viewer');
   useEffect(() => {
-    setUserRole(localStorage.getItem('dashboard-role') || 'Viewer');
+    const updateRole = () => setUserRole(localStorage.getItem('dashboard-role') || 'Viewer');
+    window.addEventListener('dashboard-role-changed', updateRole);
+    return () => window.removeEventListener('dashboard-role-changed', updateRole);
   }, []);
 
   const pageSize = 15;
