@@ -17,6 +17,7 @@ import DrilldownPanel from './DrilldownPanel';
 import PatientPanel from './PatientPanel';
 import FloatingActionButton from './FloatingActionButton';
 import { toast } from 'sonner';
+import { Database } from 'lucide-react';
 
 // --- Phase 16: Security & Session Management ---
 function useSessionTimeout(timeoutMinutes = 15) {
@@ -197,22 +198,24 @@ export default function HealthcareDashboard() {
   }, [dataset]);
 
   useEffect(() => {
-    const loadDefaultData = async () => {
+    const loadState = () => {
       try {
-        const response = await fetch('/hospital_readmission_dataset.csv');
-        if (!response.ok) throw new Error('Failed to fetch default dataset');
-        const text = await response.text();
-        const file = new File([text], 'hospital_readmission_dataset.csv', { type: 'text/csv' });
-        const ds = await parseFile(file);
-        setDataset(ds);
-        setFilters({});
-      } catch (err: any) {
-        toast.error('Failed to load dataset', { description: err.message });
+        const savedDatasetStr = sessionStorage.getItem('dashboard-dataset');
+        if (savedDatasetStr) {
+          const parsedSaved = JSON.parse(savedDatasetStr);
+          if (parsedSaved && parsedSaved.data && parsedSaved.columns) {
+            setDataset(parsedSaved);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse saved dataset", e);
+        sessionStorage.removeItem('dashboard-dataset');
       } finally {
         setIsLoading(false);
       }
     };
-    loadDefaultData();
+    loadState();
   }, []);
 
   const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
@@ -220,6 +223,12 @@ export default function HealthcareDashboard() {
     setTimeout(() => {
       setDataset(ds);
       setFilters({});
+      localStorage.removeItem('dashboard-filters');
+      try {
+        sessionStorage.setItem('dashboard-dataset', JSON.stringify(ds));
+      } catch (e) {
+        toast.warning('Dataset too large to persist locally across sessions');
+      }
       setIsLoading(false);
       toast.success('Dataset processed successfully');
     }, 300);
@@ -304,16 +313,39 @@ export default function HealthcareDashboard() {
   }, [timeFilteredDataset]);
 
   if (!dataset || !analysis || !timeFilteredDataset) {
-    return (
-      <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
-        <div className="text-center">
-          <div className="space-y-4 max-w-md mx-auto">
-            <div className="w-16 h-16 border-4 border-[#007AFF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <div className="skeleton h-4 w-48 mx-auto" />
-            <div className="skeleton h-3 w-36 mx-auto" />
-            <div className="grid grid-cols-3 gap-3 mt-6">
-              {[1,2,3].map(i => <div key={i} className="skeleton h-20" />)}
+    if (isLoading) {
+      return (
+        <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
+          <div className="text-center">
+            <div className="space-y-4 max-w-md mx-auto">
+              <div className="w-16 h-16 border-4 border-[#007AFF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <div className="skeleton h-4 w-48 mx-auto opacity-50" />
+              <div className="skeleton h-3 w-36 mx-auto opacity-50" />
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                {[1, 2, 3].map(i => <div key={i} className="skeleton h-20 opacity-50" />)}
+              </div>
             </div>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
+        <DashboardNav onDatasetLoaded={handleDatasetLoaded} activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="flex-1 w-full flex flex-col items-center justify-center p-4 text-center mt-20 animate-fade-up">
+          <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mb-6 border border-slate-200">
+            <Database className="w-10 h-10 text-cyan-500" />
+          </div>
+          <h2 className="text-3xl font-black text-slate-800 mb-2 tracking-tight">No Dataset Active</h2>
+          <p className="text-slate-500 max-w-md mx-auto mb-8 font-medium">
+            Upload your first dataset (CSV, JSON, or Excel) to start exploring insights and building dynamic dashboards.
+          </p>
+          <div className="relative group overflow-hidden">
+             <input type="file" className="block absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".csv,.xlsx,.xls,.json" onChange={(e) => { if (e.target.files?.length) handleFile(e.target.files[0])}} />
+             <div className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold flex items-center gap-2 group-hover:scale-105 group-hover:shadow-lg shadow-cyan-500/20 transition-all">
+               <Database className="w-4 h-4" />
+               Upload Your Dataset
+             </div>
           </div>
         </div>
       </div>
@@ -335,6 +367,8 @@ export default function HealthcareDashboard() {
         onDatasetLoaded={handleDatasetLoaded}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        dashboardTitle={dashboardTitle}
+        datasetName={timeFilteredDataset.fileName}
       />
 
       {/* Loading overlay */}

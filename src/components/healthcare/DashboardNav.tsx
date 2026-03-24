@@ -10,6 +10,8 @@ interface Props {
   onDatasetLoaded: (ds: DatasetInfo) => void;
   activeTab: string;
   onTabChange: (tab: string) => void;
+  dashboardTitle?: string;
+  datasetName?: string;
 }
 
 const NAV_ITEMS = [
@@ -22,7 +24,7 @@ const NAV_ITEMS = [
 
 
 
-export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }: Props) {
+export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, dashboardTitle, datasetName }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [time, setTime] = useState(new Date());
 
@@ -51,12 +53,23 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange }
             <Sparkles className="h-5 w-5 text-cyan-300" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight">Analytics Studio</h1>
-            <p className="text-[10px] text-blue-200/80 uppercase tracking-widest">
-              Data Insights Platform
+            <h1 className="text-lg font-bold tracking-tight">
+              {dashboardTitle || 'Analytics Studio'}
+            </h1>
+            <p className="text-[10px] text-blue-200/90 tracking-wider flex items-center gap-1.5">
+              <span>Data Insights Platform</span>
+              {datasetName && (
+                <>
+                  <span className="opacity-50">•</span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-white/10 border border-white/10 text-[9px] font-semibold text-cyan-100 flex items-center gap-1 shadow-sm">
+                    <Database className="w-2.5 h-2.5" />
+                    Last Viewed: {datasetName}
+                  </span>
+                </>
+              )}
             </p>
           </div>
-          <div className="hidden md:flex items-center gap-1.5 text-[9px] text-blue-200/60">
+          <div className="hidden lg:flex items-center gap-1.5 text-[9px] text-blue-200/60 ml-4 border-l border-white/10 pl-4">
             <Clock className="h-3 w-3" />
             {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             <span className="mx-1">•</span>
