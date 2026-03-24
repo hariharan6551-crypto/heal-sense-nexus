@@ -14,20 +14,24 @@ function AnimatedCounter({ target, duration = 1200, suffix = '', prefix = '' }: 
 }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
+  const prevTarget = useRef(0);
 
   useEffect(() => {
-    if (hasAnimated.current) return;
-    hasAnimated.current = true;
+    const startValue = prevTarget.current;
+    prevTarget.current = target;
     const startTime = performance.now();
+    let animationId: number;
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(target * eased));
-      if (progress < 1) requestAnimationFrame(animate);
+      setCount(Math.round(startValue + (target - startValue) * eased));
+      if (progress < 1) {
+        animationId = requestAnimationFrame(animate);
+      }
     };
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
   }, [target, duration]);
 
   return (
@@ -113,24 +117,31 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
       shadowColor: 'rgba(255, 45, 85, 0.3)',
       textColor: 'text-slate-900',
     },
-    ...(stats.avgRisk !== null ? [{
-      label: 'Avg Risk Score',
-      value: Math.round(stats.avgRisk),
-      suffix: '%',
-      icon: ShieldAlert,
-      color: stats.avgRisk > 50 ? 'bg-[#FF3B30] text-white' : 'bg-[#34C759] text-white',
-      shadowColor: stats.avgRisk > 50 ? 'rgba(255, 59, 48, 0.3)' : 'rgba(52, 199, 89, 0.3)',
-      textColor: stats.avgRisk > 50 ? 'text-[#FF3B30]' : 'text-[#34C759]',
-    }] : []),
-    ...(stats.avgRecovery !== null ? [{
-      label: 'Avg Recovery',
-      value: Math.round(stats.avgRecovery),
-      suffix: 'd',
-      icon: HeartPulse,
-      color: 'bg-[#007AFF] text-white',
-      shadowColor: 'rgba(0, 122, 255, 0.3)',
-      textColor: 'text-slate-900',
-    }] : []),
+    ...(stats.avgRisk !== null ? [(() => {
+      // Auto-detect decimal rates (0-1 range) vs percentage (0-100 range)
+      const displayRisk = stats.avgRisk <= 1 ? +(stats.avgRisk * 100).toFixed(1) : Math.round(stats.avgRisk);
+      return {
+        label: 'Avg Risk Score',
+        value: displayRisk,
+        suffix: '%',
+        icon: ShieldAlert,
+        color: displayRisk > 50 ? 'bg-[#FF3B30] text-white' : 'bg-[#34C759] text-white',
+        shadowColor: displayRisk > 50 ? 'rgba(255, 59, 48, 0.3)' : 'rgba(52, 199, 89, 0.3)',
+        textColor: displayRisk > 50 ? 'text-[#FF3B30]' : 'text-[#34C759]',
+      };
+    })()] : []),
+    ...(stats.avgRecovery !== null ? [(() => {
+      const displayRecovery = stats.avgRecovery < 1 ? +(stats.avgRecovery * 100).toFixed(1) : Math.round(stats.avgRecovery);
+      return {
+        label: 'Avg Recovery',
+        value: displayRecovery,
+        suffix: stats.avgRecovery < 1 ? '%' : 'd',
+        icon: HeartPulse,
+        color: 'bg-[#007AFF] text-white',
+        shadowColor: 'rgba(0, 122, 255, 0.3)',
+        textColor: 'text-slate-900',
+      };
+    })()] : []),
     ...(stats.avgSupport !== null ? [{
       label: 'Support Score',
       value: +(stats.avgSupport).toFixed(1),

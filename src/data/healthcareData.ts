@@ -110,14 +110,29 @@ function generatePatients(count: number): Patient[] {
 export const PATIENTS = generatePatients(200);
 
 // ── KPI Calculator ───────────────────────────────────────────────────
-export function computeKPIs(_patients: Patient[]): DashboardKPIs {
+export function computeKPIs(patients: Patient[]): DashboardKPIs {
+  const totalPatients = patients.length;
+  const avgRecoveryDays = totalPatients > 0
+    ? Math.round(patients.reduce((sum, p) => sum + p.recoveryDays, 0) / totalPatients)
+    : 0;
+  const socialSupportScore = totalPatients > 0
+    ? +(patients.reduce((sum, p) => sum + p.supportScore, 0) / totalPatients).toFixed(1)
+    : 0;
+  const readmissionRate = totalPatients > 0
+    ? +(patients.filter(p => p.readmissionRisk > 50).length / totalPatients * 100).toFixed(1)
+    : 0;
+  const opVisitsPerDay = totalPatients > 0
+    ? Math.round(patients.reduce((sum, p) => sum + p.opVisits, 0) / totalPatients)
+    : 0;
+  const doctorsOnDuty = Math.max(1, Math.round(totalPatients / 20));
+
   return {
-    totalPatients: 1245,
-    avgRecoveryDays: 18,
-    socialSupportScore: 7.4,
-    readmissionRate: 11,
-    opVisitsPerDay: 58,
-    doctorsOnDuty: 12,
+    totalPatients,
+    avgRecoveryDays,
+    socialSupportScore,
+    readmissionRate,
+    opVisitsPerDay,
+    doctorsOnDuty,
   };
 }
 
