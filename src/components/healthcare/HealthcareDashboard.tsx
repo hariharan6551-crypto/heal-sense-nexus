@@ -380,7 +380,7 @@ export default function HealthcareDashboard() {
         {/* Dashboard Title */}
         <div className="relative inline-block mb-4 pt-2">
           <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight relative z-10">
-            Post Discharge Social Support and Recovery Tracker
+            {dashboardTitle}
           </h1>
           {/* Animated highlight underline */}
           <div className="absolute bottom-1 left-0 h-3 bg-cyan-300/40 rounded-full animate-[shimmer_2s_ease-out_forwards] -z-10" style={{ width: '105%' }} />
