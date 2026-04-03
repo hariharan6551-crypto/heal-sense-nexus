@@ -27,7 +27,7 @@ export default function SecondaryRibbon() {
   ];
 
   return (
-    <div className="w-full bg-white border-b border-slate-200 shadow-sm z-30 sticky top-[64px] overflow-x-auto scrollbar-thin">
+    <div className="fixed top-16 left-0 right-0 w-full bg-white border-b border-slate-200 shadow-sm z-[90] overflow-x-auto scrollbar-thin">
       <div className="max-w-[1600px] mx-auto flex items-center gap-1.5 px-4 py-2 min-w-max">
         {tools.map((tool, idx) => {
           if (tool.sep) {

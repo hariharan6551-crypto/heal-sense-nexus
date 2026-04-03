@@ -46,8 +46,8 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, 
   };
 
   return (
-    <header className="bg-gradient-to-r from-[#312e81] via-[#1e3a8a] to-[#0e7490] text-white shadow-xl sticky top-0 z-50">
-      <div className="max-w-[1600px] mx-auto flex items-center justify-between px-4 py-3">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-[#312e81] via-[#1e3a8a] to-[#0e7490] text-white shadow-xl z-[100]">
+      <div className="w-full h-full max-w-[1600px] mx-auto flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/10">
             <Sparkles className="h-5 w-5 text-cyan-300" />
@@ -56,7 +56,7 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, 
             <h1 className="text-lg font-bold tracking-tight">
               {dashboardTitle || 'Analytics Studio'}
             </h1>
-            <p className="text-[10px] text-blue-200/90 tracking-wider flex items-center gap-1.5">
+            <p className="text-[10px] text-blue-200/90 tracking-wider flex items-center gap-1.5 leading-none mt-0.5">
               <span>Data Insights Platform</span>
               {datasetName && (
                 <>
@@ -77,19 +77,19 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, 
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <nav className="hidden md:flex items-center gap-0.5 mr-2">
+        <div className="flex items-center gap-3 h-full">
+          <nav className="hidden md:flex items-center gap-1 mr-2 h-full">
             {NAV_ITEMS.map(item => (
               <button
                 key={item.label}
                 onClick={() => onTabChange(item.label)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
                   activeTab === item.label
-                    ? 'bg-white/20 text-white shadow-inner'
-                    : 'text-blue-100/80 hover:bg-white/10 hover:text-white'
+                    ? 'bg-white/20 text-white shadow-inner scale-105'
+                    : 'text-blue-100/80 hover:bg-white/15 hover:text-white'
                 }`}
               >
-                <item.icon className="h-3.5 w-3.5" />
+                <item.icon className="h-4 w-4" />
                 {item.label}
               </button>
             ))}
@@ -98,12 +98,12 @@ export default function DashboardNav({ onDatasetLoaded, activeTab, onTabChange, 
           <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={handleFile} />
           <button
             onClick={() => fileRef.current?.click()}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-xs font-bold hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/20 border border-white/10"
+            className="flex items-center gap-1.5 px-5 py-2 bg-white text-[#1e3a8a] rounded-full text-xs font-extrabold hover:bg-slate-100 transition-all duration-200 shadow-lg shadow-white/10 border border-transparent hover:scale-105"
           >
-            <Upload className="h-3.5 w-3.5" />
+            <Upload className="h-4 w-4" />
             Upload Dataset
           </button>
-          <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] text-blue-200/60">
+          <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] text-blue-200/60 ml-1">
             <Command className="h-2.5 w-2.5" />
             <span>K</span>
           </div>

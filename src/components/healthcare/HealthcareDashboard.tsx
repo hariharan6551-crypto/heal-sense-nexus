@@ -375,7 +375,7 @@ export default function HealthcareDashboard() {
         </div>
       )}
 
-      <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-6">
+      <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-[120px]">
 
         {/* Dashboard Title */}
         <div className="relative inline-block mb-4 pt-2">
