@@ -12,10 +12,10 @@ export default function Login() {
     <div
       className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #0f0c29 0%, #1a1a4e 35%, #0d2137 65%, #0e7490 100%)',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 35%, #f0fdf4 65%, #faf5ff 100%)',
       }}
     >
-      {/* Animated floating orbs */}
+      {/* Animated floating orbs — light mode */}
       <div
         className="pointer-events-none absolute"
         style={{
@@ -24,7 +24,7 @@ export default function Login() {
           width: '55%',
           height: '55%',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)',
           animation: 'orbFloat 10s ease-in-out infinite',
         }}
       />
@@ -36,7 +36,7 @@ export default function Login() {
           width: '50%',
           height: '50%',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(14,116,144,0.3) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(14,116,144,0.1) 0%, transparent 70%)',
           animation: 'orbFloat 13s ease-in-out infinite reverse',
         }}
       />
@@ -48,7 +48,7 @@ export default function Login() {
           width: '30%',
           height: '30%',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%)',
           animation: 'orbFloat 8s ease-in-out infinite 2s',
         }}
       />
@@ -58,12 +58,12 @@ export default function Login() {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
+            'radial-gradient(circle, rgba(99,102,241,0.05) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
       />
 
-      {/* Login card — entrance animation */}
+      {/* Login card */}
       <div
         className="z-10 w-full max-w-md"
         style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.22,1,0.36,1) both' }}

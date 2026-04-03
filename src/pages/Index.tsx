@@ -1,7 +1,7 @@
-import HealthcareDashboard from "@/components/healthcare/HealthcareDashboard";
+import NexusEnhancedDashboard from "@/components/nexus/NexusEnhancedDashboard";
 
 const Index = () => {
-  return <HealthcareDashboard />;
+  return <NexusEnhancedDashboard />;
 };
 
 export default Index;
