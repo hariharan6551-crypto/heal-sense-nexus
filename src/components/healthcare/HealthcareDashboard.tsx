@@ -5,6 +5,7 @@ import { recommendCharts } from '@/lib/chartRecommender';
 import { generateInsights } from '@/lib/insightEngine';
 import { parseFile } from '@/lib/parseData';
 import DashboardNav from './DashboardNav';
+import SecondaryRibbon from './SecondaryRibbon';
 import DynamicKPIs from './DynamicKPIs';
 import DynamicCharts from './DynamicCharts';
 import DashboardTable from './DashboardTable';
@@ -198,24 +199,42 @@ export default function HealthcareDashboard() {
   }, [dataset]);
 
   useEffect(() => {
-    const loadState = () => {
+    const loadDefaultContext = async () => {
+      // 1. Try to load from session storage First
       try {
         const savedDatasetStr = sessionStorage.getItem('dashboard-dataset');
         if (savedDatasetStr) {
           const parsedSaved = JSON.parse(savedDatasetStr);
           if (parsedSaved && parsedSaved.data && parsedSaved.columns) {
             setDataset(parsedSaved);
+            setIsLoading(false);
             return;
           }
         }
       } catch (e) {
         console.error("Failed to parse saved dataset", e);
         sessionStorage.removeItem('dashboard-dataset');
+      }
+
+      // 2. Automatically load default dataset without user interaction!
+      try {
+        setIsLoading(true);
+        const response = await fetch('/hospital_readmission_dataset.csv');
+        if (!response.ok) throw new Error("Could not fetch default dataset");
+        const blob = await response.blob();
+        const file = new File([blob], 'hospital_readmission_dataset.csv', { type: 'text/csv' });
+        const ds = await parseFile(file);
+        
+        sessionStorage.setItem('dashboard-dataset', JSON.stringify(ds));
+        setDataset(ds);
+      } catch (e) {
+        console.error("Auto-load failed", e);
       } finally {
         setIsLoading(false);
       }
     };
-    loadState();
+    
+    loadDefaultContext();
   }, []);
 
   const handleDatasetLoaded = useCallback((ds: DatasetInfo) => {
@@ -313,40 +332,12 @@ export default function HealthcareDashboard() {
   }, [timeFilteredDataset]);
 
   if (!dataset || !analysis || !timeFilteredDataset) {
-    if (isLoading) {
-      return (
-        <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
-          <div className="text-center">
-            <div className="space-y-4 max-w-md mx-auto">
-              <div className="w-16 h-16 border-4 border-[#007AFF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <div className="skeleton h-4 w-48 mx-auto opacity-50" />
-              <div className="skeleton h-3 w-36 mx-auto opacity-50" />
-              <div className="grid grid-cols-3 gap-3 mt-6">
-                {[1, 2, 3].map(i => <div key={i} className="skeleton h-20 opacity-50" />)}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
     return (
-      <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
-        <DashboardNav onDatasetLoaded={handleDatasetLoaded} activeTab={activeTab} onTabChange={setActiveTab} />
-        <div className="flex-1 w-full flex flex-col items-center justify-center p-4 text-center mt-20 animate-fade-up">
-          <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mb-6 border border-slate-200">
-            <Database className="w-10 h-10 text-cyan-500" />
-          </div>
-          <h2 className="text-3xl font-black text-slate-800 mb-2 tracking-tight">No Dataset Active</h2>
-          <p className="text-slate-500 max-w-md mx-auto mb-8 font-medium">
-            Upload your first dataset (CSV, JSON, or Excel) to start exploring insights and building dynamic dashboards.
-          </p>
-          <div className="relative group overflow-hidden">
-             <input type="file" className="block absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".csv,.xlsx,.xls,.json" onChange={(e) => { if (e.target.files?.length) handleFile(e.target.files[0])}} />
-             <div className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold flex items-center gap-2 group-hover:scale-105 group-hover:shadow-lg shadow-cyan-500/20 transition-all">
-               <Database className="w-4 h-4" />
-               Upload Your Dataset
-             </div>
-          </div>
+      <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center p-4">
+        <div className="text-center space-y-4 max-w-md mx-auto">
+          <div className="w-16 h-16 border-4 border-[#007AFF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-700">Loading Enterprise Dataset...</h2>
+          <p className="text-sm text-slate-500">Auto-connecting to Post Discharge support stream</p>
         </div>
       </div>
     );
@@ -370,6 +361,9 @@ export default function HealthcareDashboard() {
         dashboardTitle={dashboardTitle}
         datasetName={timeFilteredDataset.fileName}
       />
+      
+      {/* Secondary Ribbon (Advanced Analytics) */}
+      <SecondaryRibbon />
 
       {/* Loading overlay */}
       {isLoading && (
@@ -382,6 +376,15 @@ export default function HealthcareDashboard() {
       )}
 
       <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-6">
+
+        {/* Dashboard Title */}
+        <div className="relative inline-block mb-4 pt-2">
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight relative z-10">
+            Post Discharge Social Support and Recovery Tracker
+          </h1>
+          {/* Animated highlight underline */}
+          <div className="absolute bottom-1 left-0 h-3 bg-cyan-300/40 rounded-full animate-[shimmer_2s_ease-out_forwards] -z-10" style={{ width: '105%' }} />
+        </div>
 
         {/* Hero Section */}
         <HeroSection dataset={timeFilteredDataset} analysis={analysis} dashboardTitle={dashboardTitle} />

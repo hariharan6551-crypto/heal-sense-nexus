@@ -7,7 +7,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import HealthcareDashboard from '@/components/healthcare/HealthcareDashboard';
 import UltraContainer from './wrappers/UltraContainer';
-import NexusCommandBar from './controls/NexusCommandBar';
+// import NexusCommandBar from './controls/NexusCommandBar';
 
 // AI Modules
 import AIPredictionPanel from './ai/AIPredictionPanel';
@@ -63,9 +63,6 @@ export default function NexusEnhancedDashboard() {
 
   return (
     <UltraContainer>
-      {/* Nexus AI Command Bar — floats above everything */}
-      <NexusCommandBar />
-
       {/* Original Dashboard — rendered 100% untouched */}
       <div className={commandCenterMode ? 'nexus-command-center-mode' : ''}>
         <HealthcareDashboard />

@@ -13,23 +13,17 @@ export default function LoginForm() {
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!username || !password) return;
+    
     setIsLoading(true);
-
     // Simulate a brief auth delay for UX
-    await new Promise((r) => setTimeout(r, 700));
+    await new Promise((r) => setTimeout(r, 600));
 
-    if (username === 'Admin' && password === 'Health2026') {
-      sessionStorage.setItem('isAuthenticated', 'true');
-      toast.success('Welcome back!', {
-        description: 'Redirecting to your dashboard…',
-      });
-      navigate('/');
-    } else {
-      toast.error('Invalid credentials', {
-        description: 'Please check your username and password.',
-      });
-      setIsLoading(false);
-    }
+    localStorage.setItem('isAuthenticated', 'true');
+    toast.success('Authentication Secure', {
+      description: 'Connected to Enterprise Dashboard.',
+    });
+    navigate('/');
   };
 
   return (

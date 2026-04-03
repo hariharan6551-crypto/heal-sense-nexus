@@ -2,7 +2,7 @@ import LoginForm from '@/components/auth/LoginForm';
 import { Navigate } from 'react-router-dom';
 
 export default function Login() {
-  const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true' || sessionStorage.getItem('isAuthenticated') === 'true';
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
