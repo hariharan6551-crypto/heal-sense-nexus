@@ -156,7 +156,7 @@ export default function HealthcareDashboard() {
 
   // Derived Title Generation Rule
   const dashboardTitle = useMemo(() => {
-    if (!dataset) return '';
+    if (!dataset) return 'Post Discharge Social Support and Recovery Tracker';
     const rawName = dataset.fileName.toLowerCase();
     
     // Explicit requested test cases
@@ -335,9 +335,14 @@ export default function HealthcareDashboard() {
     return (
       <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center p-4">
         <div className="text-center space-y-4 max-w-md mx-auto">
-          <div className="w-16 h-16 border-4 border-[#007AFF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-700">Loading Enterprise Dataset...</h2>
-          <p className="text-sm text-slate-500">Auto-connecting to Post Discharge support stream</p>
+          <div className="w-16 h-16 border-4 border-[#6366f1] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-700">Loading Post Discharge Recovery Tracker...</h2>
+          <p className="text-sm text-slate-500">Initializing enterprise AI analytics engine</p>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+            <div className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
         </div>
       </div>
     );
@@ -375,16 +380,7 @@ export default function HealthcareDashboard() {
         </div>
       )}
 
-      <main className="max-w-[1600px] mx-auto p-4 space-y-4 pt-[120px]">
-
-        {/* Dashboard Title */}
-        <div className="relative inline-block mb-4 pt-2">
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight relative z-10">
-            {dashboardTitle}
-          </h1>
-          {/* Animated highlight underline */}
-          <div className="absolute bottom-1 left-0 h-3 bg-cyan-300/40 rounded-full animate-[shimmer_2s_ease-out_forwards] -z-10" style={{ width: '105%' }} />
-        </div>
+      <main className="max-w-[1800px] mx-auto p-4 lg:px-6 space-y-4 pt-[110px]">
 
         {/* Hero Section */}
         <HeroSection dataset={timeFilteredDataset} analysis={analysis} dashboardTitle={dashboardTitle} />
