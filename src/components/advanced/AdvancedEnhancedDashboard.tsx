@@ -25,15 +25,12 @@ import AdvancedFilterBuilder from './data/AdvancedFilterBuilder';
 import DrillDownPanel from './data/DrillDownPanel';
 
 // Cinematic
-import BootScreen from './cinematic/BootScreen';
 
 import { useAdvancedStore } from '@/stores/advancedStore';
 import '../advanced/advanced.css';
 
 export default function AdvancedEnhancedDashboard() {
   const { commandCenterMode, bootComplete, setBootComplete } = useAdvancedStore();
-  const [showBoot, setShowBoot] = useState(!bootComplete);
-
   // Try to read dataset info from sessionStorage for AI context
   const datasetCtx = useMemo(() => {
     try {
@@ -50,16 +47,6 @@ export default function AdvancedEnhancedDashboard() {
     } catch {}
     return { name: 'Dataset', rows: 0, columns: [], numericColumns: [] };
   }, []);
-
-  const handleBootComplete = useCallback(() => {
-    setShowBoot(false);
-    setBootComplete(true);
-  }, [setBootComplete]);
-
-  // Show boot screen on first ever load
-  if (showBoot) {
-    return <BootScreen onComplete={handleBootComplete} />;
-  }
 
   return (
     <UltraContainer>
