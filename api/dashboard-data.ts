@@ -75,7 +75,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       return res.status(200).json({
-        dataset: 'heal-sense-nexus',
+        dataset: 'enterprise-analytics',
         timestamp: new Date().toISOString(),
         recordCount: data.length,
         format: 'table',

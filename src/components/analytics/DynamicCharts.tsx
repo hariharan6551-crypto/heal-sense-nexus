@@ -59,31 +59,30 @@ function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
       transition={{ duration: 0.5, delay: index * 0.1, ease: 'easeOut' }}
       className="h-full"
     >
-      <GlassCard className="h-full flex flex-col group relative overflow-visible" glowColor={(index % 2 === 0 ? "blue" : "violet") as any}>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent z-0 pointer-events-none" />
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(0,0,0,0.2)] relative z-10">
-          <div className="flex items-center gap-2 min-w-0 flex-1 relative">
-            {Icon && <Icon className="h-4 w-4 text-blue-400 flex-shrink-0" />}
+      <GlassCard className="h-full flex flex-col group relative overflow-visible bg-white">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50 relative z-10">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 relative">
+            {Icon && <Icon className="h-4 w-4 text-blue-500 flex-shrink-0" />}
             <h3
-              className="text-sm font-bold text-white line-clamp-2 leading-tight cursor-default tracking-wide drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+              className="text-sm font-bold text-slate-800 line-clamp-1 leading-tight border-none"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
               {title}
             </h3>
             {showTooltip && title.length > 30 && (
-              <div className="absolute left-0 top-full mt-2 z-50 px-3 py-2 bg-slate-900/90 text-blue-200 text-xs rounded-xl border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.5)] backdrop-blur-md max-w-[250px] whitespace-normal">
+              <div className="absolute left-0 top-full mt-2 z-[100] px-3 py-2 bg-slate-900 text-white text-xs rounded-xl shadow-lg max-w-[250px] whitespace-normal">
                 {title}
               </div>
             )}
           </div>
           {badge && (
-            <GlowBadge color={(index % 2 === 0 ? "blue" : "violet") as any} className="ml-2 flex-shrink-0">
-              {badge}
-            </GlowBadge>
+            <span className="ml-2 flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">
+              {badge.toUpperCase()}
+            </span>
           )}
         </div>
-        <div className="p-4 flex-1 relative z-10">{children}</div>
+        <div className="p-5 flex-1 relative z-10 bg-white">{children}</div>
       </GlassCard>
     </motion.div>
   );
@@ -125,17 +124,17 @@ function filterData(data: Record<string, any>[], filters: Record<string, string>
   return f;
 }
 
-// Custom tooltip (Glassmorphism)
+// Custom tooltip (Light Theme)
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0A0F1C]/80 backdrop-blur-md border border-[rgba(255,255,255,0.15)] text-white px-5 py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] text-xs">
-      <p className="font-bold mb-2 text-blue-200 border-b border-[rgba(255,255,255,0.1)] pb-1">{label}</p>
+    <div className="bg-white/95 backdrop-blur-md border border-slate-200 px-5 py-4 rounded-xl shadow-lg text-xs hover:shadow-xl transition-shadow duration-300">
+      <p className="font-bold mb-2 text-slate-800 border-b border-slate-100 pb-2">{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: p.color || '#60A5FA' }} className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full" style={{ background: p.color || '#60A5FA' }} />
-          <span>{p.name}:</span>
-          <span className="font-extrabold ml-auto text-white drop-shadow-[0_0_4px_currentColor]">
+        <p key={i} style={{ color: p.color || '#3b82f6' }} className="flex items-center gap-2 mt-1">
+          <span className="w-2 h-2 rounded-full shadow-sm" style={{ background: p.color || '#3b82f6' }} />
+          <span className="font-medium text-slate-600">{p.name}:</span>
+          <span className="font-bold ml-auto text-slate-900">
             {typeof p.value === 'number' ? p.value.toLocaleString() : p.value}
           </span>
         </p>

@@ -64,16 +64,16 @@ function useAnimatedValue(target: number, duration: number = 700) {
 function AnimatedKPICard({ k, i }: { k: any; i: number }) {
   const animatedValue = useAnimatedValue(k.rawValue, 1200);
 
-  // Cinematic Neon Colors
-  const NEON_COLORS = [
-    { text: 'text-blue-400', glow: 'blue', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
-    { text: 'text-violet-400', glow: 'violet', border: 'border-violet-500/30', bg: 'bg-violet-500/10' },
-    { text: 'text-teal-400', glow: 'teal', border: 'border-teal-500/30', bg: 'bg-teal-500/10' },
-    { text: 'text-pink-400', glow: 'pink', border: 'border-pink-500/30', bg: 'bg-pink-500/10' },
-    { text: 'text-amber-400', glow: 'none', border: 'border-amber-500/30', bg: 'bg-amber-500/10' },
-    { text: 'text-emerald-400', glow: 'none', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10' },
+  // Cinematic Neon Colors replaced with clean light theme colors
+  const LIGHT_COLORS = [
+    { text: 'text-blue-600', border: 'border-blue-200', bg: 'bg-blue-50', bgFill: 'bg-blue-500' },
+    { text: 'text-violet-600', border: 'border-violet-200', bg: 'bg-violet-50', bgFill: 'bg-violet-500' },
+    { text: 'text-teal-600', border: 'border-teal-200', bg: 'bg-teal-50', bgFill: 'bg-teal-500' },
+    { text: 'text-pink-600', border: 'border-pink-200', bg: 'bg-pink-50', bgFill: 'bg-pink-500' },
+    { text: 'text-amber-600', border: 'border-amber-200', bg: 'bg-amber-50', bgFill: 'bg-amber-500' },
+    { text: 'text-emerald-600', border: 'border-emerald-200', bg: 'bg-emerald-50', bgFill: 'bg-emerald-500' },
   ];
-  const color = NEON_COLORS[i % NEON_COLORS.length];
+  const color = LIGHT_COLORS[i % LIGHT_COLORS.length];
 
   return (
     <motion.div
@@ -82,38 +82,33 @@ function AnimatedKPICard({ k, i }: { k: any; i: number }) {
       transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
     >
       <GlassCard 
-        glowColor={color.glow as 'blue'|'violet'|'teal'|'pink'|'none'} 
-        interactive 
-        className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group"
+        className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group bg-white border border-slate-200 shadow-sm transition-all hover:shadow-md"
       >
-        {/* Decorative Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-20" />
-        
         <div className="flex items-start justify-between mb-3 relative z-10">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate pr-2">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate pr-2">
             {k.label}
           </span>
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${color.border} ${color.bg} ${color.text} shadow-[0_0_15px_currentColor] group-hover:scale-110 transition-all duration-300`}>
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${color.border} ${color.bg} ${color.text} group-hover:scale-110 transition-all duration-300`}>
             <k.Icon className="h-4 w-4" strokeWidth={2.5} />
           </div>
         </div>
 
         <div className="relative z-10">
           <div className="flex items-baseline gap-1.5 mb-2">
-            <span className={`text-3xl font-black ${color.text} tracking-tight tabular-nums drop-shadow-[0_0_10px_currentColor]`}>
+            <span className={`text-3xl font-black text-slate-800 tracking-tight tabular-nums`}>
               {formatVal(animatedValue)}
             </span>
           </div>
 
           <div className="flex items-center justify-between text-[10px] font-medium w-full">
-            <span className="text-slate-500">Min: <span className="text-slate-300">{k.min}</span></span>
-            <span className="text-slate-500">Max: <span className="text-slate-300">{k.max}</span></span>
+            <span className="text-slate-500">Min: <span className="text-slate-700">{k.min}</span></span>
+            <span className="text-slate-500">Max: <span className="text-slate-700">{k.max}</span></span>
           </div>
           
           {/* Animated Progress Bar */}
-          <div className="w-full h-1 bg-[rgba(255,255,255,0.05)] rounded-full mt-3 overflow-hidden">
+          <div className="w-full h-1 bg-slate-100 rounded-full mt-3 overflow-hidden">
             <motion.div 
-              className={`h-full ${color.bg.replace('/10', '/80')} shadow-[0_0_8px_currentColor]`}
+              className={`h-full ${color.bgFill}`}
               initial={{ width: 0 }}
               animate={{ width: `${k.progress}%` }}
               transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
@@ -121,9 +116,9 @@ function AnimatedKPICard({ k, i }: { k: any; i: number }) {
           </div>
         </div>
 
-        {/* AI insight badge - Jarvis Style Pill */}
+        {/* AI insight badge */}
         {k.insight && (
-          <div className="absolute top-2 right-2 border border-amber-500/30 bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20 backdrop-blur-md shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+          <div className="absolute top-2 right-2 border border-amber-200 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-sm">
             <Sparkles className="h-3 w-3" />
             {k.insight}
           </div>

@@ -15,7 +15,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   return res.status(200).json({
     status: 'ok',
-    service: 'heal-sense-nexus-api',
+    service: 'enterprise-analytics-api',
     timestamp: new Date().toISOString(),
     endpoints: [
       { path: '/api/health', description: 'Health check (this endpoint)' },

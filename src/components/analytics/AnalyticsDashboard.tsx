@@ -334,14 +334,7 @@ export default function AnalyticsDashboard() {
 
   if (!dataset || !analysis || !timeFilteredDataset) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-background text-foreground relative overflow-hidden page-transition">
-        {/* CINEMATIC EFFECTS BACKGROUND */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,_rgba(59,130,246,0.08),transparent_25%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_30%,_rgba(139,92,246,0.08),transparent_25%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_110%)] opacity-30" />
-        </div>
-
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-slate-50 text-slate-800 relative page-transition">
         {/* Empty Navigation Shell */}
         <div className="relative z-50">
           <DashboardNav
@@ -359,15 +352,8 @@ export default function AnalyticsDashboard() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-background text-foreground relative overflow-hidden page-transition">
-      {/* 
-        CINEMATIC EFFECTS BACKGROUND
-      */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,_rgba(59,130,246,0.08),transparent_25%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_30%,_rgba(139,92,246,0.08),transparent_25%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_110%)] opacity-30" />
-      </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-slate-50 text-slate-800 relative page-transition">
+
 
       {/* Command Palette */}
       <CommandPalette
@@ -398,29 +384,29 @@ export default function AnalyticsDashboard() {
         {/* Hero Section */}
         <HeroSection dataset={timeFilteredDataset} analysis={analysis} dashboardTitle={dashboardTitle} />
 
-        {/* Dataset info bar (Cinematic Glassmorphism) */}
+        {/* Dataset info bar */}
         <div className="flex items-center gap-3 flex-wrap animate-fade-up relative z-10" style={{ animationDelay: '200ms' }}>
-          <div className="bg-[rgba(255,255,255,0.03)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-1.5 text-[11px] text-slate-300 shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex items-center gap-1.5 hover:bg-[rgba(255,255,255,0.06)] transition-colors">
-            <span className="text-blue-400">📊</span> <span className="font-semibold text-white">{timeFilteredDataset.fileName}</span>
+          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm flex items-center gap-1.5 transition-colors">
+            <span className="text-blue-500">📊</span> <span className="font-semibold text-slate-800">{timeFilteredDataset.fileName}</span>
           </div>
-          <div className="bg-[rgba(255,255,255,0.03)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-1.5 text-[11px] text-slate-300 shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex items-center gap-1.5">
-            <span className="text-blue-400">⚡</span> {timeFilteredDataset.totalRows.toLocaleString()} rows × {timeFilteredDataset.totalColumns} cols
+          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm flex items-center gap-1.5">
+            <span className="text-blue-500">⚡</span> {timeFilteredDataset.totalRows.toLocaleString()} rows × {timeFilteredDataset.totalColumns} cols
           </div>
-          <div className="bg-[rgba(255,255,255,0.03)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-1.5 text-[11px] text-slate-300 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-            <span className="text-teal-400">🔢</span> {timeFilteredDataset.numericColumns.length} numeric <span className="mx-1 text-slate-500">|</span> <span className="text-pink-400">📋</span> {timeFilteredDataset.categoricalColumns.length} categorical
-            {dataset.datetimeColumns.length > 0 && <><span className="mx-1 text-slate-500">|</span> <span className="text-amber-400">📅</span> {dataset.datetimeColumns.length} datetime</>}
+          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm">
+            <span className="text-teal-500">🔢</span> {timeFilteredDataset.numericColumns.length} numeric <span className="mx-1 text-slate-300">|</span> <span className="text-pink-500">📋</span> {timeFilteredDataset.categoricalColumns.length} categorical
+            {dataset.datetimeColumns.length > 0 && <><span className="mx-1 text-slate-300">|</span> <span className="text-amber-500">📅</span> {dataset.datetimeColumns.length} datetime</>}
           </div>
           {timeFilteredDataset.missingValueCount > 0 ? (
-            <div className="bg-amber-500/10 rounded-lg border border-amber-500/30 px-3 py-1.5 text-[11px] text-amber-400 font-bold flex items-center gap-1.5" title="Phase 20 Data Quality Validator">
+            <div className="bg-amber-50 rounded-lg border border-amber-200 px-3 py-1.5 text-[11px] text-amber-700 font-bold flex items-center gap-1.5 shadow-sm" title="Data Quality Validator">
               ⚠️ Data may be incomplete ({(100 - (timeFilteredDataset.missingValueCount / (timeFilteredDataset.totalRows * timeFilteredDataset.totalColumns)) * 100).toFixed(1)}% Fill)
             </div>
           ) : (
-            <div className="bg-emerald-500/10 rounded-lg border border-emerald-500/30 px-3 py-1.5 text-[11px] text-emerald-400 font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+            <div className="bg-emerald-50 rounded-lg border border-emerald-200 px-3 py-1.5 text-[11px] text-emerald-700 font-bold flex items-center gap-1.5 shadow-sm">
               ✅ 100% Data Quality Validated
             </div>
           )}
           {isOffline && (
-            <div className="bg-red-500/10 rounded-lg border border-red-500/30 px-3 py-1.5 text-[11px] text-red-400 font-bold flex items-center gap-1.5 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+            <div className="bg-red-50 rounded-lg border border-red-200 px-3 py-1.5 text-[11px] text-red-700 font-bold flex items-center gap-1.5 animate-pulse shadow-sm">
               ☁️ Offline Cache Mode Active
             </div>
           )}
@@ -467,28 +453,28 @@ export default function AnalyticsDashboard() {
 
             {/* Tab: AI Assistant */}
             {activeTab === 'AI Assistant' && (
-              <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10 p-6 page-transition">
-                <h2 className="text-xl font-black text-white tracking-widest uppercase drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] mb-6 flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping shadow-[0_0_10px_currentColor]" />
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 page-transition">
+                <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
                   AI-Generated Intelligence
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {insights.map(ins => (
-                    <div key={ins.id} className={`rounded-xl border p-5 transition-all hover:scale-[1.02] shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] ${
-                      ins.severity === 'critical' ? 'bg-pink-500/10 border-pink-500/30' :
-                      ins.severity === 'warning' ? 'bg-amber-500/10 border-amber-500/30' :
-                      'bg-blue-500/10 border-blue-500/30'
+                    <div key={ins.id} className={`rounded-xl border p-5 transition-all hover:scale-[1.02] ${
+                      ins.severity === 'critical' ? 'bg-pink-50 border-pink-100' :
+                      ins.severity === 'warning' ? 'bg-amber-50 border-amber-100' :
+                      'bg-blue-50 border-blue-100'
                     }`}>
-                      <p className={`text-sm font-black tracking-widest uppercase mb-2 ${
-                        ins.severity === 'critical' ? 'text-pink-400 drop-shadow-[0_0_5px_currentColor]' :
-                        ins.severity === 'warning' ? 'text-amber-400 drop-shadow-[0_0_5px_currentColor]' :
-                        'text-blue-400 drop-shadow-[0_0_5px_currentColor]'
+                      <p className={`text-sm font-bold tracking-wide mb-2 ${
+                        ins.severity === 'critical' ? 'text-pink-700' :
+                        ins.severity === 'warning' ? 'text-amber-700' :
+                        'text-blue-700'
                       }`}>{ins.title}</p>
-                      <p className="text-xs font-mono text-slate-300 leading-relaxed max-w-[90%]">{ins.description}</p>
+                      <p className="text-xs font-mono text-slate-600 leading-relaxed max-w-[90%]">{ins.description}</p>
                       <span className={`inline-block mt-4 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest ${
-                        ins.severity === 'critical' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/50 shadow-[0_0_10px_rgba(236,72,153,0.3)]' :
-                        ins.severity === 'warning' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.3)]' :
-                        'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.3)]'
+                        ins.severity === 'critical' ? 'bg-pink-100 text-pink-700 border border-pink-200' :
+                        ins.severity === 'warning' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                        'bg-blue-100 text-blue-700 border border-blue-200'
                       }`}>
                         {ins.type}
                       </span>
@@ -501,59 +487,59 @@ export default function AnalyticsDashboard() {
             {/* Tab: Reports & Power BI (Phase 19) */}
             {activeTab === 'Reports' && (
               <div className="space-y-4 page-transition">
-                <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10 p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-black text-white tracking-widest uppercase drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">📊 Power BI Enterprise Integration</h2>
+                    <h2 className="text-xl font-black text-slate-800 tracking-tight">📊 Power BI Enterprise Integration</h2>
                   </div>
                   
                   {/* Power BI Secure Embed Frame Mock */}
-                  <div className="w-full bg-black/40 rounded-xl border-2 border-dashed border-blue-500/30 shadow-[inset_0_0_30px_rgba(0,0,0,0.5)] p-8 text-center flex flex-col items-center justify-center min-h-[400px]">
-                    <div className="w-16 h-16 bg-[#F2C811]/20 rounded-2xl border border-[#F2C811]/50 shadow-[0_0_20px_rgba(242,200,17,0.4)] flex items-center justify-center mb-4 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[#F2C811]/10 animate-pulse" />
-                      <span className="text-2xl font-black text-[#F2C811] drop-shadow-[0_0_5px_currentColor] relative z-10 font-mono">BI</span>
+                  <div className="w-full bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-8 text-center flex flex-col items-center justify-center min-h-[400px]">
+                    <div className="w-16 h-16 bg-[#F2C811]/10 rounded-2xl border border-[#F2C811]/30 flex items-center justify-center mb-4 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-[#F2C811]/5 animate-pulse" />
+                      <span className="text-2xl font-black text-[#F2C811] relative z-10 font-mono">BI</span>
                     </div>
-                    <h3 className="text-lg font-black text-white tracking-widest uppercase mb-1">Power BI Embed (Pro Mode)</h3>
-                    <p className="text-xs text-blue-300/70 max-w-sm mt-2 font-mono leading-relaxed">
+                    <h3 className="text-lg font-bold text-slate-800 tracking-wide mb-1">Power BI Embed (Pro Mode)</h3>
+                    <p className="text-xs text-slate-500 max-w-sm mt-2 font-mono leading-relaxed">
                       Secure Token-based embedding active. Filters applied automatically via URL params.
                     </p>
                     
                     <div className="mt-6 flex flex-wrap gap-3 justify-center text-mono">
-                      <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-xs font-bold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] flex items-center gap-2 tracking-wide">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse drop-shadow-[0_0_5px_currentColor]"></span> Secure Token Handshake OK
+                      <div className="px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 flex items-center gap-2 tracking-wide">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Secure Token Handshake OK
                       </div>
-                      <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-xs font-bold text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] tracking-wide">
+                      <div className="px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs font-bold text-blue-700 tracking-wide">
                         Sync Filter: TimeRange = {filters['__time_range__'] || 'All'}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] p-6">
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                   <div className="flex items-center justify-between mb-5">
-                    <h2 className="text-lg font-black text-white tracking-widest uppercase drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">📄 Internal Summary Report</h2>
+                    <h2 className="text-lg font-black text-slate-800 tracking-tight">📄 Internal Summary Report</h2>
                     <button
                       onClick={handleExportCSV}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600/80 text-blue-100 text-xs font-bold font-mono tracking-widest uppercase rounded-xl border border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:bg-blue-500 transition-all hover:scale-105"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-xs font-bold font-mono tracking-wide uppercase rounded-xl hover:bg-blue-700 transition-all shadow-sm"
                     >
                       Export Secure CSV
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-300 font-mono">
-                    <div className="bg-black/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] rounded-xl p-6 border border-white/5">
-                      <p className="font-black text-blue-400 mb-4 tracking-widest uppercase drop-shadow-[0_0_5px_currentColor]">Dataset Summary</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-600 font-mono">
+                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <p className="font-bold text-blue-700 mb-4 tracking-wide uppercase">Dataset Summary</p>
                       <div className="space-y-2">
-                        <p className="flex justify-between border-b border-white/5 pb-2"><span className="text-slate-500">File:</span> <span className="text-white font-bold">{timeFilteredDataset.fileName}</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-2"><span className="text-slate-500">Rows:</span> <span className="text-white font-bold">{timeFilteredDataset.totalRows.toLocaleString()}</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-2"><span className="text-slate-500">Columns:</span> <span className="text-white font-bold">{timeFilteredDataset.totalColumns}</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-2"><span className="text-slate-500">Missing:</span> <span className="text-white font-bold">{timeFilteredDataset.missingValueCount.toLocaleString()}</span></p>
+                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">File:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.fileName}</span></p>
+                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Rows:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalRows.toLocaleString()}</span></p>
+                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Columns:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalColumns}</span></p>
+                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Missing:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.missingValueCount.toLocaleString()}</span></p>
                       </div>
                     </div>
-                    <div className="bg-black/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] rounded-xl p-6 border border-white/5">
-                      <p className="font-black text-violet-400 mb-4 tracking-widest uppercase drop-shadow-[0_0_5px_currentColor]">Column Matrix</p>
+                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <p className="font-bold text-violet-700 mb-4 tracking-wide uppercase">Column Matrix</p>
                       <div className="space-y-2">
-                        <p className="flex flex-col gap-1 border-b border-white/5 pb-2"><span className="text-slate-500">Numeric:</span> <span className="text-white font-bold max-w-full truncate">{timeFilteredDataset.numericColumns.join(', ') || 'None'}</span></p>
-                        <p className="flex flex-col gap-1 border-b border-white/5 pb-2"><span className="text-slate-500">Categorical:</span> <span className="text-white font-bold max-w-full truncate">{timeFilteredDataset.categoricalColumns.join(', ') || 'None'}</span></p>
-                        <p className="flex flex-col gap-1 pb-1"><span className="text-slate-500">Datetime:</span> <span className="text-white font-bold max-w-full truncate">{timeFilteredDataset.datetimeColumns.join(', ') || 'None'}</span></p>
+                        <p className="flex flex-col gap-1 border-b border-slate-200 pb-2"><span className="text-slate-500">Numeric:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.numericColumns.join(', ') || 'None'}</span></p>
+                        <p className="flex flex-col gap-1 border-b border-slate-200 pb-2"><span className="text-slate-500">Categorical:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.categoricalColumns.join(', ') || 'None'}</span></p>
+                        <p className="flex flex-col gap-1 pb-1"><span className="text-slate-500">Datetime:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.datetimeColumns.join(', ') || 'None'}</span></p>
                       </div>
                     </div>
                   </div>
@@ -563,34 +549,41 @@ export default function AnalyticsDashboard() {
 
             {/* Tab: Settings */}
             {activeTab === 'Settings' && (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 page-transition">
-                <h2 className="text-lg font-bold text-slate-700 mb-6">⚙️ Enterprise Settings</h2>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 page-transition">
+                <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
+                  Enterprise Settings
+                </h2>
                 <div className="space-y-4 text-xs text-slate-600">
                   {/* Role-based Access Badge */}
-                  <div className="bg-[#AF52DE]/5 rounded-xl border border-[#AF52DE]/20 p-5">
-                    <h4 className="font-bold text-[#AF52DE] mb-3 text-sm">👤 Role-Based Access Control</h4>
+                  <div className="bg-violet-50 rounded-xl border border-violet-100 p-5">
+                    <h4 className="font-bold text-violet-700 mb-3 text-sm flex items-center gap-2">
+                      👤 Role-Based Access Control
+                    </h4>
                     <div className="flex gap-2 mb-3">
                       {['Admin', 'Doctor', 'Analyst', 'Viewer'].map(role => (
                         <button
                           key={role}
                           onClick={() => handleRoleChange(role)}
-                          className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${
+                          className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
                             userRole === role 
-                              ? 'bg-[#AF52DE] text-white shadow-sm shadow-purple-500/20' 
-                              : 'bg-white border border-slate-200 text-slate-600 hover:bg-purple-50 hover:text-[#AF52DE] hover:border-[#AF52DE]/30 cursor-pointer'
+                              ? 'bg-violet-600 text-white shadow-sm' 
+                              : 'bg-white border border-slate-200 text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 cursor-pointer'
                           }`}
                         >
                           {role}
                         </button>
                       ))}
                     </div>
-                    <p className="text-[10px] font-medium text-slate-500">Configure access levels for different roles in the enterprise suite. Active: <strong>{userRole}</strong></p>
+                    <p className="text-xs font-medium text-slate-500">Configure access levels for different roles in the enterprise suite. Active: <strong className="text-violet-600">{userRole}</strong></p>
                   </div>
 
                   {/* API & Data Security */}
-                  <div className="bg-[#34C759]/5 rounded-xl border border-[#34C759]/20 p-5">
-                    <h4 className="font-bold text-[#34C759] mb-2 text-sm">🔒 Data Security & HIPAA Readiness</h4>
-                    <p className="text-[10px] font-medium text-slate-500 mb-2">
+                  <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
+                    <h4 className="font-bold text-emerald-700 mb-2 text-sm flex items-center gap-2">
+                      🔒 Data Security & Compliance
+                    </h4>
+                    <p className="text-xs font-medium text-emerald-800 mb-2 font-mono leading-relaxed">
                       - Data Masking: Enabled for PHI (Patient IDs, Names)<br/>
                       - Audit Logging: Active for all filter/export events<br/>
                       - Session Timeout: Auto-logout at 15m inactivity
@@ -598,12 +591,12 @@ export default function AnalyticsDashboard() {
                   </div>
 
                   {/* Real-time simulation */}
-                  <div className="bg-[#FF9500]/5 rounded-xl border border-[#FF9500]/20 p-5">
-                    <h4 className="font-bold text-[#FF9500] mb-2 text-sm flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF9500] animate-pulse" />
+                  <div className="bg-amber-50 rounded-xl border border-amber-100 p-5">
+                    <h4 className="font-bold text-amber-700 mb-2 text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                       API Data Pipeline
                     </h4>
-                    <p className="text-[10px] font-medium text-slate-500">Time-based backend filtering is mocked for demonstration via deterministic row-dropping.</p>
+                    <p className="text-xs font-medium text-amber-800 font-mono">Time-based backend filtering is mocked for demonstration via deterministic row-dropping.</p>
                   </div>
                 </div>
               </div>

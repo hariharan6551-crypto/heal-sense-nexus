@@ -110,7 +110,7 @@ export default function UltraContainer({ children }: Props) {
 
   return (
     <div className="advanced-ultra-container advanced-light">
-      {/* Ambient glow that follows cursor — subtle warm tint */}
+      {/* Ambient glow that follows cursor — light mode */}
       <div
         className="advanced-cursor-glow"
         style={{

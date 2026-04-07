@@ -97,15 +97,15 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
   };
 
   return (
-    <GlassCard className="p-4 transition-all duration-300">
+    <GlassCard className="p-4 transition-all duration-300 bg-white">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-blue-500/20 border border-blue-500/50 flex items-center justify-center">
-            <Filter className="h-3.5 w-3.5 text-blue-400 drop-shadow-[0_0_5px_currentColor]" />
+          <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+            <Filter className="h-3.5 w-3.5 text-blue-600" />
           </div>
-          <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Filters & Matrix Range</span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Filters & Matrix Range</span>
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/30 text-blue-300 border border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.2)]">
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-200 shadow-sm">
               {activeFilterCount} ACTIVE
             </span>
           )}
@@ -113,22 +113,22 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowSaveModal(!showSaveModal)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-slate-300 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-colors shadow-sm"
           >
-            <Bookmark className="h-3 w-3 text-violet-400" />
+            <Bookmark className="h-3 w-3 text-violet-500" />
             Save Preset
           </button>
           {savedViews.map((view, i) => (
             <button
               key={i}
               onClick={() => loadView(view)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-white bg-blue-500/20 border border-blue-500/50 rounded-full hover:bg-blue-500/40 transition-colors shadow-[0_0_10px_rgba(59,130,246,0.2)] group"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full hover:bg-blue-100 transition-colors shadow-sm group"
               title={`Load "${view.name}"`}
             >
-              <BookmarkCheck className="h-3 w-3 text-blue-300" />
+              <BookmarkCheck className="h-3 w-3 text-blue-600" />
               {view.name}
               <X
-                className="h-3 w-3 text-white/50 hover:text-white transition-opacity hidden group-hover:block ml-1"
+                className="h-3 w-3 text-slate-400 hover:text-slate-600 transition-opacity hidden group-hover:block ml-1"
                 onClick={(e) => { e.stopPropagation(); deleteView(i); }}
               />
             </button>
@@ -137,16 +137,16 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
       </div>
 
       {showSaveModal && (
-        <div className="mb-4 flex items-center gap-2 p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 animate-fade-up">
+        <div className="mb-4 flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200 animate-fade-up">
           <input
             type="text"
             value={viewName}
             onChange={e => setViewName(e.target.value)}
             placeholder="Name your matrix preset..."
-            className="flex-1 text-xs px-3 py-2 border border-white/10 rounded-lg bg-black/40 text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500/50 placeholder-slate-500"
+            className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-slate-400"
             onKeyDown={e => e.key === 'Enter' && saveView()}
           />
-          <button onClick={saveView} className="px-4 py-2 text-xs font-bold bg-teal-500/20 border border-teal-500/50 text-teal-300 rounded-lg shadow-[0_0_10px_rgba(20,184,166,0.2)] hover:bg-teal-500/40 transition-colors">Capture</button>
+          <button onClick={saveView} className="px-4 py-2 text-xs font-bold bg-teal-50 border border-teal-200 text-teal-700 rounded-lg shadow-sm hover:bg-teal-100 transition-colors">Capture</button>
         </div>
       )}
 
@@ -157,12 +157,12 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
             onChange={e => handleFilterChange('__time_range__', e.target.value)}
             className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all font-medium min-w-[130px] appearance-none cursor-pointer ${
               filters['__time_range__'] && filters['__time_range__'] !== '__all__'
-                ? 'border-blue-500/50 bg-blue-500/10 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
-                : 'border-white/10 bg-black/30 text-slate-300 hover:bg-white/5'
+                ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
             {TIME_RANGES.map(tr => (
-              <option key={tr.value} value={tr.value} className="bg-slate-900 text-white">🕒 Range: {tr.label}</option>
+              <option key={tr.value} value={tr.value} className="bg-white text-slate-800">🕒 Range: {tr.label}</option>
             ))}
           </select>
         </div>
@@ -173,14 +173,14 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
             onChange={e => handleFilterChange('__filter_year__', e.target.value)}
             className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all font-medium appearance-none cursor-pointer ${
               filters['__filter_year__'] && filters['__filter_year__'] !== '__all__'
-                ? 'border-blue-500/50 bg-blue-500/10 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
-                : 'border-white/10 bg-black/30 text-slate-300 hover:bg-white/5'
+                ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
-            <option value="__all__" className="bg-slate-900 text-white">📅 Year: All</option>
-            <option value="2026" className="bg-slate-900 text-white">2026</option>
-            <option value="2025" className="bg-slate-900 text-white">2025</option>
-            <option value="2024" className="bg-slate-900 text-white">2024</option>
+            <option value="__all__" className="bg-white text-slate-800">📅 Year: All</option>
+            <option value="2026" className="bg-white text-slate-800">2026</option>
+            <option value="2025" className="bg-white text-slate-800">2025</option>
+            <option value="2024" className="bg-white text-slate-800">2024</option>
           </select>
         </div>
 
@@ -190,18 +190,18 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
             onChange={e => handleFilterChange('__filter_month__', e.target.value)}
             className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all font-medium appearance-none cursor-pointer ${
               filters['__filter_month__'] && filters['__filter_month__'] !== '__all__'
-                ? 'border-blue-500/50 bg-blue-500/10 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
-                : 'border-white/10 bg-black/30 text-slate-300 hover:bg-white/5'
+                ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
-            <option value="__all__" className="bg-slate-900 text-white">🗓 Month: All</option>
+            <option value="__all__" className="bg-white text-slate-800">🗓 Month: All</option>
             {Array.from({length: 12}, (_, i) => (
-              <option key={i+1} value={(i+1).toString()} className="bg-slate-900 text-white">Month {i+1}</option>
+              <option key={i+1} value={(i+1).toString()} className="bg-white text-slate-800">Month {i+1}</option>
             ))}
           </select>
         </div>
 
-        <div className="w-[1px] h-6 bg-white/10 mx-1 hidden sm:block" />
+        <div className="w-[1px] h-6 bg-slate-200 mx-1 hidden sm:block" />
 
         {/* Dynamic Categorical Filters */}
         {filterColumns.map(col => (
@@ -211,13 +211,13 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
               onChange={e => handleFilterChange(col, e.target.value)}
               className={`text-xs px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-500 max-w-[160px] transition-all font-medium appearance-none cursor-pointer ${
                 filters[col] && filters[col] !== '__all__'
-                  ? 'border-violet-500/50 bg-violet-500/10 text-violet-300 shadow-[0_0_10px_rgba(139,92,246,0.15)]'
-                  : 'border-white/10 bg-black/30 text-slate-300 hover:bg-white/5'
+                  ? 'border-violet-200 bg-violet-50 text-violet-700 shadow-sm'
+                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
               }`}
             >
-              <option value="__all__" className="bg-slate-900 text-white">{col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}: All</option>
+              <option value="__all__" className="bg-white text-slate-800">{col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}: All</option>
               {(uniqueValues[col] || []).map(v => (
-                <option key={v} value={v} className="bg-slate-900 text-white">{v}</option>
+                <option key={v} value={v} className="bg-white text-slate-800">{v}</option>
               ))}
             </select>
           </div>
@@ -226,7 +226,7 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
         {activeFilterCount > 0 && (
           <button
             onClick={resetAllFilters}
-            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded-xl hover:bg-pink-500/20 transition-colors font-bold ml-auto shadow-[0_0_10px_rgba(236,72,153,0.15)]"
+            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-pink-50 border border-pink-200 text-pink-700 rounded-xl hover:bg-pink-100 transition-colors font-bold ml-auto shadow-sm"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Purge Filters
@@ -236,7 +236,7 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
 
       {/* Active Filter Pills */}
       {activeFilterCount > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2 animate-fade-in border-t border-white/10 pt-4">
+        <div className="mt-4 flex flex-wrap gap-2 animate-fade-in border-t border-slate-100 pt-4">
           {Object.entries(filters).map(([k, v]) => {
             if (v === '__all__') return null;
             let label = k;
@@ -246,10 +246,10 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
             else label = k.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim();
             
             return (
-              <div key={k} className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-[10px] font-bold text-cyan-300 shadow-[0_0_5px_rgba(6,182,212,0.2)]">
+              <div key={k} className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-50 border border-cyan-200 rounded-full text-[10px] font-bold text-cyan-800 shadow-sm">
                 <span className="opacity-60">{label}:</span> {v.replace('_', ' ')}
                 <X 
-                  className="h-3 w-3 cursor-pointer hover:text-white transition-colors ml-0.5" 
+                  className="h-3 w-3 cursor-pointer hover:text-cyan-900 transition-colors ml-0.5" 
                   onClick={() => handleFilterChange(k, '__all__')}
                 />
               </div>

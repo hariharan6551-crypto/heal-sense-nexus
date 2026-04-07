@@ -1,10 +1,8 @@
 import { useMemo, useEffect, useState, useRef } from 'react';
-import { Users, Activity, HeartPulse, ShieldAlert, Zap } from 'lucide-react';
+import { Users, Activity, HeartPulse, ShieldAlert, Zap, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { DataAnalysis } from '@/lib/analyzeData';
-import { GlassCard } from '../ui/GlassCard';
-import { GlowBadge } from '../ui/GlowBadge';
 
 interface Props {
   dataset: DatasetInfo;
@@ -112,92 +110,97 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
 
   const heroCards = [
     {
-      label: 'Dataset Volume',
+      label: 'Total Records',
       value: stats.totalPatients,
       suffix: '',
       icon: Users,
-      glow: 'blue',
-      color: 'text-blue-400',
-      bgClass: 'bg-blue-500/10 border-blue-500/30',
+      color: 'text-red-500',
+      bgClass: 'bg-red-50',
+      iconBg: 'bg-red-500',
       hint: 'Based on current dataset',
     },
     ...(stats.avgRisk !== null ? [(() => {
       const displayRisk = stats.avgRisk <= 1 ? +(stats.avgRisk * 100).toFixed(1) : Math.round(stats.avgRisk);
-      const isHigh = displayRisk > 50;
       return {
-        label: 'Prediction Risk',
+        label: 'Avg Risk Score',
         value: displayRisk,
         suffix: '%',
         icon: ShieldAlert,
-        glow: isHigh ? 'pink' : 'teal',
-        color: isHigh ? 'text-pink-400' : 'text-teal-400',
-        bgClass: isHigh ? 'bg-pink-500/10 border-pink-500/30' : 'bg-teal-500/10 border-teal-500/30',
+        color: 'text-emerald-500',
+        bgClass: 'bg-emerald-50',
+        iconBg: 'bg-emerald-500',
       };
     })()] : []),
     ...(stats.avgRecovery !== null ? [(() => {
       const displayRecovery = stats.avgRecovery < 1 ? +(stats.avgRecovery * 100).toFixed(1) : Math.round(stats.avgRecovery);
       return {
-        label: 'Est. Recovery Time',
+        label: 'Avg Recovery',
         value: displayRecovery,
         suffix: stats.avgRecovery < 1 ? '%' : 'd',
         icon: HeartPulse,
-        glow: 'violet',
-        color: 'text-violet-400',
-        bgClass: 'bg-violet-500/10 border-violet-500/30',
+        color: 'text-blue-500',
+        bgClass: 'bg-blue-50',
+        iconBg: 'bg-blue-500',
       };
     })()] : []),
     ...(stats.avgSupport !== null ? [{
-      label: 'Efficacy Score',
+      label: 'Support Score',
       value: +(stats.avgSupport).toFixed(1),
       suffix: '/10',
       icon: Activity,
-      glow: 'teal',
-      color: 'text-teal-400',
-      bgClass: 'bg-teal-500/10 border-teal-500/30',
+      color: 'text-violet-500',
+      bgClass: 'bg-violet-50',
+      iconBg: 'bg-violet-500',
     }] : []),
   ].slice(0, 4);
+
+  const GENDER_COLORS = ['#2563eb', '#ec4899', '#f59e0b', '#14b8a6'];
 
   return (
     <div className="mb-8 space-y-6">
       {/* Header Info */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-2 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1 relative z-10">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-indigo-300 tracking-tight drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]">
+          <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">
             {dashboardTitle}
           </h1>
-          <p className="text-blue-300/70 font-medium mt-2 flex items-center gap-2">
-            <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
-            ADVANCED OS • Real-Time Data Pipeline Active
+          <p className="text-slate-500 font-medium mt-2 flex items-center gap-2 text-sm">
+            Enterprise Analytics Suite • Real-time Population Overview
           </p>
         </motion.div>
         
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="hidden md:flex items-center gap-3">
-          <GlowBadge color="emerald" pulse>
-            SYSTEM ONLINE
-          </GlowBadge>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Live Data
+          </span>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+            <Database className="w-3 h-3" />
+            {dataset.name}
+          </span>
         </motion.div>
       </div>
 
-      {/* Hero KPI Cards */}
+      {/* Hero KPI Cards — Clean white cards with colored icons (matching reference) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-2">
         {heroCards.map((card, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-            <GlassCard glowColor={card.glow as any} interactive className="p-5 overflow-visible group">
-              <div className="flex items-start justify-between mb-4 relative z-10">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-[0_0_15px_currentColor] transition-transform duration-300 group-hover:scale-110 ${card.bgClass} ${card.color}`}>
-                  <card.icon className="h-5 w-5 drop-shadow-[0_0_5px_currentColor]" strokeWidth={2.5} />
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.5 }}>
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${card.iconBg} shadow-sm`}>
+                  <card.icon className="h-5 w-5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
-              <div className="space-y-1 relative z-10">
+              <div className="space-y-1">
                 <h3 className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">{card.label}</h3>
-                <div className={`text-4xl font-black tracking-tighter drop-shadow-[0_0_12px_currentColor] ${card.color}`}>
+                <div className={`text-3xl font-black tracking-tight ${card.color}`}>
                   <AnimatedCounter target={card.value} suffix={card.suffix} duration={1500} />
                 </div>
                 {(card as any).hint && (
-                  <p className="text-[9px] text-slate-500 font-medium tracking-wide mt-1">{(card as any).hint}</p>
+                  <p className="text-[9px] text-slate-400 font-medium tracking-wide mt-1">{(card as any).hint}</p>
                 )}
               </div>
-            </GlassCard>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -207,61 +210,62 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
         {/* Gender Distribution */}
         {stats.genderData.length > 0 && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }}>
-            <GlassCard className="p-5 h-full">
-              <h3 className="text-[11px] font-bold text-blue-300/70 uppercase tracking-widest mb-5 flex items-center gap-2">
-                <Users className="w-3.5 h-3.5" /> Segmentation Metrics
+            <div className="bg-white rounded-2xl p-5 h-full border border-slate-100 shadow-sm">
+              <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                <Users className="w-3.5 h-3.5 text-blue-500" /> Population Breakdown
               </h3>
               <div className="flex items-center gap-6">
                 {stats.genderData.map((g, i) => (
                   <div key={i} className="flex-1">
                     <div className="flex items-end justify-between mb-2">
-                      <span className="text-sm font-semibold text-slate-300">{g.name}</span>
-                      <span className={`text-sm font-bold ${i === 0 ? 'text-blue-400' : 'text-violet-400'} drop-shadow-[0_0_5px_currentColor]`}>{g.pct}%</span>
+                      <span className="text-sm font-semibold text-slate-700">{g.name}</span>
+                      <span className="text-sm font-bold" style={{ color: GENDER_COLORS[i] }}>{g.pct}%</span>
                     </div>
-                    <div className="h-1.5 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${g.pct}%` }}
                         transition={{ duration: 1.5, delay: 0.5 }}
-                        className={`h-full rounded-full shadow-[0_0_10px_currentColor] ${i === 0 ? 'bg-blue-500' : 'bg-violet-500'}`}
+                        className="h-full rounded-full"
+                        style={{ background: GENDER_COLORS[i] }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
-            </GlassCard>
+            </div>
           </motion.div>
         )}
 
         {/* Top Categories */}
         {stats.diagData.length > 0 && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
-            <GlassCard className="p-5 h-full">
-              <h3 className="text-[11px] font-bold text-blue-300/70 uppercase tracking-widest mb-5 flex items-center gap-2">
-                <Activity className="w-3.5 h-3.5" /> 
-                Dominant {stats.diagCol?.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim() || 'Categories'}
+            <div className="bg-white rounded-2xl p-5 h-full border border-slate-100 shadow-sm">
+              <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                <Activity className="w-3.5 h-3.5 text-teal-500" /> 
+                Top {stats.diagCol?.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim() || 'Categories'}
               </h3>
               <div className="space-y-4">
                 {stats.diagData.slice(0, 3).map((d, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex items-end justify-between mb-1.5">
-                        <span className="text-xs font-semibold text-slate-300 truncate pr-2">{d.name}</span>
-                        <span className="text-xs font-bold text-teal-400 drop-shadow-[0_0_3px_currentColor]">{d.count}</span>
+                        <span className="text-xs font-semibold text-slate-700 truncate pr-2">{d.name}</span>
+                        <span className="text-xs font-bold text-teal-600">{d.count.toLocaleString()}</span>
                       </div>
-                      <div className="h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${d.pct}%` }}
                           transition={{ duration: 1.5, delay: 0.6 }}
-                          className="h-full rounded-full bg-teal-400 shadow-[0_0_8px_currentColor]"
+                          className="h-full rounded-full bg-gradient-to-r from-teal-400 to-cyan-500"
                         />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </GlassCard>
+            </div>
           </motion.div>
         )}
       </div>
@@ -269,13 +273,12 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
       {/* High Risk Alert */}
       {stats.highRiskCount > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <div className="flex items-center gap-4 p-4 bg-pink-500/10 border border-pink-500/30 rounded-2xl shadow-[0_0_20px_rgba(236,72,153,0.15)] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-pink-500/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-            <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center flex-shrink-0 border border-pink-500/40">
-              <ShieldAlert className="h-5 w-5 text-pink-400 drop-shadow-[0_0_8px_currentColor]" strokeWidth={2.5} />
+          <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-2xl relative overflow-hidden group">
+            <div className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+              <ShieldAlert className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-sm text-slate-300 relative z-10">
-              <strong>{stats.highRiskCount}</strong> records flagged as <span className="text-pink-400 font-bold drop-shadow-[0_0_5px_currentColor]">CRITICAL ANOMALY</span> in current dataset view.
+            <span className="text-sm text-slate-700 relative z-10">
+              <strong>{stats.highRiskCount}</strong> records flagged as <span className="text-red-600 font-bold">HIGH RISK</span> in current dataset view.
             </span>
           </div>
         </motion.div>

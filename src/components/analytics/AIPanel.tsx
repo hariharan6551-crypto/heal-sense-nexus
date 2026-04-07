@@ -23,7 +23,7 @@ const SEVERITY_STYLES = {
 export default function AIPanel({ dataset, analysis, insights }: Props) {
   const [question, setQuestion] = useState('');
   const [chatHistory, setChatHistory] = useState<{ id: string, role: 'user'|'assistant', text: string }[]>([
-    { id: 'initial', role: 'assistant', text: 'System initialized. I am ready to analyze the hospital dataset. How can I assist you today?' }
+    { id: 'initial', role: 'assistant', text: 'System initialized. I am ready to analyze your dataset. How can I assist you today?' }
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);

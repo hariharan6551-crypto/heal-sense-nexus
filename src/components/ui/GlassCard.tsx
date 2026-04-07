@@ -10,27 +10,17 @@ interface GlassCardProps extends HTMLMotionProps<"div"> {
 }
 
 export function GlassCard({ children, className, glowColor = 'none', interactive = false, ...props }: GlassCardProps) {
-  const glowClasses = {
-    blue: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]',
-    violet: 'hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]',
-    teal: 'hover:shadow-[0_0_20px_rgba(20,184,166,0.4)]',
-    pink: 'hover:shadow-[0_0_20px_rgba(236,72,153,0.4)]',
-    none: ''
-  };
-
   return (
     <motion.div
-      whileHover={interactive ? { scale: 1.04, rotateX: 2, y: -4 } : {}}
+      whileHover={interactive ? { scale: 1.02, y: -3 } : {}}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn(
-        "bg-[rgba(255,255,255,0.05)] backdrop-blur-[20px] border border-[rgba(255,255,255,0.08)] rounded-2xl relative overflow-hidden",
-        interactive && glowClasses[glowColor],
-        interactive && "cursor-pointer transition-shadow",
+        "bg-white rounded-2xl border border-slate-100 relative overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300",
+        interactive && "cursor-pointer",
         className
       )}
       {...props}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
       <div className="relative z-10 h-full w-full">
         {children}
       </div>
