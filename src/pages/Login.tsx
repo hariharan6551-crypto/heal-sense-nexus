@@ -56,7 +56,7 @@ export default function Login() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-50"
             style={{
-              background: 'linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 40%, #0e7490 100%)',
+              background: 'linear-gradient(135deg, #f0f4f8 0%, #e8eef5 40%, #f5f7fa 100%)',
             }}
           >
             <motion.div
@@ -68,10 +68,10 @@ export default function Login() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                className="w-10 h-10 rounded-full border-3 border-white/20 border-t-white"
+                className="w-10 h-10 rounded-full border-3 border-blue-500/20 border-t-blue-500"
                 style={{ borderWidth: '3px' }}
               />
-              <p className="text-white/80 text-sm font-semibold tracking-wide">Initializing Dashboard…</p>
+              <p className="text-slate-600 text-sm font-semibold tracking-wide">Initializing Dashboard…</p>
             </motion.div>
           </motion.div>
         )}
