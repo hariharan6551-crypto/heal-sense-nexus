@@ -119,6 +119,7 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
       glow: 'blue',
       color: 'text-blue-400',
       bgClass: 'bg-blue-500/10 border-blue-500/30',
+      hint: 'Based on current dataset',
     },
     ...(stats.avgRisk !== null ? [(() => {
       const displayRisk = stats.avgRisk <= 1 ? +(stats.avgRisk * 100).toFixed(1) : Math.round(stats.avgRisk);
@@ -192,6 +193,9 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
                 <div className={`text-4xl font-black tracking-tighter drop-shadow-[0_0_12px_currentColor] ${card.color}`}>
                   <AnimatedCounter target={card.value} suffix={card.suffix} duration={1500} />
                 </div>
+                {(card as any).hint && (
+                  <p className="text-[9px] text-slate-500 font-medium tracking-wide mt-1">{(card as any).hint}</p>
+                )}
               </div>
             </GlassCard>
           </motion.div>

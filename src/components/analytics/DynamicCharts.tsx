@@ -129,7 +129,7 @@ function filterData(data: Record<string, any>[], filters: Record<string, string>
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0A0F1C]/80 backdrop-blur-md border border-[rgba(255,255,255,0.15)] text-white px-4 py-3 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] text-xs">
+    <div className="bg-[#0A0F1C]/80 backdrop-blur-md border border-[rgba(255,255,255,0.15)] text-white px-5 py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] text-xs">
       <p className="font-bold mb-2 text-blue-200 border-b border-[rgba(255,255,255,0.1)] pb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color || '#60A5FA' }} className="flex items-center gap-2">

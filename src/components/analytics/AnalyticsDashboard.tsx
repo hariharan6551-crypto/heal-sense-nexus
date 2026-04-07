@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
@@ -333,29 +334,32 @@ export default function AnalyticsDashboard() {
 
   if (!dataset || !analysis || !timeFilteredDataset) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden overflow-hidden">
-        {/* Futuristic Background Gradients */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-background to-background pointer-events-none" />
-        <div className="text-center space-y-6 max-w-md mx-auto relative z-10">
-          <div className="w-20 h-20 relative mx-auto mb-4">
-            <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full" />
-            <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-pulse blur-xl" />
-          </div>
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-400">Loading Post Discharge Recovery Tracker...</h2>
-          <p className="text-sm font-medium text-slate-400">Initializing enterprise AI analytics engine</p>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" style={{ animationDelay: '300ms' }} />
-          </div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-background text-foreground relative overflow-hidden page-transition">
+        {/* CINEMATIC EFFECTS BACKGROUND */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,_rgba(59,130,246,0.08),transparent_25%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_30%,_rgba(139,92,246,0.08),transparent_25%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_110%)] opacity-30" />
         </div>
-      </div>
+
+        {/* Empty Navigation Shell */}
+        <div className="relative z-50">
+          <DashboardNav
+            onDatasetLoaded={handleDatasetLoaded}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            dashboardTitle="Analytics Dashboard"
+            datasetName=""
+          />
+          <SecondaryRibbon />
+        </div>
+        <main className="max-w-[1800px] mx-auto p-4 lg:px-6 pt-[110px]" />
+      </motion.div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden page-transition">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-background text-foreground relative overflow-hidden page-transition">
       {/* 
         CINEMATIC EFFECTS BACKGROUND
       */}
@@ -387,18 +391,7 @@ export default function AnalyticsDashboard() {
         <SecondaryRibbon />
       </div>
 
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-md flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 relative mx-auto mb-4">
-              <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full" />
-              <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-            <p className="text-sm font-medium text-slate-300 animate-pulse">Analyzing dataset in isolated environment...</p>
-          </div>
-        </div>
-      )}
+      {/* Loader removed */}
 
       <main className="max-w-[1800px] mx-auto p-4 lg:px-6 space-y-4 pt-[110px]">
 
@@ -654,6 +647,6 @@ export default function AnalyticsDashboard() {
         <p className="mb-2">Enterprise AI Analytics Suite v3.0 • Premium Edition</p>
         <p>Press <kbd className="px-1.5 py-0.5 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded text-slate-400 mx-1">Ctrl+K</kbd> for command center</p>
       </footer>
-    </div>
+    </motion.div>
   );
 }

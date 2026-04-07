@@ -17,8 +17,8 @@ export function AnimatedButton({ children, variant = 'primary', className, ...pr
 
   return (
     <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.96 }}
       className={cn(
         "px-4 py-2 rounded-xl font-medium transition-colors relative overflow-hidden flex items-center justify-center gap-2",
         variants[variant],

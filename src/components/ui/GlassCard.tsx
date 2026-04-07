@@ -20,10 +20,10 @@ export function GlassCard({ children, className, glowColor = 'none', interactive
 
   return (
     <motion.div
-      whileHover={interactive ? { scale: 1.02, rotateX: 2, y: -2 } : {}}
+      whileHover={interactive ? { scale: 1.04, rotateX: 2, y: -4 } : {}}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn(
-        "bg-[rgba(255,255,255,0.03)] backdrop-blur-[20px] border border-[rgba(255,255,255,0.08)] rounded-2xl relative overflow-hidden",
+        "bg-[rgba(255,255,255,0.05)] backdrop-blur-[20px] border border-[rgba(255,255,255,0.08)] rounded-2xl relative overflow-hidden",
         interactive && glowClasses[glowColor],
         interactive && "cursor-pointer transition-shadow",
         className
