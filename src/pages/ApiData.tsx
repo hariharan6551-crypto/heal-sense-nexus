@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { PATIENTS } from "@/data/healthcareData";
+import { PATIENTS } from "@/data/analyticsData";
 
 /**
  * /api/data — JSON Data Endpoint for Power BI
@@ -9,7 +9,7 @@ import { PATIENTS } from "@/data/healthcareData";
  */
 export default function ApiDataPage() {
   useEffect(() => {
-    document.title = "HealSense Nexus — API Data";
+    document.title = "Analytics — API Data";
 
     const columns = [
       "patientId", "age", "ageGroup", "gender", "region",
@@ -20,7 +20,7 @@ export default function ApiDataPage() {
     ];
 
     const payload = {
-      dataset: "heal-sense-nexus-healthcare",
+      dataset: "analytics-analytics",
       timestamp: new Date().toISOString(),
       recordCount: PATIENTS.length,
       format: "records",
@@ -35,7 +35,7 @@ export default function ApiDataPage() {
 
   return (
     <pre style={{ fontFamily: "monospace", padding: 20, background: "#0f172a", color: "#38bdf8", minHeight: "100vh" }}>
-      Loading healthcare data for Power BI...
+      Loading analytics data for Power BI...
     </pre>
   );
 }

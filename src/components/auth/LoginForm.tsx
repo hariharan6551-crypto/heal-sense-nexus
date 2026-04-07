@@ -84,7 +84,7 @@ export default function LoginForm() {
           </div>
           <h2 className="text-2xl font-bold tracking-tight">Secure Login</h2>
           <p className="text-blue-200 mt-1 text-sm">
-            Heal Sense Nexus · Provider Dashboard
+            Analytics · Provider Dashboard
           </p>
         </div>
 

@@ -1,7 +1,7 @@
-import NexusEnhancedDashboard from "@/components/nexus/NexusEnhancedDashboard";
+import MainDashboard from "@/components/advanced/AdvancedEnhancedDashboard";
 
 const Index = () => {
-  return <NexusEnhancedDashboard />;
+  return <MainDashboard />;
 };
 
 export default Index;
