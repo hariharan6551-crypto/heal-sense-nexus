@@ -39,7 +39,6 @@ function formatVal(v: number): string {
   return v.toFixed(2);
 }
 
-// Animated counter hook
 function useAnimatedValue(target: number, duration: number = 700) {
   const [value, setValue] = useState(0);
   const prevTarget = useRef(0);
@@ -61,54 +60,74 @@ function useAnimatedValue(target: number, duration: number = 700) {
   return value;
 }
 
+/* Vibrant color palette: Red, Yellow, Blue, Green, Purple, Pink */
+const VIBRANT_COLORS = [
+  { gradient: 'linear-gradient(135deg, #EF4444, #F97316)', text: '#DC2626', bg: 'rgba(239,68,68,0.04)', border: 'rgba(239,68,68,0.1)', shadow: 'rgba(239,68,68,0.12)', fill: '#EF4444' },
+  { gradient: 'linear-gradient(135deg, #3B82F6, #6366F1)', text: '#2563EB', bg: 'rgba(59,130,246,0.04)', border: 'rgba(59,130,246,0.1)', shadow: 'rgba(59,130,246,0.12)', fill: '#3B82F6' },
+  { gradient: 'linear-gradient(135deg, #22C55E, #10B981)', text: '#16A34A', bg: 'rgba(34,197,94,0.04)', border: 'rgba(34,197,94,0.1)', shadow: 'rgba(34,197,94,0.12)', fill: '#22C55E' },
+  { gradient: 'linear-gradient(135deg, #EAB308, #F59E0B)', text: '#CA8A04', bg: 'rgba(234,179,8,0.04)', border: 'rgba(234,179,8,0.1)', shadow: 'rgba(234,179,8,0.12)', fill: '#EAB308' },
+  { gradient: 'linear-gradient(135deg, #8B5CF6, #A855F7)', text: '#7C3AED', bg: 'rgba(139,92,246,0.04)', border: 'rgba(139,92,246,0.1)', shadow: 'rgba(139,92,246,0.12)', fill: '#8B5CF6' },
+  { gradient: 'linear-gradient(135deg, #EC4899, #F43F5E)', text: '#DB2777', bg: 'rgba(236,72,153,0.04)', border: 'rgba(236,72,153,0.1)', shadow: 'rgba(236,72,153,0.12)', fill: '#EC4899' },
+];
+
 function AnimatedKPICard({ k, i }: { k: any; i: number }) {
   const animatedValue = useAnimatedValue(k.rawValue, 1200);
-
-  // Cinematic Neon Colors replaced with clean light theme colors
-  const LIGHT_COLORS = [
-    { text: 'text-blue-600', border: 'border-blue-200', bg: 'bg-blue-50', bgFill: 'bg-blue-500' },
-    { text: 'text-violet-600', border: 'border-violet-200', bg: 'bg-violet-50', bgFill: 'bg-violet-500' },
-    { text: 'text-teal-600', border: 'border-teal-200', bg: 'bg-teal-50', bgFill: 'bg-teal-500' },
-    { text: 'text-pink-600', border: 'border-pink-200', bg: 'bg-pink-50', bgFill: 'bg-pink-500' },
-    { text: 'text-amber-600', border: 'border-amber-200', bg: 'bg-amber-50', bgFill: 'bg-amber-500' },
-    { text: 'text-emerald-600', border: 'border-emerald-200', bg: 'bg-emerald-50', bgFill: 'bg-emerald-500' },
-  ];
-  const color = LIGHT_COLORS[i % LIGHT_COLORS.length];
+  const color = VIBRANT_COLORS[i % VIBRANT_COLORS.length];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
+      whileHover={{ y: -4 }}
     >
-      <GlassCard 
-        className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group bg-white border border-slate-200 shadow-sm transition-all hover:shadow-md"
+      <GlassCard
+        className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group"
+        style={{
+          background: '#fff',
+          border: `1px solid ${color.border}`,
+          boxShadow: `0 2px 12px ${color.shadow}`,
+        }}
       >
+        {/* Corner accent gradient */}
+        <div
+          className="absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+          style={{ background: color.gradient }}
+        />
+
         <div className="flex items-start justify-between mb-3 relative z-10">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate pr-2">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate pr-2">
             {k.label}
           </span>
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${color.border} ${color.bg} ${color.text} group-hover:scale-110 transition-all duration-300`}>
-            <k.Icon className="h-4 w-4" strokeWidth={2.5} />
-          </div>
+          <motion.div
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center"
+            style={{
+              background: color.gradient,
+              boxShadow: `0 4px 10px ${color.shadow}`,
+            }}
+          >
+            <k.Icon className="h-4 w-4 text-white" strokeWidth={2.5} />
+          </motion.div>
         </div>
 
         <div className="relative z-10">
           <div className="flex items-baseline gap-1.5 mb-2">
-            <span className={`text-3xl font-black text-slate-800 tracking-tight tabular-nums`}>
+            <span className="text-3xl font-black tracking-tight tabular-nums" style={{ color: color.text }}>
               {formatVal(animatedValue)}
             </span>
           </div>
 
           <div className="flex items-center justify-between text-[10px] font-medium w-full">
-            <span className="text-slate-500">Min: <span className="text-slate-700">{k.min}</span></span>
-            <span className="text-slate-500">Max: <span className="text-slate-700">{k.max}</span></span>
+            <span className="text-slate-400">Min: <span className="text-slate-600">{k.min}</span></span>
+            <span className="text-slate-400">Max: <span className="text-slate-600">{k.max}</span></span>
           </div>
           
           {/* Animated Progress Bar */}
-          <div className="w-full h-1 bg-slate-100 rounded-full mt-3 overflow-hidden">
+          <div className="w-full h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
             <motion.div 
-              className={`h-full ${color.bgFill}`}
+              className="h-full rounded-full"
+              style={{ background: color.gradient }}
               initial={{ width: 0 }}
               animate={{ width: `${k.progress}%` }}
               transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
@@ -118,7 +137,14 @@ function AnimatedKPICard({ k, i }: { k: any; i: number }) {
 
         {/* AI insight badge */}
         {k.insight && (
-          <div className="absolute top-2 right-2 border border-amber-200 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-sm">
+          <div
+            className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+            style={{
+              background: 'rgba(234,179,8,0.06)',
+              border: '1px solid rgba(234,179,8,0.15)',
+              color: '#CA8A04',
+            }}
+          >
             <Sparkles className="h-3 w-3" />
             {k.insight}
           </div>
@@ -134,7 +160,6 @@ export default function DynamicKPIs({ dataset, columnStats }: Props) {
       const Icon = pickIcon(s.column);
       const progress = s.max > 0 ? Math.min(100, Math.max(5, (s.mean / s.max) * 100)) : 50;
 
-      // AI insight badge
       let insight = '';
       if (s.outlierCount > 5) insight = `${s.outlierCount} anomalies`;
       else if (Math.abs(s.skewness) > 1.5) insight = 'Irregular pattern';
@@ -161,4 +186,3 @@ export default function DynamicKPIs({ dataset, columnStats }: Props) {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 // ============================================================================
-// UltraContainer — The Root Enhancement Wrapper (LIGHT MODE)
-// Wraps the ENTIRE existing dashboard with subtle background effects
+// UltraContainer — The Root Enhancement Wrapper (VIBRANT LIGHT MODE)
+// Wraps the ENTIRE existing dashboard with colorful background effects
 // NON-DESTRUCTIVE: Children render untouched
 // ============================================================================
 import { ReactNode, useRef, useEffect } from 'react';
@@ -15,7 +15,7 @@ export default function UltraContainer({ children }: Props) {
   const { particlesEnabled } = useAdvancedStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const particlesRef = useRef<{ x: number; y: number; vx: number; vy: number; size: number; alpha: number; hue: number }[]>([]);
+  const particlesRef = useRef<{ x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[]>([]);
 
   // Cursor-reactive gradient overlay
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function UltraContainer({ children }: Props) {
     return () => window.removeEventListener('mousemove', handleMouse);
   }, []);
 
-  // Particle system — subtle light-mode particles
+  // Particle system — vibrant light-mode particles
   useEffect(() => {
     if (!particlesEnabled || !canvasRef.current) return;
 
@@ -35,6 +35,8 @@ export default function UltraContainer({ children }: Props) {
     if (!ctx) return;
 
     let animId: number;
+    const COLORS = ['#EF4444', '#EAB308', '#3B82F6', '#22C55E', '#8B5CF6', '#EC4899'];
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -42,17 +44,17 @@ export default function UltraContainer({ children }: Props) {
     resize();
     window.addEventListener('resize', resize);
 
-    // Initialize particles with light-friendly colors
+    // Initialize particles with vibrant colors
     if (particlesRef.current.length === 0) {
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 35; i++) {
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * 0.2,
           vy: (Math.random() - 0.5) * 0.2,
-          size: Math.random() * 2 + 0.5,
-          alpha: Math.random() * 0.15 + 0.05,
-          hue: 220 + Math.random() * 40,
+          size: Math.random() * 2.5 + 0.5,
+          alpha: Math.random() * 0.12 + 0.04,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
         });
       }
     }
@@ -65,8 +67,8 @@ export default function UltraContainer({ children }: Props) {
         const dy = mouseRef.current.y - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 300) {
-          p.vx += (dx / dist) * 0.008;
-          p.vy += (dy / dist) * 0.008;
+          p.vx += (dx / dist) * 0.006;
+          p.vy += (dy / dist) * 0.006;
         }
 
         p.x += p.vx;
@@ -79,9 +81,10 @@ export default function UltraContainer({ children }: Props) {
         if (p.y < 0) p.y = canvas.height;
         if (p.y > canvas.height) p.y = 0;
 
+        ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 50%, 55%, ${p.alpha})`;
+        ctx.fillStyle = p.color;
         ctx.fill();
 
         for (let j = i + 1; j < particlesRef.current.length; j++) {
@@ -91,11 +94,13 @@ export default function UltraContainer({ children }: Props) {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `hsla(${p.hue}, 40%, 55%, ${0.04 * (1 - d / 120)})`;
+            ctx.globalAlpha = 0.03 * (1 - d / 120);
+            ctx.strokeStyle = p.color;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
+        ctx.globalAlpha = 1;
       });
 
       animId = requestAnimationFrame(animate);
@@ -110,11 +115,11 @@ export default function UltraContainer({ children }: Props) {
 
   return (
     <div className="advanced-ultra-container advanced-light">
-      {/* Ambient glow that follows cursor — light mode */}
+      {/* Ambient cursor glow — light mode with subtle color */}
       <div
         className="advanced-cursor-glow"
         style={{
-          background: `radial-gradient(600px circle at ${mouseRef.current.x}px ${mouseRef.current.y}px, rgba(99, 102, 241, 0.03), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${mouseRef.current.x}px ${mouseRef.current.y}px, rgba(59, 130, 246, 0.02), transparent 40%)`,
         }}
       />
 
@@ -126,7 +131,7 @@ export default function UltraContainer({ children }: Props) {
         />
       )}
 
-      {/* Existing dashboard renders untouched */}
+      {/* Dashboard content renders untouched */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

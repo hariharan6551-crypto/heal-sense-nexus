@@ -64,36 +64,36 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
   const patientId = String(patient[idCol] ?? 'Unknown');
 
   const riskColors: Record<string, string> = {
-    pink: 'bg-pink-500/10 text-pink-400 border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,0.3)]',
-    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.3)]',
-    teal: 'bg-teal-500/10 text-teal-400 border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.3)]',
+    pink: 'bg-pink-100 text-pink-700 border-pink-200 shadow-sm',
+    amber: 'bg-amber-100 text-amber-700 border-amber-200 shadow-sm',
+    teal: 'bg-teal-100 text-teal-700 border-teal-200 shadow-sm',
   };
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-xl bg-slate-900/90 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border-l border-white/10 overflow-y-auto animate-slide-in-right custom-scrollbar">
+      <div className="fixed inset-0 z-[60] bg-slate-900/30 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-xl bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto animate-slide-in-right custom-scrollbar">
         {/* Header */}
-        <div className="sticky top-0 bg-black/40 backdrop-blur-md text-white px-6 py-5 z-10 border-b border-white/10">
+        <div className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-5 z-10 border-b border-slate-100 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-cyan-500/20 border border-cyan-500/50 rounded-xl flex items-center justify-center">
-                <User className="h-5 w-5 text-cyan-400 drop-shadow-[0_0_5px_currentColor]" />
+              <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center shadow-sm">
+                <User className="h-5 w-5 text-blue-500" />
               </div>
               <div>
-                <h2 className="text-sm font-black tracking-widest text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] uppercase">Node Profile {patientId}</h2>
-                <p className="text-cyan-300/70 text-[10px] font-mono mt-0.5">Isolated Telemetry View</p>
+                <h2 className="text-sm font-black tracking-widest text-slate-800 uppercase">Node Profile {patientId}</h2>
+                <p className="text-slate-500 text-[10px] font-mono font-medium mt-0.5">Isolated Telemetry View</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={toggleFlag}
-                className={`p-2 rounded-xl border transition-all ${flagged ? 'bg-pink-500/20 text-pink-400 border-pink-500/40 shadow-[0_0_15px_rgba(236,72,153,0.3)]' : 'bg-white/5 hover:bg-white/10 text-slate-400 border-white/10 hover:border-white/20'}`}
+                className={`p-2 rounded-xl border transition-all ${flagged ? 'bg-pink-100 text-pink-600 border-pink-200 shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-slate-200 hover:border-slate-300'}`}
                 title={flagged ? 'Unflag' : 'Flag for review'}
               >
-                {flagged ? <Flag className="h-4 w-4 drop-shadow-[0_0_5px_currentColor]" /> : <FlagOff className="h-4 w-4" />}
+                {flagged ? <Flag className="h-4 w-4" /> : <FlagOff className="h-4 w-4" />}
               </button>
-              <button onClick={onClose} className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl transition-all">
-                <X className="h-4 w-4 text-slate-400 hover:text-white" />
+              <button onClick={onClose} className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-sm">
+                <X className="h-4 w-4 text-slate-500 hover:text-slate-800" />
               </button>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
           {/* Risk Badge */}
           {riskLevel && (
             <div className={`mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold border ${riskColors[riskLevel.color]}`}>
-              <ShieldAlert className="h-3 w-3 drop-shadow-[0_0_5px_currentColor]" />
+              <ShieldAlert className="h-3 w-3" />
               {riskLevel.level} Status — {riskLevel.value}% Confidence
             </div>
           )}
@@ -110,9 +110,9 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
         {/* Body */}
         <div className="p-6 space-y-6">
           {/* Patient Details Grid */}
-          <div className="bg-black/40 rounded-xl p-5 border border-white/10 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
-            <h3 className="text-xs font-bold text-white tracking-widest uppercase mb-4 flex items-center gap-2">
-              <Activity className="h-4 w-4 text-cyan-400 drop-shadow-[0_0_5px_currentColor]" />
+          <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 shadow-sm">
+            <h3 className="text-xs font-bold text-slate-800 tracking-widest uppercase mb-4 flex items-center gap-2">
+              <Activity className="h-4 w-4 text-blue-500" />
               Telemetry Data Stream
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -121,11 +121,11 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
                 if (val === undefined || val === null) return null;
                 const isNum = dataset.numericColumns.includes(col);
                 return (
-                  <div key={col} className="bg-white/5 hover:bg-white/10 rounded-lg p-3 border border-white/5 transition-colors">
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate mb-1">
+                  <div key={col} className="bg-white hover:bg-slate-50 rounded-lg p-3 border border-slate-200 transition-colors shadow-sm">
+                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate mb-1">
                       {col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}
                     </p>
-                    <p className={`text-xs font-mono font-bold truncate ${isNum ? 'text-blue-300 drop-shadow-[0_0_3px_rgba(147,197,253,0.5)]' : 'text-slate-200'}`}>
+                    <p className={`text-xs font-mono font-bold truncate ${isNum ? 'text-blue-700' : 'text-slate-700'}`}>
                       {isNum && typeof val === 'number' ? (Number.isInteger(val) ? val.toLocaleString() : val.toFixed(2)) : String(val)}
                     </p>
                   </div>
@@ -135,22 +135,22 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
           </div>
 
           {/* Notes */}
-          <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-5 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
-            <h3 className="text-xs font-bold text-white tracking-widest uppercase mb-3 flex items-center gap-2">
-              <StickyNote className="h-4 w-4 text-amber-400 drop-shadow-[0_0_5px_currentColor]" />
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h3 className="text-xs font-bold text-slate-800 tracking-widest uppercase mb-3 flex items-center gap-2">
+              <StickyNote className="h-4 w-4 text-amber-500" />
               Operator Annotations
             </h3>
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
               placeholder="Add secured operator notes..."
-              className="w-full h-28 text-xs text-blue-100 bg-black/50 border border-white/10 rounded-lg p-3 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500/50 placeholder-slate-500 font-mono shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] transition-all"
+              className="w-full h-28 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 placeholder-slate-400 font-mono shadow-inner transition-all"
             />
             <button
               onClick={saveNotes}
-              className="mt-3 flex items-center gap-1.5 px-4 py-2 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-[10px] uppercase tracking-widest font-bold rounded-lg hover:bg-blue-500/40 transition-colors shadow-[0_0_10px_rgba(59,130,246,0.2)]"
+              className="mt-3 flex items-center gap-1.5 px-4 py-2 bg-blue-600 border border-blue-700 text-white text-[10px] uppercase tracking-widest font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
             >
-              <Save className="h-3.5 w-3.5 drop-shadow-[0_0_5px_currentColor]" />
+              <Save className="h-3.5 w-3.5" />
               Sync Data
             </button>
           </div>
@@ -162,14 +162,14 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
           height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba(0, 0, 0, 0.02);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(0, 0, 0, 0.1);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </>

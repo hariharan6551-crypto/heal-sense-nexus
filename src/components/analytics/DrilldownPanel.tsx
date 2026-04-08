@@ -75,25 +75,25 @@ export default function DrilldownPanel({ isOpen, onClose, chartId, dataset, anal
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-[60] bg-slate-900/30 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-md bg-slate-900/90 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border-l border-white/10 overflow-y-auto animate-slide-in-right custom-scrollbar">
+      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-md bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto animate-slide-in-right custom-scrollbar">
         {/* Header */}
-        <div className="sticky top-0 bg-black/40 backdrop-blur-md text-white px-6 py-5 z-10 border-b border-white/10">
+        <div className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-5 z-10 border-b border-slate-100 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/50 flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-blue-400 drop-shadow-[0_0_5px_currentColor]" />
+              <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-blue-600" />
               </div>
-              <h2 className="text-sm font-black tracking-widest text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">Deep Dive Analysis</h2>
+              <h2 className="text-sm font-black tracking-widest text-slate-800 uppercase">Deep Dive Analysis</h2>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-              <X className="h-4 w-4 text-slate-400 hover:text-white" />
+            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+              <X className="h-4 w-4 text-slate-500 hover:text-slate-800" />
             </button>
           </div>
           {chart && (
-            <p className="text-blue-300 text-xs mt-3 font-mono border-l-2 border-blue-500 pl-2">{chart.title}</p>
+            <p className="text-blue-700 text-xs mt-3 font-mono border-l-2 border-blue-500 pl-2 font-medium">{chart.title}</p>
           )}
         </div>
 
@@ -102,57 +102,57 @@ export default function DrilldownPanel({ isOpen, onClose, chartId, dataset, anal
           {/* KPI Summary */}
           {kpis && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-black/40 rounded-xl p-4 border border-white/10 shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Nodes</p>
-                <p className="text-2xl font-black text-blue-100 drop-shadow-[0_0_5px_rgba(191,219,254,0.5)] font-mono">{kpis.totalCount.toLocaleString()}</p>
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 shadow-sm">
+                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Nodes</p>
+                <p className="text-2xl font-black text-blue-700 font-mono">{kpis.totalCount.toLocaleString()}</p>
               </div>
-              <div className="bg-black/40 rounded-xl p-4 border border-white/10 shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Global Avg</p>
-                <p className="text-2xl font-black text-violet-100 drop-shadow-[0_0_5px_rgba(221,214,254,0.5)] font-mono">{kpis.avgOverall.toLocaleString()}</p>
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 shadow-sm">
+                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Global Avg</p>
+                <p className="text-2xl font-black text-violet-700 font-mono">{kpis.avgOverall.toLocaleString()}</p>
               </div>
               {kpis.highest && (
-                <div className="bg-teal-500/10 rounded-xl p-4 border border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
-                  <p className="text-[9px] font-bold text-teal-400 uppercase tracking-widest mb-1">Peak Segment</p>
-                  <p className="text-sm font-black text-teal-100 truncate">{kpis.highest.name}</p>
-                  <p className="text-xs font-mono text-teal-300 mt-1">{kpis.highest.avg.toLocaleString()}</p>
+                <div className="bg-teal-50 rounded-xl p-4 border border-teal-100 shadow-sm">
+                  <p className="text-[9px] font-bold text-teal-600 uppercase tracking-widest mb-1">Peak Segment</p>
+                  <p className="text-sm font-black text-teal-800 truncate">{kpis.highest.name}</p>
+                  <p className="text-xs font-mono font-bold text-teal-700 mt-1">{kpis.highest.avg.toLocaleString()}</p>
                 </div>
               )}
               {kpis.lowest && (
-                <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,0.1)]">
-                  <p className="text-[9px] font-bold text-pink-400 uppercase tracking-widest mb-1">Trough Segment</p>
-                  <p className="text-sm font-black text-pink-100 truncate">{kpis.lowest.name}</p>
-                  <p className="text-xs font-mono text-pink-300 mt-1">{kpis.lowest.avg.toLocaleString()}</p>
+                <div className="bg-pink-50 rounded-xl p-4 border border-pink-100 shadow-sm">
+                  <p className="text-[9px] font-bold text-pink-600 uppercase tracking-widest mb-1">Trough Segment</p>
+                  <p className="text-sm font-black text-pink-800 truncate">{kpis.lowest.name}</p>
+                  <p className="text-xs font-mono font-bold text-pink-700 mt-1">{kpis.lowest.avg.toLocaleString()}</p>
                 </div>
               )}
             </div>
           )}
 
           {/* Segment Table */}
-          <div className="bg-black/40 rounded-xl border border-white/10 overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
-            <div className="px-5 py-3 bg-white/5 border-b border-white/10">
-              <h3 className="text-xs font-bold text-white tracking-widest uppercase">Segment Breakdown</h3>
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+              <h3 className="text-xs font-bold text-slate-800 tracking-widest uppercase">Segment Breakdown</h3>
             </div>
             <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-slate-400 border-b border-white/10 bg-black/50 font-mono text-[10px]">
+                  <tr className="text-slate-500 border-b border-slate-100 bg-white font-mono text-[10px]">
                     <th className="px-5 py-3 text-left font-bold uppercase tracking-wider">Segment</th>
                     <th className="px-5 py-3 text-right font-bold uppercase tracking-wider">Count</th>
                     <th className="px-5 py-3 text-right font-bold uppercase tracking-wider">Avg</th>
                     <th className="px-5 py-3 text-right font-bold uppercase tracking-wider">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-50 border-t border-slate-100">
                   {segmentInsights.map((seg, i) => (
-                    <tr key={i} className="hover:bg-white/5 transition-colors group">
-                      <td className="px-5 py-3 font-medium text-slate-300 group-hover:text-white transition-colors">{seg.name}</td>
-                      <td className="px-5 py-3 text-right text-slate-400 font-mono">{seg.count.toLocaleString()}</td>
+                    <tr key={i} className="hover:bg-slate-50/80 transition-colors group">
+                      <td className="px-5 py-3 font-bold text-slate-700 group-hover:text-slate-900 transition-colors">{seg.name}</td>
+                      <td className="px-5 py-3 text-right text-slate-500 font-mono font-medium">{seg.count.toLocaleString()}</td>
                       <td className="px-5 py-3 text-right">
-                        <span className="inline-block px-2.5 py-0.5 rounded border border-blue-500/30 text-[10px] font-bold bg-blue-500/10 text-blue-300 font-mono shadow-[0_0_10px_rgba(59,130,246,0.15)]">
+                        <span className="inline-block px-2.5 py-0.5 rounded border border-blue-200 text-[10px] font-bold bg-blue-50 text-blue-700 font-mono shadow-sm">
                           {seg.avg.toLocaleString()}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-right text-slate-400 font-mono">{seg.total.toLocaleString()}</td>
+                      <td className="px-5 py-3 text-right text-slate-500 font-mono font-medium">{seg.total.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -162,13 +162,13 @@ export default function DrilldownPanel({ isOpen, onClose, chartId, dataset, anal
 
           {/* Chart Info */}
           {chart && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-white/10">
-              <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Chart Matrix Details</h3>
-              <div className="space-y-2 text-[11px] text-slate-400 font-mono">
-                <p>Type: <span className="font-bold text-blue-300 capitalize">{chart.type.replace('_', ' ')}</span></p>
-                {chart.xColumn && <p>X-Axis: <span className="font-bold text-violet-300">{chart.xColumn}</span></p>}
-                {chart.yColumn && <p>Y-Axis: <span className="font-bold text-teal-300">{chart.yColumn}</span></p>}
-                <p className="mt-2 text-slate-500 leading-relaxed border-t border-white/5 pt-2">{chart.description}</p>
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 shadow-sm">
+              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3">Chart Matrix Details</h3>
+              <div className="space-y-2 text-[11px] text-slate-600 font-mono font-medium">
+                <p>Type: <span className="font-bold text-blue-600 capitalize">{chart.type.replace('_', ' ')}</span></p>
+                {chart.xColumn && <p>X-Axis: <span className="font-bold text-violet-600">{chart.xColumn}</span></p>}
+                {chart.yColumn && <p>Y-Axis: <span className="font-bold text-teal-600">{chart.yColumn}</span></p>}
+                <p className="mt-2 text-slate-500 leading-relaxed border-t border-slate-200 pt-2">{chart.description}</p>
               </div>
             </div>
           )}
@@ -180,14 +180,14 @@ export default function DrilldownPanel({ isOpen, onClose, chartId, dataset, anal
           height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba(0, 0, 0, 0.02);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(0, 0, 0, 0.1);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </>

@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, X, Download, Sparkles, MessageSquare,
   BarChart3, FileSpreadsheet,
@@ -14,39 +15,88 @@ export default function FloatingActionButton({ onExportCSV, onOpenAI, onScrollTo
   const [expanded, setExpanded] = useState(false);
 
   const actions = [
-    { icon: Sparkles, label: 'Engage AI', color: 'bg-indigo-500/80 hover:bg-indigo-500 text-indigo-100 border border-indigo-400/50 shadow-[0_0_15px_rgba(99,102,241,0.5)]', onClick: onOpenAI },
-    { icon: FileSpreadsheet, label: 'Extract Data', color: 'bg-emerald-500/80 hover:bg-emerald-500 text-emerald-100 border border-emerald-400/50 shadow-[0_0_15px_rgba(16,185,129,0.5)]', onClick: onExportCSV },
-    { icon: BarChart3, label: 'Top Navigation', color: 'bg-blue-500/80 hover:bg-blue-500 text-blue-100 border border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)]', onClick: onScrollTop },
+    {
+      icon: Sparkles,
+      label: 'Engage AI',
+      gradient: 'linear-gradient(135deg, #8B5CF6, #6366F1)',
+      shadow: '0 4px 16px rgba(139,92,246,0.3)',
+      onClick: onOpenAI,
+    },
+    {
+      icon: FileSpreadsheet,
+      label: 'Extract Data',
+      gradient: 'linear-gradient(135deg, #22C55E, #10B981)',
+      shadow: '0 4px 16px rgba(34,197,94,0.3)',
+      onClick: onExportCSV,
+    },
+    {
+      icon: BarChart3,
+      label: 'Top Navigation',
+      gradient: 'linear-gradient(135deg, #3B82F6, #0EA5E9)',
+      shadow: '0 4px 16px rgba(59,130,246,0.3)',
+      onClick: onScrollTop,
+    },
   ];
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       {/* Action buttons */}
-      {expanded && (
-        <div className="flex flex-col gap-3 mb-2 animate-fade-up">
-          {actions.map((action, i) => (
-            <button
-              key={i}
-              onClick={() => { action.onClick?.(); setExpanded(false); }}
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full backdrop-blur-md text-xs font-bold font-mono tracking-wide transition-all duration-300 hover:scale-105 ${action.color}`}
-              style={{ animationDelay: `${i * 50}ms` }}
-            >
-              <action.icon className="h-4 w-4 drop-shadow-[0_0_5px_currentColor]" />
-              {action.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="flex flex-col gap-3 mb-2"
+          >
+            {actions.map((action, i) => (
+              <motion.button
+                key={i}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ delay: i * 0.06 }}
+                whileHover={{ scale: 1.05, x: -4 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { action.onClick?.(); setExpanded(false); }}
+                className="flex items-center gap-2.5 px-4 py-2.5 rounded-full text-white text-xs font-bold tracking-wide"
+                style={{
+                  background: action.gradient,
+                  boxShadow: action.shadow,
+                }}
+              >
+                <action.icon className="h-4 w-4" />
+                {action.label}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Main FAB */}
-      <button
+      {/* Main FAB — Vibrant gradient */}
+      <motion.button
         onClick={() => setExpanded(!expanded)}
-        className={`w-14 h-14 rounded-full bg-slate-900/90 backdrop-blur-xl border-2 border-blue-500/50 text-white shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:shadow-[0_0_40px_rgba(59,130,246,0.8)] hover:scale-105 hover:bg-black transition-all duration-300 flex items-center justify-center group ${
-          expanded ? 'rotate-45 border-pink-500/50 shadow-[0_0_30px_rgba(236,72,153,0.5)] hover:shadow-[0_0_40px_rgba(236,72,153,0.8)]' : ''
-        }`}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.92 }}
+        animate={{
+          rotate: expanded ? 45 : 0,
+        }}
+        className="w-14 h-14 rounded-full text-white flex items-center justify-center transition-all duration-300"
+        style={{
+          background: expanded
+            ? 'linear-gradient(135deg, #EF4444, #EC4899)'
+            : 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
+          boxShadow: expanded
+            ? '0 8px 30px rgba(239,68,68,0.35)'
+            : '0 8px 30px rgba(59,130,246,0.35)',
+        }}
       >
-        {expanded ? <X className="h-6 w-6 text-pink-400 drop-shadow-[0_0_8px_currentColor]" /> : <Plus className="h-6 w-6 text-blue-400 drop-shadow-[0_0_8px_currentColor] group-hover:scale-110 transition-transform" />}
-      </button>
+        {expanded ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <Plus className="h-6 w-6" />
+        )}
+      </motion.button>
     </div>
   );
 }

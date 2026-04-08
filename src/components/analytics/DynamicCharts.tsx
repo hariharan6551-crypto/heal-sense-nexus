@@ -493,14 +493,14 @@ function RenderChart({ chart, data, analysis }: {
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full text-[9px] border-collapse font-mono">
           <thead>
-            <tr><th className="p-1.5 bg-black/40 border-b border-white/5"></th>
-              {cols.map(c => <th key={c} className="p-1.5 text-blue-300/70 truncate max-w-[70px] bg-black/40 border-b border-white/5 font-black uppercase tracking-wider">{c}</th>)}
+            <tr><th className="p-1.5 bg-slate-50 border-b border-slate-200"></th>
+              {cols.map(c => <th key={c} className="p-1.5 text-blue-700 truncate max-w-[70px] bg-slate-50 border-b border-slate-200 font-black uppercase tracking-wider">{c}</th>)}
             </tr>
           </thead>
           <tbody>
             {cols.map(row => (
               <tr key={row}>
-                <td className="p-1.5 font-bold text-violet-300/80 truncate max-w-[85px] bg-black/40 border-r border-white/5 text-right">{row}</td>
+                <td className="p-1.5 font-bold text-violet-700 truncate max-w-[85px] bg-slate-50 border-r border-slate-200 text-right">{row}</td>
                 {cols.map(col => {
                   const e = correlationMatrix.find(e => e.col1 === row && e.col2 === col);
                   const v = e?.value ?? 0;

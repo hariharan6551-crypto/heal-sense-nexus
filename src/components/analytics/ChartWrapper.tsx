@@ -3,6 +3,7 @@ import {
   Download, BarChart3, TrendingUp, PieChart as PieIcon,
   Table, ChevronDown, Image, FileSpreadsheet, X,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { ChartRecommendation } from '@/lib/chartRecommender';
 
 interface Props {
@@ -11,11 +12,6 @@ interface Props {
   data: Record<string, any>[];
   onDrilldown?: (chartId: string) => void;
 }
-
-const VIEW_OPTIONS = [
-  { key: 'default', label: 'Default', icon: BarChart3 },
-  { key: 'table', label: 'Table', icon: Table },
-];
 
 export default function ChartWrapper({ chart, children, data, onDrilldown }: Props) {
   const [showExport, setShowExport] = useState(false);
@@ -56,7 +52,7 @@ export default function ChartWrapper({ chart, children, data, onDrilldown }: Pro
       img.onload = () => {
         canvas.width = img.width * 2;
         canvas.height = img.height * 2;
-        ctx!.fillStyle = '#0f172a'; // Match dark background
+        ctx!.fillStyle = '#ffffff';
         ctx!.fillRect(0, 0, canvas.width, canvas.height);
         ctx!.scale(2, 2);
         ctx!.drawImage(img, 0, 0);
@@ -76,46 +72,75 @@ export default function ChartWrapper({ chart, children, data, onDrilldown }: Pro
 
   return (
     <div className="relative group h-full w-full" ref={chartRef}>
-      {/* Action bar that appears on hover */}
+      {/* Action bar on hover */}
       <div className="absolute top-2 right-2 z-20 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         {/* Drilldown */}
         {onDrilldown && (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => onDrilldown(chart.id)}
-            className="p-1.5 bg-black/40 backdrop-blur-md rounded-lg border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)] hover:bg-blue-500/20 hover:border-blue-500/50 transition-all"
+            className="p-1.5 rounded-lg transition-all"
+            style={{
+              background: 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(59,130,246,0.15)',
+              boxShadow: '0 2px 8px rgba(59,130,246,0.1)',
+            }}
             title="Drill Down Matrix"
           >
-            <TrendingUp className="h-3.5 w-3.5 text-blue-400 drop-shadow-[0_0_5px_currentColor]" />
-          </button>
+            <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+          </motion.button>
         )}
 
         {/* Export */}
         <div className="relative">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setShowExport(!showExport)}
-            className={`p-1.5 rounded-lg border transition-all shadow-[0_0_10px_rgba(6,182,212,0.2)] ${showExport ? 'bg-cyan-500/20 border-cyan-500/50' : 'bg-black/40 backdrop-blur-md border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50'}`}
+            className="p-1.5 rounded-lg transition-all"
+            style={{
+              background: showExport ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(8px)',
+              border: `1px solid ${showExport ? 'rgba(34,197,94,0.2)' : 'rgba(34,197,94,0.15)'}`,
+              boxShadow: '0 2px 8px rgba(34,197,94,0.1)',
+            }}
             title="Export Data"
           >
-            <Download className="h-3.5 w-3.5 text-cyan-400 drop-shadow-[0_0_5px_currentColor]" />
-          </button>
-          {showExport && (
-            <div className="absolute right-0 top-full mt-2 bg-slate-900/90 backdrop-blur-xl rounded-xl border border-cyan-500/30 shadow-[0_0_20px_rgba(0,0,0,0.8)] p-1.5 min-w-[140px] z-30 animate-scale-in">
-              <button
-                onClick={exportPNG}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-cyan-500/20 font-mono rounded-lg transition-colors group"
+            <Download className="h-3.5 w-3.5 text-green-500" />
+          </motion.button>
+          <AnimatePresence>
+            {showExport && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                className="absolute right-0 top-full mt-2 rounded-xl p-1.5 min-w-[140px] z-30"
+                style={{
+                  background: 'rgba(255,255,255,0.98)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04)',
+                }}
               >
-                <Image className="h-3.5 w-3.5 text-cyan-500 group-hover:text-cyan-400" />
-                Export PNG
-              </button>
-              <button
-                onClick={exportCSV}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-cyan-500/20 font-mono rounded-lg transition-colors group"
-              >
-                <FileSpreadsheet className="h-3.5 w-3.5 text-cyan-500 group-hover:text-cyan-400" />
-                Export CSV
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={exportPNG}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-600 hover:text-slate-800 hover:bg-blue-50 font-semibold rounded-lg transition-colors"
+                >
+                  <Image className="h-3.5 w-3.5 text-blue-500" />
+                  Export PNG
+                </button>
+                <button
+                  onClick={exportCSV}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-600 hover:text-slate-800 hover:bg-green-50 font-semibold rounded-lg transition-colors"
+                >
+                  <FileSpreadsheet className="h-3.5 w-3.5 text-green-500" />
+                  Export CSV
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

@@ -71,16 +71,16 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]" onClick={() => setOpen(false)}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-md animate-fade-in" />
+      <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-md animate-fade-in" />
 
       {/* Palette */}
       <div
-        className="relative z-10 w-full max-w-xl bg-slate-900/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.3)] overflow-hidden animate-scale-in"
+        className="relative z-10 w-full max-w-xl bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl overflow-hidden animate-scale-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Search Input */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-blue-500/30 bg-black/40">
-          <Command className="h-5 w-5 text-blue-400 drop-shadow-[0_0_5px_currentColor] flex-shrink-0 animate-pulse" />
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-white">
+          <Command className="h-5 w-5 text-blue-500 flex-shrink-0 animate-pulse" />
           <input
             ref={inputRef}
             type="text"
@@ -88,9 +88,9 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
             value={query}
             onChange={e => { setQuery(e.target.value); setSelected(0); }}
             onKeyDown={handleKeyDown}
-            className="flex-1 text-base font-mono text-blue-100 placeholder-blue-300/40 outline-none bg-transparent"
+            className="flex-1 text-base font-mono font-medium text-slate-800 placeholder-slate-400 outline-none bg-transparent"
           />
-          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-bold font-mono text-blue-300 bg-blue-500/10 rounded border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]">
+          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-bold font-mono text-slate-500 bg-slate-100 rounded border border-slate-200 shadow-sm">
             ESC
           </kbd>
         </div>
@@ -98,7 +98,7 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
         {/* Results */}
         <div className="max-h-[350px] overflow-y-auto p-3 custom-scrollbar">
           {filtered.length === 0 ? (
-            <p className="text-center text-sm font-mono text-pink-400 py-10 opacity-70">ERR: Unknown command sequence</p>
+            <p className="text-center text-sm font-mono text-pink-500 font-bold py-10 opacity-70">ERR: Unknown command sequence</p>
           ) : (
             <>
               {['System Navigation', 'Executable Actions'].map(cat => {
@@ -115,12 +115,12 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
                           onClick={() => { item.action(); setOpen(false); }}
                           onMouseEnter={() => setSelected(idx)}
                           className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
-                            idx === selected ? 'bg-blue-500/20 text-blue-200 border border-blue-500/50 shadow-[inset_0_0_20px_rgba(59,130,246,0.3)]' : 'text-slate-300 hover:bg-white/5 border border-transparent'
+                            idx === selected ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm' : 'text-slate-600 hover:bg-slate-50 border border-transparent cursor-pointer'
                           }`}
                         >
-                          <item.icon className={`h-4 w-4 flex-shrink-0 ${idx === selected ? 'text-blue-400 drop-shadow-[0_0_5px_currentColor]' : 'text-slate-500'}`} />
-                          <span className={`text-xs font-mono font-bold flex-1 ${idx === selected ? 'drop-shadow-[0_0_3px_currentColor]' : ''}`}>{item.label}</span>
-                          {idx === selected && <ArrowRight className="h-4 w-4 text-blue-400 drop-shadow-[0_0_5px_currentColor]" />}
+                          <item.icon className={`h-4 w-4 flex-shrink-0 ${idx === selected ? 'text-blue-600' : 'text-slate-400'}`} />
+                          <span className={`text-xs font-mono flex-1 ${idx === selected ? 'font-black' : 'font-semibold'}`}>{item.label}</span>
+                          {idx === selected && <ArrowRight className="h-4 w-4 text-blue-500" />}
                         </button>
                       );
                     })}
@@ -132,18 +132,18 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-5 py-3 border-t border-blue-500/30 bg-black/60">
-          <div className="flex items-center gap-3 text-[10px] text-blue-300/70 font-mono">
+        <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50">
+          <div className="flex items-center gap-3 text-[10px] text-slate-500 font-mono font-medium">
             <div className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-blue-500/10 rounded border border-blue-500/30">↑↓</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-sm">↑↓</kbd>
               <span>Navigate</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-blue-500/10 rounded border border-blue-500/30">↵</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-sm">↵</kbd>
               <span>Execute</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-blue-300/70 font-mono font-bold">
+          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono font-bold">
             <Command className="h-3 w-3 inline-block" /> + K <span className="opacity-50 font-normal">to close</span>
           </div>
         </div>
@@ -153,14 +153,14 @@ export default function CommandPalette({ onTabChange, onAction }: Props) {
           width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba(0, 0, 0, 0.02);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(59, 130, 246, 0.4);
+          background: rgba(59, 130, 246, 0.2);
           border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(59, 130, 246, 0.6);
+          background: rgba(59, 130, 246, 0.4);
         }
       `}</style>
     </div>
