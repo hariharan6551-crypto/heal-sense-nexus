@@ -133,10 +133,12 @@ export default function UltraContainer({ children }: Props) {
 
       {/* Dashboard content renders untouched */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="advanced-content-layer"
+        layoutId="cinematic-morph-container"
+        initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)', z: -50 }}
+        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', z: 0 }}
+        transition={{ layout: { type: "spring", bounce: 0, duration: 1.2 }, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="advanced-content-layer relative z-10 w-full min-h-screen bg-transparent"
+        style={{ transformStyle: 'preserve-3d' }}
       >
         {children}
       </motion.div>

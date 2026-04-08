@@ -103,17 +103,17 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 right-6 z-[55] w-[400px] h-[560px] rounded-2xl overflow-hidden advanced-copilot-glass flex flex-col"
+            className="fixed bottom-6 right-6 z-[55] w-[400px] h-[560px] rounded-2xl overflow-hidden bg-white shadow-2xl border border-slate-200 flex flex-col"
           >
             {/* Chat Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">AI Copilot</h3>
-                  <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                  <h3 className="text-sm font-bold text-slate-800">AI Copilot</h3>
+                  <p className="text-[10px] text-slate-500 flex items-center gap-1 font-medium tracking-wide">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     Online · Context-aware
                   </p>
@@ -136,8 +136,8 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center">
                     <Sparkles className="w-7 h-7 text-purple-400" />
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">How can I help?</h4>
-                  <p className="text-xs text-slate-500 mb-4">Ask me anything about your dataset</p>
+                  <h4 className="text-sm font-bold text-slate-800 mb-1">How can I help?</h4>
+                  <p className="text-xs text-slate-500 mb-4 font-medium">Ask me anything about your dataset</p>
                   <div className="space-y-2">
                     {quickActions.map((action) => (
                       <button
@@ -146,7 +146,7 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
                           setInput(action);
                           setTimeout(handleSend, 100);
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-slate-300 transition-colors border border-white/5"
+                        className="w-full text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs text-slate-700 transition-colors border border-slate-200 font-semibold"
                       >
                         {action}
                       </button>
@@ -162,24 +162,24 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
                 >
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm ${
                     msg.role === 'user' 
-                      ? 'bg-cyan-500/20' 
+                      ? 'bg-blue-50 border border-blue-100' 
                       : 'bg-gradient-to-br from-violet-500 to-purple-600'
                   }`}>
                     {msg.role === 'user' ? (
-                      <User className="w-3.5 h-3.5 text-cyan-400" />
+                      <User className="w-3.5 h-3.5 text-blue-600" />
                     ) : (
                       <Bot className="w-3.5 h-3.5 text-white" />
                     )}
                   </div>
-                  <div className={`max-w-[280px] rounded-xl px-3 py-2.5 text-xs leading-relaxed ${
+                  <div className={`max-w-[280px] rounded-xl px-3 py-2.5 text-xs leading-relaxed shadow-sm font-medium ${
                     msg.role === 'user'
-                      ? 'bg-cyan-500/15 text-cyan-100 border border-cyan-500/20'
-                      : 'bg-white/5 text-slate-300 border border-white/5'
+                      ? 'bg-blue-600 text-white border border-blue-700 rounded-tr-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 rounded-tl-sm'
                   }`}>
                     <div className="whitespace-pre-wrap">{msg.content}</div>
-                    <p className="text-[9px] text-slate-600 mt-1">
+                    <p className={`text-[9px] mt-1 ${msg.role === 'user' ? 'text-blue-200' : 'text-slate-400'}`}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
                     <Bot className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div className="bg-white/5 rounded-xl px-4 py-3 border border-white/5">
+                  <div className="bg-slate-50 rounded-xl rounded-tl-sm px-4 py-3 border border-slate-200 shadow-sm">
                     <div className="flex gap-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
@@ -214,8 +214,8 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
             </div>
 
             {/* Input */}
-            <div className="p-3 border-t border-white/5">
-              <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/10 focus-within:border-purple-500/40 transition-colors">
+            <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+              <div className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-slate-200 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-sm">
                 <input
                   ref={inputRef}
                   type="text"
@@ -223,7 +223,7 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about your data..."
-                  className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
+                  className="flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 font-medium outline-none"
                 />
                 <button
                   onClick={handleSend}

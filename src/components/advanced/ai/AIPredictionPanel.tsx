@@ -73,7 +73,7 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 400 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed right-0 top-0 bottom-0 w-[420px] z-[60] advanced-panel-glass overflow-y-auto"
+          className="fixed right-0 top-0 bottom-0 w-[420px] z-[60] bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto"
         >
           <div className="p-6">
             {/* Header */}
@@ -83,11 +83,11 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
                   <Target className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">AI Predictions</h2>
-                  <p className="text-xs text-slate-400">Time-series forecasting engine</p>
+                  <h2 className="text-lg font-bold text-slate-800">AI Predictions</h2>
+                  <p className="text-xs text-slate-500">Time-series forecasting engine</p>
                 </div>
               </div>
-              <button onClick={togglePredictionPanel} className="advanced-close-btn">
+              <button onClick={togglePredictionPanel} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -95,7 +95,7 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
             {isComputing ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4">
                 <div className="advanced-spinner" />
-                <p className="text-sm text-slate-400 animate-pulse">Running prediction models...</p>
+                <p className="text-sm text-slate-500 animate-pulse font-medium">Running prediction models...</p>
                 <div className="flex gap-1">
                   {[0, 1, 2, 3, 4].map((i) => (
                     <motion.div
@@ -110,23 +110,23 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
             ) : (
               <>
                 {/* Trend Overview */}
-                <div className="advanced-metric-card mb-4">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm mb-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Projected Trend</span>
+                    <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Projected Trend</span>
                     <div className={`flex items-center gap-1 text-sm font-bold ${overallTrend >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       {overallTrend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                       {overallTrend >= 0 ? '+' : ''}{overallTrend.toFixed(1)}%
                     </div>
                   </div>
-                  <p className="text-2xl font-black text-white mt-2">
+                  <p className="text-2xl font-black text-slate-800 mt-2 font-mono">
                     {forecast[forecast.length - 1]?.predicted?.toLocaleString() || '—'}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">Predicted value at M12</p>
                 </div>
 
                 {/* Forecast Chart */}
-                <div className="advanced-metric-card mb-4">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Forecast Timeline</p>
+                <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-4">
+                  <p className="text-xs text-slate-600 uppercase tracking-wider font-bold mb-3">Forecast Timeline</p>
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={forecast}>
@@ -144,11 +144,12 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
                         <YAxis tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} width={45} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
                             border: '1px solid rgba(148, 163, 184, 0.2)',
                             borderRadius: '12px',
-                            color: '#e2e8f0',
+                            color: '#0f172a',
                             fontSize: '11px',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                           }}
                         />
                         <Area type="monotone" dataKey="upper" stroke="none" fill="rgba(139, 92, 246, 0.1)" />
@@ -166,8 +167,8 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
                 </div>
 
                 {/* Risk Scores */}
-                <div className="advanced-metric-card">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3 flex items-center gap-2">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+                  <p className="text-xs text-slate-600 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                     <AlertTriangle className="w-3 h-3" /> Risk Probability Scores
                   </p>
                   <div className="space-y-3">
@@ -181,12 +182,12 @@ export default function AIPredictionPanel({ datasetSize = 100, numericColumns = 
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-slate-300 truncate font-medium">{r.name}</span>
+                            <span className="text-xs text-slate-700 truncate font-semibold">{r.name}</span>
                             <span className={`text-xs font-bold ${r.risk > 0.7 ? 'text-rose-400' : r.risk > 0.4 ? 'text-amber-400' : 'text-emerald-400'}`}>
                               {(r.risk * 100).toFixed(0)}%
                             </span>
                           </div>
-                          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                          <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${r.risk * 100}%` }}

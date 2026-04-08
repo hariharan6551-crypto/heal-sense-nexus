@@ -90,8 +90,7 @@ export default function AdvancedFilterBuilder() {
           initial={{ opacity: 0, x: 400 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 400 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed right-0 top-0 bottom-0 w-[460px] z-[60] advanced-panel-glass overflow-y-auto"
+          className="fixed right-0 top-0 bottom-0 w-[460px] z-[60] bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto"
         >
           <div className="p-6">
             {/* Header */}
@@ -101,18 +100,18 @@ export default function AdvancedFilterBuilder() {
                   <Filter className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">Filter Builder</h2>
+                  <h2 className="text-lg font-bold text-slate-800">Filter Builder</h2>
                   <p className="text-xs text-slate-400">
                     {activeCount > 0 ? `${activeCount} active condition${activeCount > 1 ? 's' : ''}` : 'Multi-condition filter engine'}
                   </p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={resetAll} className="advanced-icon-btn" title="Reset">
+                <button onClick={resetAll} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500" title="Reset">
                   <RotateCcw className="w-4 h-4" />
                 </button>
-                <button onClick={toggleFilterBuilder} className="advanced-close-btn">
-                  <X className="w-4 h-4" />
+                <button onClick={toggleFilterBuilder} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <X className="w-4 h-4 text-slate-500" />
                 </button>
               </div>
             </div>
@@ -124,7 +123,7 @@ export default function AdvancedFilterBuilder() {
                 {presets.map((preset) => (
                   <button
                     key={preset.name}
-                    className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300 hover:bg-white/10 hover:text-white transition-all flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all flex items-center gap-1.5 shadow-sm"
                   >
                     <Layers className="w-3 h-3 text-blue-400" />
                     {preset.name}
@@ -141,7 +140,7 @@ export default function AdvancedFilterBuilder() {
                 value={filterName}
                 onChange={(e) => setFilterName(e.target.value)}
                 placeholder="Name this filter (optional)..."
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 outline-none focus:border-blue-500/40 transition-colors"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-300 transition-colors shadow-sm"
               />
             </div>
 
@@ -152,9 +151,7 @@ export default function AdvancedFilterBuilder() {
                   key={condition.id}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="advanced-metric-card"
+                  className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm relative"
                 >
                   {/* Logic connector */}
                   {i > 0 && (
@@ -174,7 +171,7 @@ export default function AdvancedFilterBuilder() {
                       <select
                         value={condition.field}
                         onChange={(e) => updateCondition(condition.id, { field: e.target.value })}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none cursor-pointer [&>option]:bg-slate-900 focus:border-blue-500/40 transition-colors"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none cursor-pointer [&>option]:bg-white focus:border-indigo-300 transition-colors"
                       >
                         <option value="">Select field...</option>
                         {columns.map((col) => (
@@ -187,7 +184,7 @@ export default function AdvancedFilterBuilder() {
                         <select
                           value={condition.operator}
                           onChange={(e) => updateCondition(condition.id, { operator: e.target.value })}
-                          className="w-[45%] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none cursor-pointer [&>option]:bg-slate-900 focus:border-blue-500/40 transition-colors"
+                          className="w-[45%] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none cursor-pointer [&>option]:bg-white focus:border-indigo-300 transition-colors"
                         >
                           {OPERATORS.map((op) => (
                             <option key={op.value} value={op.value}>{op.label}</option>
@@ -198,7 +195,7 @@ export default function AdvancedFilterBuilder() {
                           value={condition.value}
                           onChange={(e) => updateCondition(condition.id, { value: e.target.value })}
                           placeholder="Value..."
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 outline-none focus:border-blue-500/40 transition-colors"
+                          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-300 transition-colors"
                         />
                       </div>
                     </div>
@@ -207,7 +204,7 @@ export default function AdvancedFilterBuilder() {
                     {conditions.length > 1 && (
                       <button
                         onClick={() => removeCondition(condition.id)}
-                        className="advanced-icon-btn mt-0.5 w-7 h-7 flex-shrink-0 hover:!bg-rose-500/10 hover:!text-rose-400 hover:!border-rose-500/20"
+                        className="p-2 ml-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -220,7 +217,7 @@ export default function AdvancedFilterBuilder() {
             {/* Add Condition */}
             <button
               onClick={addCondition}
-              className="w-full mb-5 py-2.5 rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+              className="w-full mb-5 py-2.5 rounded-xl border border-dashed border-slate-300 text-xs font-semibold text-slate-500 hover:text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Condition
@@ -235,7 +232,7 @@ export default function AdvancedFilterBuilder() {
                 Apply Filter ({activeCount})
               </button>
               <button
-                className="py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:bg-white/10 transition-all"
+                className="py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all shadow-sm"
               >
                 Save
               </button>
@@ -246,16 +243,16 @@ export default function AdvancedFilterBuilder() {
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-3 rounded-xl bg-blue-500/5 border border-blue-500/10"
+                className="mt-4 p-3 rounded-xl bg-indigo-50 border border-indigo-100 shadow-sm"
               >
-                <p className="text-[10px] text-blue-400 font-semibold uppercase tracking-wider mb-1">Filter Preview</p>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-wider mb-1">Filter Preview</p>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
                   {conditions.filter(c => c.field && c.value).map((c, i) => (
                     <span key={c.id}>
                       {i > 0 && <span className={c.logic === 'AND' ? 'text-cyan-400' : 'text-amber-400'}> {c.logic} </span>}
-                      <span className="text-white font-medium">{c.field}</span>
+                      <span className="text-slate-800 font-bold">{c.field}</span>
                       {' '}<span className="text-slate-500">{c.operator.replace('_', ' ')}</span>{' '}
-                      <span className="text-emerald-400">"{c.value}"</span>
+                      <span className="text-indigo-600 font-bold font-mono">"{c.value}"</span>
                     </span>
                   ))}
                 </p>

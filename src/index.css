@@ -104,15 +104,42 @@
     background: var(--gradient-hero);
   }
   .card-analytics {
-    background: var(--gradient-card);
-    box-shadow: var(--shadow-card);
-    border: 1px solid rgba(0,0,0,0.04);
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 
+      0 1px 3px rgba(0,0,0,0.02), 
+      0 10px 40px rgba(59,130,246,0.03),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
     border-radius: 20px;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
   }
+  
+  /* Inner light streak noise highlight */
+  .card-analytics::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg);
+    transition: 0.7s;
+    pointer-events: none;
+  }
+  
+  .card-analytics:hover::before {
+    left: 150%;
+  }
+
   .card-analytics:hover {
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
+    transform: translateY(-4px) translateZ(10px) rotateX(1deg);
+    box-shadow: 
+      0 20px 50px rgba(59,130,246,0.08), 
+      0 8px 20px rgba(0,0,0,0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
   }
 }
 

@@ -45,7 +45,7 @@ export default function WhatIfSimulator({ numericColumns = [], datasetSize = 100
       {whatIfPanelOpen && (
         <motion.div initial={{ opacity: 0, x: 400 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 400 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed right-0 top-0 bottom-0 w-[420px] z-[60] advanced-panel-glass overflow-y-auto">
+          className="fixed right-0 top-0 bottom-0 w-[420px] z-[60] bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -53,19 +53,19 @@ export default function WhatIfSimulator({ numericColumns = [], datasetSize = 100
                   <SlidersHorizontal className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">What-If Simulator</h2>
-                  <p className="text-xs text-slate-400">Scenario impact analysis</p>
+                  <h2 className="text-lg font-bold text-slate-800">What-If Simulator</h2>
+                  <p className="text-xs text-slate-500 font-medium">Scenario impact analysis</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setParams(defaultParams)} className="advanced-icon-btn"><RotateCcw className="w-4 h-4" /></button>
-                <button onClick={toggleWhatIfPanel} className="advanced-close-btn"><X className="w-4 h-4" /></button>
+                <button onClick={() => setParams(defaultParams)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"><RotateCcw className="w-4 h-4" /></button>
+                <button onClick={toggleWhatIfPanel} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"><X className="w-4 h-4" /></button>
               </div>
             </div>
 
-            <div className="advanced-metric-card mb-4">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm mb-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Net Impact</span>
+                <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Net Impact</span>
                 <Zap className="w-4 h-4 text-amber-400" />
               </div>
               <span className={`text-3xl font-black ${totalImpact >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -77,11 +77,11 @@ export default function WhatIfSimulator({ numericColumns = [], datasetSize = 100
               {params.map((param, i) => {
                 const pct = ((param.currentValue - param.baseValue) / param.baseValue) * 100;
                 return (
-                  <motion.div key={param.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="advanced-metric-card">
+                  <motion.div key={param.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-slate-300 truncate max-w-[180px]">{param.name}</span>
+                      <span className="text-xs font-bold text-slate-700 truncate max-w-[180px]">{param.name}</span>
                       <div className="flex items-center gap-1 text-xs">
-                        <span className="text-slate-500">{param.baseValue}</span>
+                        <span className="text-slate-500 font-mono font-medium">{param.baseValue}</span>
                         <ArrowRight className="w-3 h-3 text-slate-600" />
                         <span className={pct >= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>{param.currentValue}</span>
                       </div>
@@ -99,14 +99,14 @@ export default function WhatIfSimulator({ numericColumns = [], datasetSize = 100
               })}
             </div>
 
-            <div className="advanced-metric-card">
-              <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Impact Distribution</p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+              <p className="text-xs text-slate-600 uppercase tracking-wider font-bold mb-3">Impact Distribution</p>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={impactData} layout="vertical">
                     <XAxis type="number" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
                     <YAxis dataKey="name" type="category" tick={{ fill: '#94a3b8', fontSize: 10 }} axisLine={false} tickLine={false} width={70} />
-                    <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.95)', border: '1px solid rgba(148,163,184,0.2)', borderRadius: '12px', color: '#e2e8f0', fontSize: '11px' }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', border: '1px solid rgba(148,163,184,0.2)', borderRadius: '12px', color: '#0f172a', fontSize: '11px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }} />
                     <Bar dataKey="impact" radius={[0, 6, 6, 0]}>
                       {impactData.map((e, idx) => <Cell key={idx} fill={e.impact >= 0 ? '#10b981' : '#f43f5e'} fillOpacity={0.8} />)}
                     </Bar>

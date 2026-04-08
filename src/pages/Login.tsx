@@ -198,11 +198,14 @@ export default function Login() {
   }
 
   return (
-    <div
+    <motion.div
       className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, #f0f4ff 0%, #fef7f0 25%, #f0fdf4 50%, #eff6ff 75%, #fdf2f8 100%)',
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.8 } }}
     >
       {/* Subtle grid */}
       <div
@@ -222,87 +225,29 @@ export default function Login() {
       <VibrantOrbs />
       <FloatingShapes />
 
-      {/* Morph transition overlay */}
-      <AnimatePresence>
-        {isMorphing && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.3, borderRadius: '24px' }}
-            animate={{ opacity: 1, scale: 1, borderRadius: '0px' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-50"
-            style={{
-              background: 'linear-gradient(135deg, #eff6ff, #f0fdf4, #fefce8)',
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex flex-col items-center justify-center h-full gap-5"
-            >
-              {/* Rainbow spinner */}
-              <div className="relative w-16 h-16">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    border: '3px solid transparent',
-                    borderTopColor: '#3B82F6',
-                    borderRightColor: '#22C55E',
-                  }}
-                />
-                <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-2 rounded-full"
-                  style={{
-                    border: '3px solid transparent',
-                    borderBottomColor: '#EF4444',
-                    borderLeftColor: '#EAB308',
-                  }}
-                />
-                <motion.div
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{
-                      background: 'linear-gradient(135deg, #3B82F6, #22C55E)',
-                      boxShadow: '0 0 15px rgba(59,130,246,0.4)',
-                    }}
-                  />
-                </motion.div>
-              </div>
-              <motion.p
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-sm font-bold tracking-widest uppercase text-gradient-vibrant"
-              >
-                Launching Dashboard…
-              </motion.p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Login card */}
+      {/* Login card wrapped in Shared Layout Morph Container */}
       <motion.div
-        className="z-10 w-full max-w-[440px]"
-        initial={{ opacity: 0, y: 40, scale: 0.92 }}
+        layoutId="cinematic-morph-container"
+        className="z-10 w-full max-w-[440px] origin-center"
+        initial={{ opacity: 0, y: 40, scale: 0.92, filter: 'blur(10px)', perspective: 1400 }}
         animate={isMorphing
-          ? { opacity: 0, y: -60, scale: 1.15, filter: 'blur(10px)' }
+          ? { 
+              opacity: 0, 
+              scale: 1.2, 
+              filter: 'blur(20px)',
+              z: 200,
+            }
           : mounted
-            ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
-            : { opacity: 0, y: 40, scale: 0.92 }
+            ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', z: 0 }
+            : { opacity: 0, y: 40, scale: 0.92, filter: 'blur(10px)' }
         }
         transition={{
-          duration: isMorphing ? 0.5 : 0.8,
+          layout: { type: "spring", bounce: 0, duration: 1.2 },
+          duration: isMorphing ? 1.0 : 0.8,
           ease: [0.22, 1, 0.36, 1],
           delay: isMorphing ? 0 : 0.2,
         }}
+        style={{ transformStyle: 'preserve-3d' }}
       >
         <LoginForm onMorphStart={() => setIsMorphing(true)} />
       </motion.div>
@@ -311,13 +256,13 @@ export default function Login() {
       <motion.div
         className="z-10 mt-10 text-center"
         initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: isMorphing ? 0 : mounted ? 0.6 : 0, y: isMorphing ? -10 : 0 }}
+        animate={{ opacity: isMorphing ? 0 : mounted ? 0.6 : 0, y: isMorphing ? -20 : 0 }}
         transition={{ duration: 0.5, delay: isMorphing ? 0 : 1.2 }}
       >
         <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-slate-400">
           Enterprise Analytics Suite v3.0 — Secure Portal
         </p>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
