@@ -216,7 +216,7 @@ export default function LoginForm({ onMorphStart }: Props) {
               >
                 <Sparkles className="w-3 h-3 text-blue-400" />
                 <span className="text-[10px] font-bold text-blue-300 tracking-[0.2em] uppercase drop-shadow">
-                  AI Nexus Online
+                  AI System Online
                 </span>
               </motion.div>
             </motion.div>
@@ -472,7 +472,7 @@ export default function LoginForm({ onMorphStart }: Props) {
               <div className="w-[1px] h-3 bg-slate-700" />
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3 h-3 text-blue-500" />
-                <p className="text-[10px] font-medium text-slate-400">Quantum Encrypted</p>
+                <p className="text-[10px] font-medium text-slate-400">AES-256 Encrypted</p>
               </div>
             </motion.div>
           </div>
