@@ -143,13 +143,13 @@ export default function Login() {
         }}
         style={{ transformStyle: 'preserve-3d' }}
       >
-        {/* Add continuous 360 loop animation to the login form, stops when morphing */}
+        {/* One-time 3D entrance rotation (no infinite loop) */}
         <motion.div
-          animate={isMorphing ? { rotateY: 0 } : { rotateY: [0, 360] }}
+          initial={{ rotateY: 180 }}
+          animate={isMorphing ? { rotateY: 0 } : { rotateY: 0 }}
           transition={{
-            duration: 10,
-            repeat: isMorphing ? 0 : Infinity,
-            ease: "linear"
+            duration: 1.2,
+            ease: [0.22, 1, 0.36, 1] // Apple-like ease out
           }}
           style={{ transformStyle: 'preserve-3d' }}
           className="w-full"
