@@ -89,7 +89,7 @@ function ParticleField() {
 }
 
 export default function Login() {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true' || sessionStorage.getItem('isAuthenticated') === 'true';
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
   const [isMorphing, setIsMorphing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
