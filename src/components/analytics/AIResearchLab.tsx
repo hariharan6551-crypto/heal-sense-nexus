@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Send, Cpu, Database, Zap, Sparkles, BookOpen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import GlassCard from '@/components/core/GlassCard';
+import GlowButton from '@/components/core/GlowButton';
 
 export default function AIResearchLab() {
   const [question, setQuestion] = useState('');
@@ -15,7 +18,7 @@ export default function AIResearchLab() {
     if (ql.includes('understand data') || ql.includes('analytics') || ql.includes('patterns')) {
       answer = (
         <div className="space-y-4 fade-in">
-          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 shadow-sm">
+          <div className="bg-blue-50/80 backdrop-blur-sm p-4 rounded-xl border border-blue-100 shadow-sm">
             <h4 className="font-bold flex items-center gap-2 text-blue-700 mb-2">
               <BookOpen className="w-4 h-4" /> 1. Matrix Analysis
             </h4>
@@ -24,7 +27,7 @@ export default function AIResearchLab() {
             </p>
           </div>
 
-          <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 shadow-sm">
+          <div className="bg-amber-50/80 backdrop-blur-sm p-4 rounded-xl border border-amber-100 shadow-sm">
             <h4 className="font-bold flex items-center gap-2 text-amber-700 mb-2">
               <Zap className="w-4 h-4" /> 2. Outlier Detection
             </h4>
@@ -35,7 +38,7 @@ export default function AIResearchLab() {
             </ul>
           </div>
 
-          <div className="bg-violet-50 p-4 rounded-xl border border-violet-100 shadow-sm">
+          <div className="bg-violet-50/80 backdrop-blur-sm p-4 rounded-xl border border-violet-100 shadow-sm">
             <h4 className="font-bold flex items-center gap-2 text-violet-700 mb-2">
               <Cpu className="w-4 h-4" /> 3. Advanced Compute Strategies
             </h4>
@@ -46,7 +49,7 @@ export default function AIResearchLab() {
             </ul>
           </div>
 
-          <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 shadow-sm">
+          <div className="bg-teal-50/80 backdrop-blur-sm p-4 rounded-xl border border-teal-100 shadow-sm">
             <h4 className="font-bold flex items-center gap-2 text-teal-700 mb-2">
               <Database className="w-4 h-4" /> 4. Data Processing Pipelines
             </h4>
@@ -57,7 +60,7 @@ export default function AIResearchLab() {
             </ul>
           </div>
 
-          <div className="bg-pink-50 p-4 rounded-xl border border-pink-100 shadow-sm">
+          <div className="bg-pink-50/80 backdrop-blur-sm p-4 rounded-xl border border-pink-100 shadow-sm">
             <h4 className="font-bold flex items-center gap-2 text-pink-700 mb-2">
               <Sparkles className="w-4 h-4" /> 5. Automated Intelligence Outcomes
             </h4>
@@ -71,7 +74,7 @@ export default function AIResearchLab() {
       answer = (
         <p className="text-sm text-slate-500 font-mono font-medium">
           I am the AI Research Lab. My current focus is advanced data compute operations. Try asking me: <br/>
-          <strong className="text-blue-600 mt-2 block hover:text-blue-800 cursor-pointer transition-colors" onClick={() => setQuestion('Understand Data Analytics and patterns')}>{">>"} "Understand Data Analytics and patterns"</strong>
+          <strong className="text-blue-600 mt-2 block hover:text-blue-800 cursor-pointer transition-colors" onClick={() => setQuestion('Understand Data Analytics and patterns')}>{">> "}"Understand Data Analytics and patterns"</strong>
         </p>
       );
     }
@@ -81,23 +84,33 @@ export default function AIResearchLab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-full flex flex-col">
-      <div className="px-6 py-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200 relative overflow-hidden">
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full filter blur-[80px] -z-10" />
+    <GlassCard className="overflow-hidden h-full flex flex-col" glowColor="blue">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-white/50 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.06), rgba(99,102,241,0.06))' }}
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/5 rounded-full filter blur-[80px]" />
         
-        <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-white rounded-xl border border-blue-100 shadow-sm">
-            <Cpu className="h-6 w-6 text-blue-600 animate-[pulse_3s_ease-in-out_infinite]" />
-          </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            className="p-2.5 rounded-xl shadow-md"
+            style={{
+              background: 'linear-gradient(135deg, #3B82F6, #6366F1)',
+              boxShadow: '0 4px 15px rgba(59,130,246,0.3)',
+            }}
+          >
+            <Cpu className="h-6 w-6 text-white" />
+          </motion.div>
           <div>
             <h3 className="text-xl font-black tracking-widest text-slate-800 uppercase">AI Research Lab</h3>
-            <p className="text-[10px] text-blue-700 uppercase tracking-[0.2em] font-bold font-mono mt-0.5">Advanced Analytics Compute Engine</p>
+            <p className="text-[10px] text-blue-600 uppercase tracking-[0.2em] font-bold font-mono mt-0.5">Advanced Analytics Compute Engine</p>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 p-6 overflow-y-auto space-y-6 bg-slate-50/50 custom-scrollbar relative">
+      {/* Chat Area */}
+      <div className="flex-1 p-6 overflow-y-auto space-y-6 bg-transparent custom-scrollbar relative">
         {responses.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
             <div className="relative">
@@ -109,28 +122,36 @@ export default function AIResearchLab() {
             <p className="font-mono text-sm font-bold tracking-widest text-slate-400">AWAITING RESEARCH QUERY...</p>
           </div>
         ) : (
-          responses.map((item, i) => (
-            <div key={i} className="space-y-4 animate-scale-in">
-              <div className="flex items-start justify-end gap-2">
-                <div className="bg-blue-600 border border-blue-700 text-white px-4 py-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[80%] font-mono font-medium">
-                  {item.q}
+          <AnimatePresence initial={false}>
+            {responses.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <div className="flex items-start justify-end gap-2">
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm text-sm shadow-lg max-w-[80%] font-mono font-medium">
+                    {item.q}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-sm relative overflow-hidden group">
-                   <div className="absolute inset-0 bg-blue-50 animate-pulse" />
-                  <Cpu className="w-5 h-5 text-blue-600 relative z-10" />
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/80 backdrop-blur-md border border-blue-100 flex items-center justify-center flex-shrink-0 shadow-md relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/50 animate-pulse" />
+                    <Cpu className="w-5 h-5 text-blue-600 relative z-10" />
+                  </div>
+                  <div className="bg-white/60 backdrop-blur-sm border border-white/80 px-5 py-4 rounded-2xl rounded-tl-sm text-sm shadow-sm w-full max-w-[90%]">
+                    {item.a}
+                  </div>
                 </div>
-                <div className="bg-white border border-slate-200 px-5 py-4 rounded-2xl rounded-tl-sm text-sm shadow-sm w-full max-w-[90%]">
-                  {item.a}
-                </div>
-              </div>
-            </div>
-          ))
+              </motion.div>
+            ))}
+          </AnimatePresence>
         )}
       </div>
 
-      <div className="p-5 bg-white border-t border-slate-200">
+      {/* Input Area */}
+      <div className="p-5 border-t border-white/50 bg-white/30 backdrop-blur-sm">
         <div className="flex gap-3 relative">
           <input
             type="text"
@@ -138,34 +159,20 @@ export default function AIResearchLab() {
             value={question}
             onChange={e => setQuestion(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleAsk()}
-            className="flex-1 pl-4 pr-14 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-slate-800 placeholder-slate-400 font-mono font-medium shadow-inner transition-all"
+            className="flex-1 pl-4 pr-14 py-3.5 bg-white/60 backdrop-blur-md border border-white/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 text-slate-800 placeholder-slate-400 font-mono font-medium shadow-sm transition-all"
           />
-          <button 
-            onClick={handleAsk} 
-            className="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-700 transition-all flex items-center justify-center shadow-sm"
+          <GlowButton
+            onClick={handleAsk}
+            variant="primary"
+            className="px-5 py-3 rounded-xl shadow-md"
           >
             <Send className="h-4 w-4" />
-          </button>
+          </GlowButton>
         </div>
         <div className="mt-3 text-center text-[9px] text-slate-400 font-black tracking-[0.3em] uppercase">
           System: Online | Module: Active | Sec-Lvl: Alpha
         </div>
       </div>
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.02);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(59, 130, 246, 0.2);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(59, 130, 246, 0.4);
-        }
-      `}</style>
-    </div>
+    </GlassCard>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Search, ChevronLeft, ChevronRight, Database, Eye, User, AlertTriangle, ShieldAlert } from 'lucide-react';
 import type { DatasetInfo } from '@/lib/parseData';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
 
 interface Props {
   dataset: DatasetInfo;

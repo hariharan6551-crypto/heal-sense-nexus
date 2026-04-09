@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { DataAnalysis } from '@/lib/analyzeData';
 import type { Insight } from '@/lib/insightEngine';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
 import { GlowBadge } from '../ui/GlowBadge';
 import { AnimatedButton } from '../ui/AnimatedButton';
 

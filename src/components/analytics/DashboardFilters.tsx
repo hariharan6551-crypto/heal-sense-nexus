@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Filter, X, Bookmark, BookmarkCheck, RotateCcw } from 'lucide-react';
 import type { DatasetInfo } from '@/lib/parseData';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
 
 interface Props {
   dataset: DatasetInfo;

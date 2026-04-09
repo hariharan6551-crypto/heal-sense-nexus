@@ -5,8 +5,10 @@ import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import { generateInsights } from '@/lib/insightEngine';
 import { parseFile } from '@/lib/parseData';
-import DashboardNav from './DashboardNav';
-import SecondaryRibbon from './SecondaryRibbon';
+import PrimaryRibbon from '@/components/layout/PrimaryRibbon';
+import SecondaryRibbon from '@/components/layout/SecondaryRibbon';
+import AdminPanel3D from '@/components/admin/AdminPanel3D';
+import GlassCard from '@/components/core/GlassCard';
 import DynamicKPIs from './DynamicKPIs';
 import DynamicCharts from './DynamicCharts';
 import DashboardTable from './DashboardTable';
@@ -20,6 +22,7 @@ import PatientPanel from './PatientPanel';
 import FloatingActionButton from './FloatingActionButton';
 import { toast } from 'sonner';
 import { Database } from 'lucide-react';
+import MorphContainer from '@/components/core/MorphContainer';
 
 // --- Phase 16: Security & Session Management ---
 function useSessionTimeout(timeoutMinutes = 15) {
@@ -71,6 +74,7 @@ export default function AnalyticsDashboard() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   // Phase 22: Offline Mode Resilience
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -337,7 +341,7 @@ export default function AnalyticsDashboard() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="min-h-screen bg-slate-50 text-slate-800 relative page-transition">
         {/* Empty Navigation Shell */}
         <div className="relative z-50">
-          <DashboardNav
+          <PrimaryRibbon
             onDatasetLoaded={handleDatasetLoaded}
             activeTab={activeTab}
             onTabChange={setActiveTab}
@@ -364,22 +368,25 @@ export default function AnalyticsDashboard() {
       />
 
       {/* Navigation */}
-      <div className="relative z-50">
-        <DashboardNav
+      <MorphContainer id="cinematic-morph-container" className="relative z-50 bg-transparent">
+        <PrimaryRibbon
           onDatasetLoaded={handleDatasetLoaded}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tab) => {
+            if (tab === 'Settings') setAdminPanelOpen(true);
+            else setActiveTab(tab);
+          }}
           dashboardTitle={dashboardTitle}
           datasetName={timeFilteredDataset.fileName}
         />
         
         {/* Secondary Ribbon (Advanced Analytics) */}
         <SecondaryRibbon />
-      </div>
+      </MorphContainer>
 
       {/* Loader removed */}
 
-      <main className="max-w-[1800px] mx-auto p-4 lg:px-6 space-y-4 pt-[110px]">
+      <main className="max-w-[1800px] mx-auto p-4 lg:px-6 space-y-4 pt-[110px] relative z-10">
 
         {/* Hero Section */}
         <HeroSection dataset={timeFilteredDataset} analysis={analysis} dashboardTitle={dashboardTitle} />
@@ -453,17 +460,17 @@ export default function AnalyticsDashboard() {
 
             {/* Tab: AI Assistant */}
             {activeTab === 'AI Assistant' && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 page-transition">
+              <GlassCard className="p-6 page-transition">
                 <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
                   AI-Generated Intelligence
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {insights.map(ins => (
-                    <div key={ins.id} className={`rounded-xl border p-5 transition-all hover:scale-[1.02] ${
-                      ins.severity === 'critical' ? 'bg-pink-50 border-pink-100' :
-                      ins.severity === 'warning' ? 'bg-amber-50 border-amber-100' :
-                      'bg-blue-50 border-blue-100'
+                    <div key={ins.id} className={`rounded-xl border p-5 transition-all hover:scale-[1.02] backdrop-blur-sm ${
+                      ins.severity === 'critical' ? 'bg-pink-50/80 border-pink-100' :
+                      ins.severity === 'warning' ? 'bg-amber-50/80 border-amber-100' :
+                      'bg-blue-50/80 border-blue-100'
                     }`}>
                       <p className={`text-sm font-bold tracking-wide mb-2 ${
                         ins.severity === 'critical' ? 'text-pink-700' :
@@ -481,19 +488,19 @@ export default function AnalyticsDashboard() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
 
             {/* Tab: Reports & Power BI (Phase 19) */}
             {activeTab === 'Reports' && (
               <div className="space-y-4 page-transition">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <GlassCard className="p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-slate-800 tracking-tight">📊 Power BI Enterprise Integration</h2>
                   </div>
                   
                   {/* Power BI Secure Embed Frame Mock */}
-                  <div className="w-full bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-8 text-center flex flex-col items-center justify-center min-h-[400px]">
+                  <div className="w-full bg-white/50 backdrop-blur-sm rounded-xl border-2 border-dashed border-slate-200/60 p-8 text-center flex flex-col items-center justify-center min-h-[400px]">
                     <div className="w-16 h-16 bg-[#F2C811]/10 rounded-2xl border border-[#F2C811]/30 flex items-center justify-center mb-4 relative overflow-hidden">
                       <div className="absolute inset-0 bg-[#F2C811]/5 animate-pulse" />
                       <span className="text-2xl font-black text-[#F2C811] relative z-10 font-mono">BI</span>
@@ -504,59 +511,60 @@ export default function AnalyticsDashboard() {
                     </p>
                     
                     <div className="mt-6 flex flex-wrap gap-3 justify-center text-mono">
-                      <div className="px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 flex items-center gap-2 tracking-wide">
+                      <div className="px-4 py-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 flex items-center gap-2 tracking-wide">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Secure Token Handshake OK
                       </div>
-                      <div className="px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs font-bold text-blue-700 tracking-wide">
+                      <div className="px-4 py-2 bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-lg text-xs font-bold text-blue-700 tracking-wide">
                         Sync Filter: TimeRange = {filters['__time_range__'] || 'All'}
                       </div>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
 
-                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <GlassCard className="p-6">
                   <div className="flex items-center justify-between mb-5">
                     <h2 className="text-lg font-black text-slate-800 tracking-tight">📄 Internal Summary Report</h2>
                     <button
                       onClick={handleExportCSV}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-xs font-bold font-mono tracking-wide uppercase rounded-xl hover:bg-blue-700 transition-all shadow-sm"
+                      className="flex items-center gap-2 px-5 py-2.5 text-white text-xs font-bold font-mono tracking-wide uppercase rounded-xl hover:opacity-90 transition-all shadow-md"
+                      style={{ background: 'linear-gradient(135deg, #3B82F6, #6366F1)', boxShadow: '0 4px 15px rgba(59,130,246,0.3)' }}
                     >
                       Export Secure CSV
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-600 font-mono">
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/80">
                       <p className="font-bold text-blue-700 mb-4 tracking-wide uppercase">Dataset Summary</p>
                       <div className="space-y-2">
-                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">File:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.fileName}</span></p>
-                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Rows:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalRows.toLocaleString()}</span></p>
-                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Columns:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalColumns}</span></p>
-                        <p className="flex justify-between border-b border-slate-200 pb-2"><span className="text-slate-500">Missing:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.missingValueCount.toLocaleString()}</span></p>
+                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">File:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.fileName}</span></p>
+                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Rows:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalRows.toLocaleString()}</span></p>
+                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Columns:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalColumns}</span></p>
+                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Missing:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.missingValueCount.toLocaleString()}</span></p>
                       </div>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/80">
                       <p className="font-bold text-violet-700 mb-4 tracking-wide uppercase">Column Matrix</p>
                       <div className="space-y-2">
-                        <p className="flex flex-col gap-1 border-b border-slate-200 pb-2"><span className="text-slate-500">Numeric:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.numericColumns.join(', ') || 'None'}</span></p>
-                        <p className="flex flex-col gap-1 border-b border-slate-200 pb-2"><span className="text-slate-500">Categorical:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.categoricalColumns.join(', ') || 'None'}</span></p>
+                        <p className="flex flex-col gap-1 border-b border-slate-200/50 pb-2"><span className="text-slate-500">Numeric:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.numericColumns.join(', ') || 'None'}</span></p>
+                        <p className="flex flex-col gap-1 border-b border-slate-200/50 pb-2"><span className="text-slate-500">Categorical:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.categoricalColumns.join(', ') || 'None'}</span></p>
                         <p className="flex flex-col gap-1 pb-1"><span className="text-slate-500">Datetime:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.datetimeColumns.join(', ') || 'None'}</span></p>
                       </div>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
               </div>
             )}
 
             {/* Tab: Settings */}
             {activeTab === 'Settings' && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 page-transition">
+              <GlassCard className="p-6 page-transition">
                 <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
                   Enterprise Settings
                 </h2>
                 <div className="space-y-4 text-xs text-slate-600">
                   {/* Role-based Access Badge */}
-                  <div className="bg-violet-50 rounded-xl border border-violet-100 p-5">
+                  <div className="bg-violet-50/80 backdrop-blur-sm rounded-xl border border-violet-100/80 p-5">
                     <h4 className="font-bold text-violet-700 mb-3 text-sm flex items-center gap-2">
                       👤 Role-Based Access Control
                     </h4>
@@ -579,7 +587,7 @@ export default function AnalyticsDashboard() {
                   </div>
 
                   {/* API & Data Security */}
-                  <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
+                  <div className="bg-emerald-50/80 backdrop-blur-sm rounded-xl border border-emerald-100/80 p-5">
                     <h4 className="font-bold text-emerald-700 mb-2 text-sm flex items-center gap-2">
                       🔒 Data Security & Compliance
                     </h4>
@@ -591,7 +599,7 @@ export default function AnalyticsDashboard() {
                   </div>
 
                   {/* Real-time simulation */}
-                  <div className="bg-amber-50 rounded-xl border border-amber-100 p-5">
+                  <div className="bg-amber-50/80 backdrop-blur-sm rounded-xl border border-amber-100/80 p-5">
                     <h4 className="font-bold text-amber-700 mb-2 text-sm flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                       API Data Pipeline
@@ -599,7 +607,7 @@ export default function AnalyticsDashboard() {
                     <p className="text-xs font-medium text-amber-800 font-mono">Time-based backend filtering is mocked for demonstration via deterministic row-dropping.</p>
                   </div>
                 </div>
-              </div>
+              </GlassCard>
             )}
           </div>
 
@@ -636,9 +644,11 @@ export default function AnalyticsDashboard() {
         dataset={timeFilteredDataset}
       />
 
-      <footer className="py-8 mt-12 text-center text-[10px] font-semibold text-slate-500 relative z-10 border-t border-[rgba(255,255,255,0.05)]">
+      <AdminPanel3D isOpen={adminPanelOpen} onClose={() => setAdminPanelOpen(false)} />
+
+      <footer className="py-8 mt-12 text-center text-[10px] font-semibold text-slate-400 relative z-10 border-t border-slate-200/30">
         <p className="mb-2">Enterprise AI Analytics Suite v3.0 • Premium Edition</p>
-        <p>Press <kbd className="px-1.5 py-0.5 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded text-slate-400 mx-1">Ctrl+K</kbd> for command center</p>
+        <p>Press <kbd className="px-1.5 py-0.5 bg-white/60 backdrop-blur-sm border border-white/80 rounded text-slate-500 mx-1 shadow-sm">Ctrl+K</kbd> for command center</p>
       </footer>
     </motion.div>
   );

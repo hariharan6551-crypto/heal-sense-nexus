@@ -80,14 +80,14 @@ export default function ChartWrapper({ chart, children, data, onDrilldown }: Pro
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => onDrilldown(chart.id)}
-            className="p-1.5 rounded-lg transition-all"
+            className="p-1.5 rounded-xl transition-all"
             style={{
-              background: 'rgba(255,255,255,0.9)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(59,130,246,0.15)',
-              boxShadow: '0 2px 8px rgba(59,130,246,0.1)',
+              background: 'rgba(255,255,255,0.7)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(59,130,246,0.2)',
+              boxShadow: '0 2px 12px rgba(59,130,246,0.12)',
             }}
-            title="Drill Down Matrix"
+            title="Drill Down"
           >
             <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
           </motion.button>
@@ -99,12 +99,12 @@ export default function ChartWrapper({ chart, children, data, onDrilldown }: Pro
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setShowExport(!showExport)}
-            className="p-1.5 rounded-lg transition-all"
+            className="p-1.5 rounded-xl transition-all"
             style={{
-              background: showExport ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.9)',
-              backdropFilter: 'blur(8px)',
-              border: `1px solid ${showExport ? 'rgba(34,197,94,0.2)' : 'rgba(34,197,94,0.15)'}`,
-              boxShadow: '0 2px 8px rgba(34,197,94,0.1)',
+              background: showExport ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.7)',
+              backdropFilter: 'blur(12px)',
+              border: `1px solid ${showExport ? 'rgba(34,197,94,0.25)' : 'rgba(34,197,94,0.2)'}`,
+              boxShadow: '0 2px 12px rgba(34,197,94,0.12)',
             }}
             title="Export Data"
           >
@@ -116,24 +116,24 @@ export default function ChartWrapper({ chart, children, data, onDrilldown }: Pro
                 initial={{ opacity: 0, y: -4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.95 }}
-                className="absolute right-0 top-full mt-2 rounded-xl p-1.5 min-w-[140px] z-30"
+                className="absolute right-0 top-full mt-2 rounded-2xl p-2 min-w-[150px] z-30"
                 style={{
-                  background: 'rgba(255,255,255,0.98)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(0,0,0,0.06)',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04)',
+                  background: 'rgba(255,255,255,0.85)',
+                  backdropFilter: 'blur(24px) saturate(180%)',
+                  border: '1px solid rgba(255,255,255,0.9)',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02)',
                 }}
               >
                 <button
                   onClick={exportPNG}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-600 hover:text-slate-800 hover:bg-blue-50 font-semibold rounded-lg transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 font-bold rounded-xl transition-colors"
                 >
                   <Image className="h-3.5 w-3.5 text-blue-500" />
                   Export PNG
                 </button>
                 <button
                   onClick={exportCSV}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-600 hover:text-slate-800 hover:bg-green-50 font-semibold rounded-lg transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/80 font-bold rounded-xl transition-colors"
                 >
                   <FileSpreadsheet className="h-3.5 w-3.5 text-green-500" />
                   Export CSV

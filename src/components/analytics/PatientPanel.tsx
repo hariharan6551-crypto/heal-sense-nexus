@@ -71,14 +71,24 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] bg-slate-900/30 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-xl bg-white/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 overflow-y-auto animate-slide-in-right custom-scrollbar">
+      <div className="fixed inset-0 z-[60] bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-xl overflow-y-auto animate-slide-in-right custom-scrollbar"
+        style={{
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(30px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+          borderLeft: '1px solid rgba(255,255,255,0.7)',
+          boxShadow: '-20px 0 60px rgba(0,0,0,0.08)',
+        }}
+      >
         {/* Header */}
         <div className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-5 z-10 border-b border-slate-100 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center shadow-sm">
-                <User className="h-5 w-5 text-blue-500" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
+                style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }}
+              >
+                <User className="h-5 w-5 text-white" />
               </div>
               <div>
                 <h2 className="text-sm font-black tracking-widest text-slate-800 uppercase">Node Profile {patientId}</h2>
@@ -110,7 +120,7 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
         {/* Body */}
         <div className="p-6 space-y-6">
           {/* Patient Details Grid */}
-          <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-white/80 shadow-sm">
             <h3 className="text-xs font-bold text-slate-800 tracking-widest uppercase mb-4 flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-500" />
               Telemetry Data Stream
@@ -121,7 +131,7 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
                 if (val === undefined || val === null) return null;
                 const isNum = dataset.numericColumns.includes(col);
                 return (
-                  <div key={col} className="bg-white hover:bg-slate-50 rounded-lg p-3 border border-slate-200 transition-colors shadow-sm">
+                  <div key={col} className="bg-white/70 backdrop-blur-sm hover:bg-white/90 rounded-xl p-3 border border-white/80 transition-colors shadow-sm">
                     <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate mb-1">
                       {col.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim()}
                     </p>
@@ -135,7 +145,7 @@ export default function PatientPanel({ isOpen, onClose, patient, dataset }: Prop
           </div>
 
           {/* Notes */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-white/80 p-5 shadow-sm">
             <h3 className="text-xs font-bold text-slate-800 tracking-widest uppercase mb-3 flex items-center gap-2">
               <StickyNote className="h-4 w-4 text-amber-500" />
               Operator Annotations

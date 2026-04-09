@@ -3,7 +3,7 @@ import {
   Search, LayoutDashboard, Database, Bot, FileText, Settings, BarChart3,
   ArrowRight, Command, X,
 } from 'lucide-react';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
 
 interface CommandItem {
   id: string;

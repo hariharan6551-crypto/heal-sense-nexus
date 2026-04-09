@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TableProperties, BarChart3 } from 'lucide-react';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { DataAnalysis } from '@/lib/analyzeData';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
 
 interface Props {
   dataset: DatasetInfo;

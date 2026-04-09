@@ -17,7 +17,8 @@ import ChartWrapper from './ChartWrapper';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { ChartRecommendation } from '@/lib/chartRecommender';
 import type { DataAnalysis } from '@/lib/analyzeData';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
+import ParallaxLayer from '@/components/core/ParallaxLayer';
 import { GlowBadge } from '../ui/GlowBadge';
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -59,7 +60,8 @@ function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
       transition={{ duration: 0.5, delay: index * 0.1, ease: 'easeOut' }}
       className="h-full"
     >
-      <GlassCard className="h-full flex flex-col group relative overflow-visible bg-white">
+      <ParallaxLayer intensity={4} className="h-full">
+        <GlassCard className="h-full flex flex-col group relative overflow-visible bg-white/70">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50 relative z-10">
           <div className="flex items-center gap-2.5 min-w-0 flex-1 relative">
             {Icon && <Icon className="h-4 w-4 text-blue-500 flex-shrink-0" />}
@@ -82,8 +84,9 @@ function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
             </span>
           )}
         </div>
-        <div className="p-5 flex-1 relative z-10 bg-white">{children}</div>
+        <div className="p-5 flex-1 relative z-10 bg-transparent">{children}</div>
       </GlassCard>
+      </ParallaxLayer>
     </motion.div>
   );
 }
@@ -158,18 +161,21 @@ function RenderChart({ chart, data, analysis }: {
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={agg} margin={{ bottom: 30 }}>
           <defs>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="2" dy="5" stdDeviation="4" floodOpacity="0.15" />
+            </filter>
             {agg.map((_, i) => (
-              <linearGradient key={i} id={`barGrad${i}`} x1="0" y1="0" x2="0" y2="1">
+              <linearGradient key={i} id={`barGrad${i}`} x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][0]} />
                 <stop offset="100%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][1]} />
               </linearGradient>
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#64748b' }} interval={0} angle={-25} textAnchor="end" height={55} />
           <YAxis tick={{ fontSize: 10, fill: '#64748b' }} />
           <Tooltip content={<ChartTooltip />} />
-          <Bar dataKey="value" name={yColumn} radius={[6, 6, 0, 0]} animationDuration={800}>
+          <Bar dataKey="value" name={yColumn} radius={[6, 6, 0, 0]} animationDuration={800} filter="url(#shadow)">
             {agg.map((_, i) => <Cell key={i} fill={`url(#barGrad${i})`} />)}
           </Bar>
         </BarChart>
@@ -214,16 +220,24 @@ function RenderChart({ chart, data, analysis }: {
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={sorted}>
           <defs>
+            <filter id="glowLine">
+              <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
             <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#6366f1" />
-              <stop offset="100%" stopColor="#06b6d4" />
+              <stop offset="0%" stopColor="#3B82F6" />
+              <stop offset="50%" stopColor="#8B5CF6" />
+              <stop offset="100%" stopColor="#06B6D4" />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis dataKey={xColumn} tick={{ fontSize: 9, fill: '#64748b' }} />
           <YAxis tick={{ fontSize: 10, fill: '#64748b' }} />
           <Tooltip content={<ChartTooltip />} />
-          <Line type="monotone" dataKey={yColumn} stroke="url(#lineGrad)" strokeWidth={3} dot={false} animationDuration={1000} />
+          <Line type="monotone" dataKey={yColumn} stroke="url(#lineGrad)" strokeWidth={4} dot={{ r: 3, fill: '#fff', strokeWidth: 2, stroke: '#3B82F6' }} activeDot={{ r: 6, fill: '#fff', stroke: '#8B5CF6' }} filter="url(#glowLine)" animationDuration={1000} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -264,7 +278,7 @@ function RenderChart({ chart, data, analysis }: {
           <XAxis dataKey="x" name={xColumn} tick={{ fontSize: 10, fill: '#64748b' }} />
           <YAxis dataKey="y" name={yColumn} tick={{ fontSize: 10, fill: '#64748b' }} />
           <Tooltip content={<ChartTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-          <Scatter name="Data" fill="#6366f1" fillOpacity={0.6} r={4} animationDuration={800} />
+          <Scatter name="Data" fill="#3B82F6" fillOpacity={0.8} r={5} animationDuration={800} className="hover:opacity-100 transition-opacity" style={{ filter: 'drop-shadow(0px 4px 6px rgba(59,130,246,0.3))' }} />
         </RechartsScatter>
       </ResponsiveContainer>
     );
@@ -312,6 +326,9 @@ function RenderChart({ chart, data, analysis }: {
                 <stop offset="100%" stopColor={GRADIENT_PAIRS[i % GRADIENT_PAIRS.length][1]} />
               </linearGradient>
             ))}
+            <filter id="dropShadowPie">
+              <feDropShadow dx="0" dy="4" stdDeviation="5" floodOpacity="0.1" />
+            </filter>
           </defs>
           <Pie data={donutData} dataKey="value" nameKey="name" cx="50%" cy="45%"
             outerRadius={90} innerRadius={52} paddingAngle={3}

@@ -7,7 +7,8 @@ import {
 import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { ColumnStats } from '@/lib/analyzeData';
-import { GlassCard } from '../ui/GlassCard';
+import GlassCard from '@/components/core/GlassCard';
+import ParallaxLayer from '@/components/core/ParallaxLayer';
 
 interface Props {
   dataset: DatasetInfo;
@@ -81,75 +82,77 @@ function AnimatedKPICard({ k, i }: { k: any; i: number }) {
       transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
       whileHover={{ y: -4 }}
     >
-      <GlassCard
-        className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group"
-        style={{
-          background: '#fff',
-          border: `1px solid ${color.border}`,
-          boxShadow: `0 2px 12px ${color.shadow}`,
-        }}
-      >
-        {/* Corner accent gradient */}
-        <div
-          className="absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
-          style={{ background: color.gradient }}
-        />
-
-        <div className="flex items-start justify-between mb-3 relative z-10">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate pr-2">
-            {k.label}
-          </span>
-          <motion.div
-            whileHover={{ scale: 1.15, rotate: 5 }}
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{
-              background: color.gradient,
-              boxShadow: `0 4px 10px ${color.shadow}`,
-            }}
-          >
-            <k.Icon className="h-4 w-4 text-white" strokeWidth={2.5} />
-          </motion.div>
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-baseline gap-1.5 mb-2">
-            <span className="text-3xl font-black tracking-tight tabular-nums" style={{ color: color.text }}>
-              {formatVal(animatedValue)}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between text-[10px] font-medium w-full">
-            <span className="text-slate-400">Min: <span className="text-slate-600">{k.min}</span></span>
-            <span className="text-slate-400">Max: <span className="text-slate-600">{k.max}</span></span>
-          </div>
-          
-          {/* Animated Progress Bar */}
-          <div className="w-full h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
-            <motion.div 
-              className="h-full rounded-full"
-              style={{ background: color.gradient }}
-              initial={{ width: 0 }}
-              animate={{ width: `${k.progress}%` }}
-              transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
-            />
-          </div>
-        </div>
-
-        {/* AI insight badge */}
-        {k.insight && (
+      <ParallaxLayer intensity={8}>
+        <GlassCard
+          className="p-5 flex flex-col justify-between h-[150px] relative overflow-hidden group"
+          style={{
+            border: `1px solid ${color.border}`,
+            boxShadow: `0 2px 12px ${color.shadow}`,
+          }}
+          interactive={true}
+        >
+          {/* Corner accent gradient */}
           <div
-            className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20"
-            style={{
-              background: 'rgba(234,179,8,0.06)',
-              border: '1px solid rgba(234,179,8,0.15)',
-              color: '#CA8A04',
-            }}
-          >
-            <Sparkles className="h-3 w-3" />
-            {k.insight}
+            className="absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+            style={{ background: color.gradient }}
+          />
+
+          <div className="flex items-start justify-between mb-3 relative z-10">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate pr-2">
+              {k.label}
+            </span>
+            <motion.div
+              whileHover={{ scale: 1.15, rotate: 5 }}
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{
+                background: color.gradient,
+                boxShadow: `0 4px 10px ${color.shadow}`,
+              }}
+            >
+              <k.Icon className="h-4 w-4 text-white" strokeWidth={2.5} />
+            </motion.div>
           </div>
-        )}
-      </GlassCard>
+
+          <div className="relative z-10">
+            <div className="flex items-baseline gap-1.5 mb-2">
+              <span className="text-3xl font-black tracking-tight tabular-nums" style={{ color: color.text }}>
+                {formatVal(animatedValue)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between text-[10px] font-medium w-full">
+              <span className="text-slate-400">Min: <span className="text-slate-600">{k.min}</span></span>
+              <span className="text-slate-400">Max: <span className="text-slate-600">{k.max}</span></span>
+            </div>
+            
+            {/* Animated Progress Bar */}
+            <div className="w-full h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
+              <motion.div 
+                className="h-full rounded-full"
+                style={{ background: color.gradient }}
+                initial={{ width: 0 }}
+                animate={{ width: `${k.progress}%` }}
+                transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
+              />
+            </div>
+          </div>
+
+          {/* AI insight badge */}
+          {k.insight && (
+            <div
+              className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+              style={{
+                background: 'rgba(234,179,8,0.06)',
+                border: '1px solid rgba(234,179,8,0.15)',
+                color: '#CA8A04',
+              }}
+            >
+              <Sparkles className="h-3 w-3" />
+              {k.insight}
+            </div>
+          )}
+        </GlassCard>
+      </ParallaxLayer>
     </motion.div>
   );
 }

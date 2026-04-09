@@ -3,6 +3,8 @@ import { Users, Activity, HeartPulse, ShieldAlert, Zap, Database, TrendingUp } f
 import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import type { DataAnalysis } from '@/lib/analyzeData';
+import GlassCard from '@/components/core/GlassCard';
+import ParallaxLayer from '@/components/core/ParallaxLayer';
 
 interface Props {
   dataset: DatasetInfo;
@@ -209,12 +211,12 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
             style={{ background: 'rgba(59,130,246,0.05)', color: '#2563eb', border: '1px solid rgba(59,130,246,0.12)' }}
           >
             <Database className="w-3 h-3" />
-            {dataset.name}
+            {dataset.fileName}
           </span>
         </motion.div>
       </div>
 
-      {/* Hero KPI Cards — Vibrant colored icons */}
+      {/* Hero KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-2">
         {heroCards.map((card, i) => {
           const style = CARD_STYLES[i % CARD_STYLES.length];
@@ -225,49 +227,52 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
               whileHover={{ y: -4, boxShadow: `0 12px 40px ${style.shadowColor}` }}
+              className="h-full"
             >
-              <div
-                className="rounded-2xl p-5 transition-all duration-300 group relative overflow-hidden"
-                style={{
-                  background: '#fff',
-                  border: `1px solid ${style.borderColor}`,
-                  boxShadow: `0 2px 12px ${style.shadowColor}`,
-                }}
-              >
-                {/* Subtle gradient accent in corner */}
-                <div
-                  className="absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"
-                  style={{ background: style.gradient }}
-                />
+              <ParallaxLayer intensity={8} className="h-full">
+                <GlassCard
+                  className="rounded-2xl p-5 transition-all duration-300 group relative overflow-hidden h-full"
+                  style={{
+                    border: `1px solid ${style.borderColor}`,
+                    boxShadow: `0 2px 12px ${style.shadowColor}`,
+                  }}
+                  interactive={true}
+                >
+                  {/* Subtle gradient accent in corner */}
+                  <div
+                    className="absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"
+                    style={{ background: style.gradient }}
+                  />
 
-                <div className="flex items-start justify-between mb-4 relative z-10">
-                  <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
-                    style={{ background: style.gradient, boxShadow: `0 4px 12px ${style.shadowColor}` }}
-                  >
-                    <card.icon className="h-5 w-5 text-white" strokeWidth={2.5} />
-                  </motion.div>
-                </div>
-                <div className="space-y-1 relative z-10">
-                  <h3 className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">{card.label}</h3>
-                  <div className="text-3xl font-black tracking-tight" style={{ color: style.textColor }}>
-                    <AnimatedCounter target={card.value} suffix={card.suffix} duration={1500} />
+                  <div className="flex items-start justify-between mb-4 relative z-10">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
+                      style={{ background: style.gradient, boxShadow: `0 4px 12px ${style.shadowColor}` }}
+                    >
+                      <card.icon className="h-5 w-5 text-white" strokeWidth={2.5} />
+                    </motion.div>
                   </div>
-                  {(card as any).hint && (
-                    <p className="text-[9px] text-slate-400 font-medium tracking-wide mt-1">{(card as any).hint}</p>
-                  )}
-                </div>
+                  <div className="space-y-1 relative z-10">
+                    <h3 className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">{card.label}</h3>
+                    <div className="text-3xl font-black tracking-tight" style={{ color: style.textColor }}>
+                      <AnimatedCounter target={card.value} suffix={card.suffix} duration={1500} />
+                    </div>
+                    {(card as any).hint && (
+                      <p className="text-[9px] text-slate-400 font-medium tracking-wide mt-1">{(card as any).hint}</p>
+                    )}
+                  </div>
 
-                {/* Animated bottom progress bar */}
-                <motion.div
-                  className="absolute bottom-0 left-0 h-[3px]"
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 2, delay: i * 0.2, ease: 'easeOut' }}
-                  style={{ background: style.gradient, borderRadius: '0 0 16px 16px' }}
-                />
-              </div>
+                  {/* Animated bottom progress bar */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-[3px]"
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 2, delay: i * 0.2, ease: 'easeOut' }}
+                    style={{ background: style.gradient, borderRadius: '0 0 16px 16px' }}
+                  />
+                </GlassCard>
+              </ParallaxLayer>
             </motion.div>
           );
         })}
@@ -277,10 +282,8 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Gender Distribution */}
         {stats.genderData.length > 0 && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }}>
-            <div className="bg-white rounded-2xl p-5 h-full shadow-sm hover:shadow-md transition-shadow duration-300"
-              style={{ border: '1px solid rgba(0,0,0,0.04)' }}
-            >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="h-full">
+            <GlassCard className="p-5 h-full shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <Users className="w-3.5 h-3.5 text-blue-500" /> Population Breakdown
               </h3>
@@ -303,16 +306,14 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
           </motion.div>
         )}
 
         {/* Top Categories */}
         {stats.diagData.length > 0 && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
-            <div className="bg-white rounded-2xl p-5 h-full shadow-sm hover:shadow-md transition-shadow duration-300"
-              style={{ border: '1px solid rgba(0,0,0,0.04)' }}
-            >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }} className="h-full">
+            <GlassCard className="p-5 h-full shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-3.5 h-3.5 text-green-500" /> 
                 Top {stats.diagCol?.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim() || 'Categories'}
@@ -341,7 +342,7 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
                   );
                 })}
               </div>
-            </div>
+            </GlassCard>
           </motion.div>
         )}
       </div>
@@ -375,3 +376,4 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
     </div>
   );
 }
+
