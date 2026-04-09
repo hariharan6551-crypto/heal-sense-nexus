@@ -46,7 +46,8 @@ export default function LoginForm({ onMorphStart }: Props) {
     await new Promise((r) => setTimeout(r, 800));
 
     setLoginSuccess(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    sessionStorage.setItem('isAuthenticated', 'true');
+    localStorage.removeItem('isAuthenticated'); // Clear any legacy persist
     toast.success('Authentication Successful', {
       description: 'Morphing to Analytics Dashboard…',
       icon: <Zap className="w-4 h-4 text-blue-500" />,
