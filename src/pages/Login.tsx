@@ -4,28 +4,31 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import MorphContainer from '@/components/core/MorphContainer';
 
-/* ───── Light Theme Sky Blue Particle System ───── */
+/* ───── Light Theme Sky Blue Particle System (Optimized) ───── */
 function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animationId: number;
+    let frameCount = 0;
     // Updated palette to Sky Blue premium
     const COLORS = ['#3B82F6', '#38BDF8', '#60A5FA', '#93C5FD', '#FFFFFF'];
     const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; color: string }[] = [];
-    const PARTICLE_COUNT = 60;
+    const PARTICLE_COUNT = 40; // Reduced from 60 for smoother animation
+    const CONN_DIST = 120; // Reduced from 140
+    const CONN_DIST_SQ = CONN_DIST * CONN_DIST;
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push({
@@ -41,8 +44,11 @@ function ParticleField() {
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frameCount++;
+      const drawConns = frameCount % 2 === 0; // Draw connections every 2nd frame
 
-      particles.forEach((p, i) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
         if (p.x < 0) p.x = canvas.width;
@@ -55,25 +61,27 @@ function ParticleField() {
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.opacity;
         ctx.fill();
-        ctx.globalAlpha = 1;
 
-        // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = p.x - particles[j].x;
-          const dy = p.y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 140) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.globalAlpha = 0.05 * (1 - dist / 140);
-            ctx.strokeStyle = '#3B82F6';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            ctx.globalAlpha = 1;
+        // Draw connections (optimized with squared distance)
+        if (drawConns) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = p.x - particles[j].x;
+            const dy = p.y - particles[j].y;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < CONN_DIST_SQ) {
+              const dist = Math.sqrt(distSq);
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.globalAlpha = 0.05 * (1 - dist / CONN_DIST);
+              ctx.strokeStyle = '#3B82F6';
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
           }
         }
-      });
+      }
+      ctx.globalAlpha = 1;
 
       animationId = requestAnimationFrame(draw);
     };

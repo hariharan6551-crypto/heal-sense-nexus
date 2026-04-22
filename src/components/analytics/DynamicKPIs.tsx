@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useRef } from 'react';
+import { useMemo, useEffect, useState, useRef, memo } from 'react';
 import {
   Users, Clock, Heart, AlertTriangle, Stethoscope, UserCheck,
   TrendingUp, TrendingDown, Minus, BarChart3, Hash, DollarSign, Activity, Percent,
@@ -71,7 +71,7 @@ const VIBRANT_COLORS = [
   { gradient: 'linear-gradient(135deg, #EC4899, #F43F5E)', text: '#DB2777', bg: 'rgba(236,72,153,0.04)', border: 'rgba(236,72,153,0.1)', shadow: 'rgba(236,72,153,0.12)', fill: '#EC4899' },
 ];
 
-function AnimatedKPICard({ k, i }: { k: any; i: number }) {
+const AnimatedKPICard = memo(function AnimatedKPICard({ k, i }: { k: any; i: number }) {
   const animatedValue = useAnimatedValue(k.rawValue, 1200);
   const color = VIBRANT_COLORS[i % VIBRANT_COLORS.length];
 
@@ -155,7 +155,7 @@ function AnimatedKPICard({ k, i }: { k: any; i: number }) {
       </ParallaxLayer>
     </motion.div>
   );
-}
+});
 
 export default function DynamicKPIs({ dataset, columnStats }: Props) {
   const kpis = useMemo(() => {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Fonts loaded non-blocking via index.html <link> with display=swap */
 
 @tailwind base;
 @tailwind components;
@@ -623,6 +623,7 @@
   .text-gradient-vibrant {
     background: linear-gradient(135deg, var(--vivid-red), var(--vivid-yellow), var(--vivid-green), var(--vivid-blue));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 300% auto;
     animation: gradientTextShift 4s ease infinite;
@@ -647,3 +648,19 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
   }
 }
+
+  /* ============================================================================
+     GPU-ACCELERATED ANIMATION UTILITIES
+     Forces compositing layer for smooth 60fps transforms
+     ============================================================================ */
+  .gpu-accelerated {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Content visibility for off-screen optimization */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }

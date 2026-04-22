@@ -13,8 +13,18 @@
     <meta property="og:description" content="Enterprise AI-powered analytics with real-time data visualization and predictive intelligence.">
     <meta property="og:type" content="website" />
 
+    <!-- Preconnect to font origins (eliminates DNS+TLS round-trip) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Non-blocking font load with display=swap (prevents FOIT) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
+    </noscript>
+
+    <!-- Preload the default dataset so it's ready when the dashboard mounts -->
+    <link rel="prefetch" href="/hospital_readmission_dataset.csv" as="fetch" crossorigin />
   </head>
 
   <body>
@@ -22,3 +32,4 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+

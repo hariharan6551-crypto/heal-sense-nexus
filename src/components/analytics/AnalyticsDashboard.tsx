@@ -28,7 +28,13 @@ import MorphContainer from '@/components/core/MorphContainer';
 function useSessionTimeout(timeoutMinutes = 15) {
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    let lastReset = 0;
+    const THROTTLE_MS = 30_000; // Only reset timer every 30s — no need for sub-second precision on a 15min timeout
+
     const reset = () => {
+      const now = Date.now();
+      if (now - lastReset < THROTTLE_MS) return; // Throttle: skip if reset recently
+      lastReset = now;
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         toast.error('Session expired due to inactivity. Please log in again.');
@@ -38,9 +44,10 @@ function useSessionTimeout(timeoutMinutes = 15) {
       }, timeoutMinutes * 60 * 1000);
     };
     
-    // Listen for activity
-    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
-    events.forEach(e => document.addEventListener(e, reset));
+    // Listen for activity — passive to avoid blocking scroll/touch
+    const events: (keyof DocumentEventMap)[] = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    // Removed 'mousemove' — mousedown is sufficient for detecting activity
+    events.forEach(e => document.addEventListener(e, reset, { passive: true }));
     reset();
     
     return () => {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, memo } from 'react';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   ScatterChart as RechartsScatter, Scatter,
@@ -49,7 +49,7 @@ interface Props {
 // ═══════════════════════════════════════════════════════════════════════
 // Section Card (Cinematic Edition)
 // ═══════════════════════════════════════════════════════════════════════
-function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
+const SectionCard = memo(function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
   title: string; icon?: any; badge?: string; children: React.ReactNode; index?: number;
 }) {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -89,7 +89,7 @@ function SectionCard({ title, icon: Icon, badge, children, index = 0 }: {
       </ParallaxLayer>
     </motion.div>
   );
-}
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // Data Helpers
@@ -128,7 +128,7 @@ function filterData(data: Record<string, any>[], filters: Record<string, string>
 }
 
 // Custom tooltip (Light Theme)
-const ChartTooltip = ({ active, payload, label }: any) => {
+const ChartTooltip = memo(({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white/95 backdrop-blur-md border border-slate-200 px-5 py-4 rounded-xl shadow-lg text-xs hover:shadow-xl transition-shadow duration-300">
@@ -144,12 +144,12 @@ const ChartTooltip = ({ active, payload, label }: any) => {
       ))}
     </div>
   );
-};
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // Chart Renderer
 // ═══════════════════════════════════════════════════════════════════════
-function RenderChart({ chart, data, analysis }: {
+const RenderChart = memo(function RenderChart({ chart, data, analysis }: {
   chart: ChartRecommendation; data: Record<string, any>[]; analysis: DataAnalysis;
 }) {
   const { type, xColumn, yColumn, columns, sizeColumn } = chart;
@@ -562,7 +562,7 @@ function RenderChart({ chart, data, analysis }: {
   }
 
   return <p className="text-xs text-slate-400 italic py-8 text-center">Visualization pending...</p>;
-}
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // Main Export
