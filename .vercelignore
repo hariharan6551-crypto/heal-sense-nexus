@@ -1,0 +1,6 @@
+backend
+backend/**
+*.py
+__pycache__
+*.pyc
+scripts

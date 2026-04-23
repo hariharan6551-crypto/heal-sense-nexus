@@ -1,7 +1,9 @@
 {
   "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "outputDirectory": "dist",
   "framework": "vite",
+  "ignoreCommand": "echo 'frontend only'",
   "rewrites": [
     {
       "source": "/(.*)",
