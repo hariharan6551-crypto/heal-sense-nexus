@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import {
   LayoutDashboard, Database, Bot, FileText, Settings,
-  Sparkles, Upload, Clock, LogOut, ChevronDown, Menu, X
+  Sparkles, Upload, Clock, LogOut, ChevronDown, Menu, X, Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parseFile } from '@/lib/parseData';
@@ -20,6 +20,7 @@ interface Props {
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', color: '#3B82F6', bgColor: 'rgba(59,130,246,0.08)' },
+  { icon: Shield, label: 'Risk Analysis', color: '#EF4444', bgColor: 'rgba(239,68,68,0.08)' },
   { icon: Database, label: 'Dataset', color: '#22C55E', bgColor: 'rgba(34,197,94,0.08)' },
   { icon: Bot, label: 'AI Assistant', color: '#8B5CF6', bgColor: 'rgba(139,92,246,0.08)' },
   { icon: FileText, label: 'Reports', color: '#EAB308', bgColor: 'rgba(234,179,8,0.08)' },

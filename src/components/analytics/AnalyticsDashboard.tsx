@@ -20,6 +20,7 @@ import CommandPalette from './CommandPalette';
 import DrilldownPanel from './DrilldownPanel';
 import PatientPanel from './PatientPanel';
 import FloatingActionButton from './FloatingActionButton';
+import HealthcareDashboard from '@/components/healthcare/HealthcareDashboard';
 import { toast } from 'sonner';
 import { Database } from 'lucide-react';
 import MorphContainer from '@/components/core/MorphContainer';
@@ -456,6 +457,13 @@ export default function AnalyticsDashboard() {
                   onPatientClick={handlePatientClick}
                 />
               </>
+            )}
+
+            {/* Tab: Risk Analysis — Healthcare ML Dashboard */}
+            {activeTab === 'Risk Analysis' && (
+              <div className="page-transition">
+                <HealthcareDashboard dataset={timeFilteredDataset} />
+              </div>
             )}
 
             {/* Tab: Dataset */}

@@ -45,11 +45,20 @@ export default function LoginForm({ onMorphStart }: Props) {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
 
+    // Validate credentials: Admin / Health2026
+    if (username.trim() !== 'Admin' || password !== 'Health2026') {
+      setIsLoading(false);
+      setErrors({ username: 'Invalid credentials', password: 'Invalid credentials' });
+      toast.error('Access Denied', { description: 'Invalid username or password. Use Admin / Health2026' });
+      return;
+    }
+
     setLoginSuccess(true);
     sessionStorage.setItem('isAuthenticated', 'true');
+    sessionStorage.setItem('dashboard-user', username.trim());
     localStorage.removeItem('isAuthenticated'); // Clear any legacy persist
     toast.success('Authentication Successful', {
-      description: 'Morphing to Analytics Dashboard…',
+      description: 'Morphing to Healthcare Analytics Dashboard…',
       icon: <Zap className="w-4 h-4 text-blue-500" />,
     });
 
