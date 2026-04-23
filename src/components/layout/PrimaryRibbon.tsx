@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, memo, useCallback, startTransition } from 'react';
 import {
   LayoutDashboard, Database, Bot, FileText, Settings,
   Sparkles, Upload, Clock, LogOut, ChevronDown, Menu, X, Shield
@@ -27,17 +27,31 @@ const NAV_ITEMS = [
   { icon: Settings, label: 'Settings', color: '#64748b', bgColor: 'rgba(100,116,139,0.08)' },
 ];
 
-export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange, dashboardTitle, datasetName }: Props) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+// Isolated clock component — prevents re-rendering the entire navbar every second
+const LiveClock = memo(function LiveClock() {
   const [time, setTime] = useState(new Date());
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+  return (
+    <div className="hidden xl:flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 shadow-sm text-slate-500">
+      <Clock className="h-4 w-4 text-blue-500" />
+      <span className="tabular-nums">{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+    </div>
+  );
+});
+
+export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange, dashboardTitle, datasetName }: Props) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  // Wrap tab changes in startTransition so the click feels instant
+  const handleTabChange = useCallback((tab: string) => {
+    startTransition(() => onTabChange(tab));
+  }, [onTabChange]);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -105,18 +119,16 @@ export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange,
             </div>
           </div>
 
-          {/* Desktop Nav Items */}
+          {/* Desktop Nav Items — uses startTransition for instant tab switch */}
           <nav className="hidden lg:flex items-center gap-1.5 h-full ml-8" id="nav-tabs">
             {NAV_ITEMS.map(item => {
               const isActive = activeTab === item.label;
               return (
-                <motion.button
+                <button
                   key={item.label}
                   id={`nav-tab-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                  onClick={() => onTabChange(item.label)}
-                  whileHover={!isActive ? { y: -1 } : {}}
-                  whileTap={{ scale: 0.97 }}
-                  className="relative px-5 h-[44px] flex items-center gap-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+                  onClick={() => handleTabChange(item.label)}
+                  className={`relative px-5 h-[44px] flex items-center gap-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:-translate-y-[1px] active:scale-[0.97] ${isActive ? '' : 'hover:bg-slate-50'}`}
                   style={{
                     background: isActive ? item.bgColor : 'transparent',
                     color: isActive ? item.color : '#64748b',
@@ -126,25 +138,20 @@ export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange,
                   <item.icon className="h-[18px] w-[18px]" style={{ color: isActive ? item.color : undefined }} />
                   <span>{item.label}</span>
                   {isActive && (
-                    <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-[4px] rounded-full"
+                    <div
+                      className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-[4px] rounded-full transition-all duration-300"
                       style={{ background: `linear-gradient(90deg, ${item.color}, ${item.color}80)` }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
-                </motion.button>
+                </button>
               );
             })}
           </nav>
 
           {/* Right Section */}
           <div className="flex items-center gap-4 ml-auto relative z-20">
-            {/* Live Clock */}
-            <div className="hidden xl:flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 shadow-sm text-slate-500">
-              <Clock className="h-4 w-4 text-blue-500" />
-              <span className="tabular-nums">{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-            </div>
+            {/* Live Clock — isolated memo'd component */}
+            <LiveClock />
 
             {/* Upload Dataset CTA */}
             <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={handleFile} />
@@ -219,7 +226,7 @@ export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange,
                     <motion.button
                       key={item.label}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => { onTabChange(item.label); setMobileOpen(false); }}
+                      onClick={() => { handleTabChange(item.label); setMobileOpen(false); }}
                       className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all"
                       style={{
                         background: isActive ? item.bgColor : 'transparent',

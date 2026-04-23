@@ -54,12 +54,7 @@ const SectionCard = memo(function SectionCard({ title, icon: Icon, badge, childr
 }) {
   const [showTooltip, setShowTooltip] = useState(false);
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: 'easeOut' }}
-      className="h-full"
-    >
+    <div className="h-full animate-fade-in">
       <ParallaxLayer intensity={4} className="h-full">
         <GlassCard className="h-full flex flex-col group relative overflow-visible bg-white/70">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50 relative z-10">
@@ -87,7 +82,7 @@ const SectionCard = memo(function SectionCard({ title, icon: Icon, badge, childr
         <div className="p-5 flex-1 relative z-10 bg-transparent">{children}</div>
       </GlassCard>
       </ParallaxLayer>
-    </motion.div>
+    </div>
   );
 });
 
