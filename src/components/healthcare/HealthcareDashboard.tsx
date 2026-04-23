@@ -1,18 +1,22 @@
 import { useState, useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Stethoscope, HeartHandshake, Brain, Activity } from 'lucide-react';
+import { Shield, Stethoscope, HeartHandshake, Brain, Activity, BarChart3, TrendingUp } from 'lucide-react';
 import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import type { DatasetInfo } from '@/lib/parseData';
 import RiskOverview from './RiskOverview';
 import ClinicalPanel from './ClinicalPanel';
 import SocialSupportPanel from './SocialSupportPanel';
 import ModelResults from './ModelResults';
+import ReadmissionPatterns from './ReadmissionPatterns';
+import RecoveryTrends from './RecoveryTrends';
 import GlassCard from '@/components/core/GlassCard';
 
 const TABS = [
   { id: 'risk', label: 'Risk Overview', icon: Shield, color: '#3B82F6' },
   { id: 'clinical', label: 'Clinical Indicators', icon: Stethoscope, color: '#8B5CF6' },
+  { id: 'readmission', label: 'Readmission Patterns', icon: BarChart3, color: '#EF4444' },
   { id: 'social', label: 'Social & Recovery', icon: HeartHandshake, color: '#10B981' },
+  { id: 'recovery', label: 'Recovery Trends', icon: TrendingUp, color: '#14B8A6' },
   { id: 'model', label: 'AI Model Results', icon: Brain, color: '#EC4899' },
 ] as const;
 
@@ -45,7 +49,7 @@ export default memo(function HealthcareDashboard({ dataset }: { dataset: Dataset
   return (
     <div className="space-y-4">
       {/* Tab Navigation */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
         {TABS.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -76,7 +80,9 @@ export default memo(function HealthcareDashboard({ dataset }: { dataset: Dataset
       >
         {activeTab === 'risk' && <RiskOverview result={mlResult} />}
         {activeTab === 'clinical' && <ClinicalPanel result={mlResult} />}
+        {activeTab === 'readmission' && <ReadmissionPatterns result={mlResult} />}
         {activeTab === 'social' && <SocialSupportPanel result={mlResult} />}
+        {activeTab === 'recovery' && <RecoveryTrends result={mlResult} />}
         {activeTab === 'model' && <ModelResults result={mlResult} />}
       </motion.div>
     </div>

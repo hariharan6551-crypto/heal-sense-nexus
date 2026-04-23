@@ -109,8 +109,9 @@ export default function AIPanel({ dataset, analysis, insights }: Props) {
   return (
     <div className="space-y-4">
       {/* AI Chat Interface */}
-      <GlassCard className="flex flex-col h-[400px]" glowColor="blue">
-        <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+      <GlassCard className="overflow-hidden" glowColor="blue">
+        <div className="flex flex-col h-[420px]">
+        <div className="flex-shrink-0 px-4 py-3 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -131,7 +132,7 @@ export default function AIPanel({ dataset, analysis, insights }: Props) {
         </div>
         
         {/* Chat History */}
-        <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto scrollbar-thin space-y-4 bg-white">
+        <div ref={scrollRef} className="flex-1 min-h-0 p-4 overflow-y-auto scrollbar-thin space-y-4 bg-white">
           <AnimatePresence initial={false}>
             {chatHistory.map((msg) => (
               <motion.div
@@ -173,8 +174,8 @@ export default function AIPanel({ dataset, analysis, insights }: Props) {
           </AnimatePresence>
         </div>
 
-        {/* Input Area */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50">
+        {/* Input Area — flex-shrink-0 ensures it NEVER disappears */}
+        <div className="flex-shrink-0 p-3 border-t border-slate-100 bg-slate-50">
           <div className="flex gap-2 mb-3 px-1 overflow-x-auto scrollbar-thin pb-1">
             {suggestedQuestions.map(sq => (
               <button key={sq} onClick={() => handleAsk(sq)}
@@ -196,6 +197,7 @@ export default function AIPanel({ dataset, analysis, insights }: Props) {
             </AnimatedButton>
           </div>
         </div>
+        </div>{/* close inner flex container */}
       </GlassCard>
 
       {/* Auto-Generated Insights Container */}
