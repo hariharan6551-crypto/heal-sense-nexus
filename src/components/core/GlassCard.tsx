@@ -1,5 +1,5 @@
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { ReactNode, forwardRef, memo } from 'react';
+import { ReactNode, forwardRef, memo, CSSProperties } from 'react';
 
 interface GlassCardProps extends HTMLMotionProps<"div"> {
   children: ReactNode;
@@ -28,10 +28,9 @@ const GlassCard = memo(function GlassCard({ children, className = '', glowColor 
     </>
   );
 
-  // For non-interactive cards (~80% of usage), use plain div to avoid framer-motion overhead
   if (!interactive) {
     return (
-      <div className={baseClass} style={props.style}>
+      <div className={baseClass} style={props.style as CSSProperties}>
         {innerContent}
       </div>
     );
