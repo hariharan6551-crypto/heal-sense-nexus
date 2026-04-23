@@ -218,6 +218,28 @@ def main():
     with open(os.path.join(OUTPUT_DIR, 'feature_importance.json'), 'w') as f:
         json.dump(feature_importance, f, indent=2)
 
+    # 8. Aggregated Metrics
+    agg_rows = []
+    for group_col in ['diagnosis_group', 'region', 'age_group', 'gender']:
+        if group_col in df.columns:
+            target_col = [c for c in df.columns if 'readmitted' in c.lower()][0]
+            grouped = df.groupby(group_col).agg(
+                total_patients=(target_col, 'count'),
+                readmitted=(target_col, 'sum'),
+                readmission_rate=(target_col, 'mean'),
+                avg_length_of_stay=('length_of_stay', 'mean') if 'length_of_stay' in df.columns else (target_col, 'count'),
+            ).reset_index()
+            grouped['group_type'] = group_col
+            grouped.rename(columns={group_col: 'group_value'}, inplace=True)
+            grouped['readmission_rate'] = (grouped['readmission_rate'] * 100).round(1)
+            if 'avg_length_of_stay' in grouped.columns:
+                grouped['avg_length_of_stay'] = grouped['avg_length_of_stay'].round(1)
+            agg_rows.append(grouped)
+    if agg_rows:
+        agg_df = pd.concat(agg_rows, ignore_index=True)
+        agg_df.to_csv(os.path.join(OUTPUT_DIR, 'aggregated_metrics.csv'), index=False)
+        print(f"✅ Exported aggregated_metrics.csv ({len(agg_df)} rows)")
+
     # Summary
     dist = {'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
     for s in risk_scores:
