@@ -1,3 +1,4 @@
+// cspell:ignore Drilldown drilldown
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
