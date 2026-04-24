@@ -16,9 +16,9 @@ import io
 import json
 import os
 
-from backend.data_processing.cleaner import clean_dataset, detect_column_types
-from backend.feature_engineering.transformer import run_feature_pipeline, prepare_model_features
-from backend.models.trainer import (
+from ml_backend.data_processing.cleaner import clean_dataset, detect_column_types
+from ml_backend.feature_engineering.transformer import run_feature_pipeline, prepare_model_features
+from ml_backend.models.trainer import (
     train_logistic_regression, train_random_forest,
     evaluate_model, get_feature_importance, assign_risk_category
 )

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from backend.ml_model import train_linear_model, predict_with_model
+from ml_backend.ml_model import train_linear_model, predict_with_model
 
 
 def predict_future(df: pd.DataFrame, years: int) -> str:

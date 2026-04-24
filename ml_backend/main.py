@@ -4,9 +4,9 @@ This module can be used to run the backend as a standalone service
 or to initialize components when imported.
 """
 
-from backend.ai_agent import ask_ai
-from backend.predictor import predict_future
-from backend.chart_generator import (
+from ml_backend.ai_agent import ask_ai
+from ml_backend.predictor import predict_future
+from ml_backend.chart_generator import (
     generate_bar_chart,
     generate_pie_chart,
     generate_line_chart,

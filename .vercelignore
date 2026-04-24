@@ -1,5 +1,5 @@
-backend
-backend/**
+ml_backend
+ml_backend/**
 *.py
 __pycache__
 *.pyc
