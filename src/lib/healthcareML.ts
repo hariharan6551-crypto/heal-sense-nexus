@@ -111,7 +111,7 @@ function engineerFeatures(data: Record<string, unknown>[]) {
 }
 
 // ── Logistic Regression ──────────────────────────────────────────────
-function trainLogisticRegression(X: number[][], y: number[], lr = 0.01, epochs = 200) {
+function trainLogisticRegression(X: number[][], y: number[], lr = 0.01, epochs = 100) {
   const nFeatures = X[0].length;
   const weights = new Array(nFeatures).fill(0).map(() => (Math.random() - 0.5) * 0.01);
   let bias = 0;
@@ -174,7 +174,7 @@ function buildStump(X: number[][], y: number[], sampleWeights?: number[]): TreeN
 }
 
 // ── Random Forest ────────────────────────────────────────────────────
-function trainRandomForest(X: number[][], y: number[], nTrees = 50) {
+function trainRandomForest(X: number[][], y: number[], nTrees = 30) {
   const trees: TreeNode[] = [];
   const n = X.length;
   const featureImportances = new Array(X[0].length).fill(0);
@@ -268,9 +268,9 @@ export function runMLPipeline(data: Record<string, unknown>[]): MLPipelineResult
   const Xtest = testIdx.map(i => X[i]);
   const ytest = testIdx.map(i => y[i]);
 
-  // Train models
-  const lr = trainLogisticRegression(Xtrain, ytrain, 0.05, 300);
-  const rf = trainRandomForest(Xtrain, ytrain, 60);
+  // Train models (reduced hyperparams for instant UI)
+  const lr = trainLogisticRegression(Xtrain, ytrain, 0.05, 100);
+  const rf = trainRandomForest(Xtrain, ytrain, 30);
 
   // Evaluate
   const lrProbs = lr.predict(Xtest);

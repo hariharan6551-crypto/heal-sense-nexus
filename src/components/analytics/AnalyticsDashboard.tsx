@@ -1,10 +1,11 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { DatasetInfo } from '@/lib/parseData';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import { generateInsights } from '@/lib/insightEngine';
 import { parseFile } from '@/lib/parseData';
+import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import PrimaryRibbon from '@/components/layout/PrimaryRibbon';
 import SecondaryRibbon from '@/components/layout/SecondaryRibbon';
 import AdminPanel3D from '@/components/admin/AdminPanel3D';
@@ -77,12 +78,48 @@ export default function AnalyticsDashboard() {
       
       const saved = localStorage.getItem('dashboard-filters');
       if (saved) return JSON.parse(saved);
-    } catch {}
+    } catch (e) {
+      console.warn('Failed to parse dashboard filters', e);
+    }
     return {};
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+
+  // ── Async ML Pipeline: runs off main thread via setTimeout yielding ──
+  const [mlResult, setMlResult] = useState<MLPipelineResult | null>(null);
+  const mlDataRef = useRef<unknown[] | null>(null); // track which dataset the result is for
+
+  useEffect(() => {
+    if (!dataset?.data?.length) {
+      setMlResult(null);
+      mlDataRef.current = null;
+      return;
+    }
+    // Skip if we already computed for this exact dataset reference
+    if (mlDataRef.current === dataset.data) return;
+
+    // Run ML asynchronously so it never blocks the main thread
+    let cancelled = false;
+    setMlResult(null); // show skeleton instantly
+
+    // Use setTimeout(0) to yield control back to the browser before heavy work
+    const timerId = setTimeout(() => {
+      if (cancelled) return;
+      try {
+        const result = runMLPipeline(dataset.data);
+        if (!cancelled) {
+          mlDataRef.current = dataset.data;
+          setMlResult(result);
+        }
+      } catch (e) {
+        console.error('ML Pipeline error:', e);
+      }
+    }, 0);
+
+    return () => { cancelled = true; clearTimeout(timerId); };
+  }, [dataset]);
 
   // Phase 22: Offline Mode Resilience
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -112,7 +149,7 @@ export default function AnalyticsDashboard() {
   // Drilldown & Patient Panel state
   const [drilldownChartId, setDrilldownChartId] = useState<string | null>(null);
   const [drilldownOpen, setDrilldownOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<Record<string, any> | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Record<string, unknown> | null>(null);
   const [patientPanelOpen, setPatientPanelOpen] = useState(false);
 
   // Phase 16: Interactive Role-Based Access Control
@@ -189,7 +226,7 @@ export default function AnalyticsDashboard() {
     // Generic Fallback
     let base = dataset.fileName.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
     base = base.replace(/([a-z])([A-Z])/g, '$1 $2');
-    let words = base.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    const words = base.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
     
     // Check columns to infer subjects if the title is too generic
     const allCols = dataset.columns.join(' ').toLowerCase();
@@ -271,8 +308,9 @@ export default function AnalyticsDashboard() {
       setIsLoading(true);
       const ds = await parseFile(file);
       handleDatasetLoaded(ds);
-    } catch (err: any) {
-      toast.error('Failed to parse file', { description: err.message });
+    } catch (err) {
+      const e = err as Error;
+      toast.error('Failed to parse file', { description: e.message });
       setIsLoading(false);
     }
   };
@@ -305,7 +343,9 @@ export default function AnalyticsDashboard() {
         Object.entries(next).forEach(([k, v]) => params.set(k, v));
         const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
         window.history.replaceState({}, '', newUrl);
-      } catch {}
+      } catch (e) {
+        console.warn('Failed to save filters to URL/storage', e);
+      }
 
       return next;
     });
@@ -316,7 +356,7 @@ export default function AnalyticsDashboard() {
     setDrilldownOpen(true);
   }, []);
 
-  const handlePatientClick = useCallback((patient: Record<string, any>) => {
+  const handlePatientClick = useCallback((patient: Record<string, unknown>) => {
     setSelectedPatient(patient);
     setPatientPanelOpen(true);
   }, []);
@@ -459,12 +499,10 @@ export default function AnalyticsDashboard() {
               </>
             )}
 
-            {/* Tab: Risk Analysis — Healthcare ML Dashboard */}
-            {activeTab === 'Risk Analysis' && (
-              <div className="page-transition">
-                <HealthcareDashboard dataset={timeFilteredDataset} />
-              </div>
-            )}
+            {/* Tab: Risk Analysis — Healthcare ML Dashboard (always mounted, CSS-hidden) */}
+            <div className="page-transition" style={{ display: activeTab === 'Risk Analysis' ? 'block' : 'none' }}>
+              <HealthcareDashboard mlResult={mlResult} />
+            </div>
 
             {/* Tab: Dataset */}
             {activeTab === 'Dataset' && (
