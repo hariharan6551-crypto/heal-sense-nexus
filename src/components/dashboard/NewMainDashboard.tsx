@@ -12,15 +12,21 @@ import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import { useTheme } from '@/contexts/ThemeContext';
 import DashboardPreview from './DashboardPreview';
 import PipelineView from './PipelineView';
+import DynamicCharts from '../analytics/DynamicCharts';
+import { analyzeDataset } from '@/lib/analyzeData';
+import { recommendCharts } from '@/lib/chartRecommender';
 import {
   LayoutDashboard, GitBranch, Sun, Moon, LogOut,
-  ChevronDown, Activity, Sparkles
+  ChevronDown, Activity, Sparkles, Database, Bot, FileBarChart, UploadCloud, PieChart
 } from 'lucide-react';
 import './dashboard-theme.css';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'pipeline', label: 'ML Pipeline', icon: GitBranch },
+  { id: 'features', label: 'Features', icon: PieChart },
+  { id: 'ai', label: 'AI Assistant', icon: Bot },
+  { id: 'reports', label: 'Reports & Power BI', icon: FileBarChart },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -71,6 +77,9 @@ export default function NewMainDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const mlDataRef = useRef<unknown[] | null>(null);
+
+  const analysis = useMemo(() => dataset ? analyzeDataset(dataset) : null, [dataset]);
+  const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
 
   const username = localStorage.getItem('dashboard-username') || 'Admin';
 
@@ -180,6 +189,23 @@ export default function NewMainDashboard() {
 
         {/* Right Side */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Upload Dataset Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => alert("Upload Dataset feature coming soon...")}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: 6, 
+              padding: '6px 12px', borderRadius: 8, 
+              background: 'rgba(56,189,248,0.1)', 
+              border: '1px solid rgba(56,189,248,0.2)',
+              color: 'var(--text-accent)', fontSize: 12, fontWeight: 700, cursor: 'pointer' 
+            }}
+          >
+            <UploadCloud size={14} />
+            Upload Dataset
+          </motion.button>
+
           {/* Theme Toggle */}
           <motion.button
             onClick={toggleTheme}
@@ -242,6 +268,21 @@ export default function NewMainDashboard() {
           {activeTab === 'pipeline' && (
             <motion.div key="pipeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
               <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
+            </motion.div>
+          )}
+          {activeTab === 'features' && dataset && analysis && (
+            <motion.div key="features" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+              <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+            </motion.div>
+          )}
+          {(activeTab === 'ai' || activeTab === 'reports') && (
+            <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'var(--text-muted)' }}>
+              <div style={{ padding: 24, borderRadius: 16, background: 'var(--bg-card)', border: '1px solid var(--border-light)', textAlign: 'center' }}>
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
+                  {TABS.find(t => t.id === activeTab)?.label}
+                </h3>
+                <p style={{ fontSize: 14 }}>This module is currently being integrated and prepared for deployment.</p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
