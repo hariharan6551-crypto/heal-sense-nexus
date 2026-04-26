@@ -452,8 +452,15 @@ export default function AnalyticsDashboard() {
             {/* Tab: Dashboard */}
             {activeTab === 'Dashboard' && (
               <div className="space-y-6">
-                {/* ML Pipeline Flow Visualization removed per user request */}
-
+                <div className="animate-fade-up page-transition" style={{ animationDelay: '450ms' }}>
+                  <DynamicCharts 
+                    dataset={timeFilteredDataset} 
+                    charts={charts} 
+                    analysis={analysis} 
+                    filters={filters} 
+                    onDrilldown={handleDrilldown} 
+                  />
+                </div>
                 {/* Dashboard Overview Panels */}
                 {mlResult ? (
                   <DashboardPreview mlResult={mlResult} totalPatients={timeFilteredDataset.totalRows} />
@@ -480,52 +487,6 @@ export default function AnalyticsDashboard() {
               <div className="page-transition">
                 <DataProfilePanel dataset={timeFilteredDataset} analysis={analysis} />
               </div>
-            )}
-
-            {/* Tab: Features (Dynamic Charts) */}
-            {activeTab === 'Features' && (
-              <div className="page-transition">
-                <DynamicCharts 
-                  dataset={timeFilteredDataset} 
-                  charts={charts} 
-                  analysis={analysis} 
-                  filters={filters} 
-                  onDrilldown={handleDrilldown} 
-                />
-              </div>
-            )}
-
-            {/* Tab: AI Assistant */}
-            {activeTab === 'AI Assistant' && (
-              <GlassCard className="p-6 page-transition">
-                <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-                  AI-Generated Intelligence
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {insights.map(ins => (
-                    <div key={ins.id} className={`rounded-xl border p-5 transition-all hover:scale-[1.02] backdrop-blur-sm ${
-                      ins.severity === 'critical' ? 'bg-pink-50/80 border-pink-100' :
-                      ins.severity === 'warning' ? 'bg-amber-50/80 border-amber-100' :
-                      'bg-blue-50/80 border-blue-100'
-                    }`}>
-                      <p className={`text-sm font-bold tracking-wide mb-2 ${
-                        ins.severity === 'critical' ? 'text-pink-700' :
-                        ins.severity === 'warning' ? 'text-amber-700' :
-                        'text-blue-700'
-                      }`}>{ins.title}</p>
-                      <p className="text-xs font-mono text-slate-600 leading-relaxed max-w-[90%]">{ins.description}</p>
-                      <span className={`inline-block mt-4 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest ${
-                        ins.severity === 'critical' ? 'bg-pink-100 text-pink-700 border border-pink-200' :
-                        ins.severity === 'warning' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
-                        'bg-blue-100 text-blue-700 border border-blue-200'
-                      }`}>
-                        {ins.type}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </GlassCard>
             )}
 
             {/* Tab: Reports & Power BI (Phase 19) */}

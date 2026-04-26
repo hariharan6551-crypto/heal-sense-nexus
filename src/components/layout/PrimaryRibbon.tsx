@@ -21,8 +21,6 @@ interface Props {
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', color: '#3B82F6', bgColor: 'rgba(59,130,246,0.08)' },
   { icon: Shield, label: 'Risk Analysis', color: '#EF4444', bgColor: 'rgba(239,68,68,0.08)' },
-  { icon: Sparkles, label: 'Features', color: '#10B981', bgColor: 'rgba(16,185,129,0.08)' },
-  { icon: Bot, label: 'AI Assistant', color: '#8B5CF6', bgColor: 'rgba(139,92,246,0.08)' },
   { icon: FileText, label: 'Reports', color: '#F59E0B', bgColor: 'rgba(245,158,11,0.08)' },
   { icon: Settings, label: 'Settings', color: '#64748b', bgColor: 'rgba(100,116,139,0.08)' },
 ];
