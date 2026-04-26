@@ -96,17 +96,7 @@ export function recommendCharts(dataset: DatasetInfo): ChartRecommendation[] {
     });
 
     // Stacked bar with two categoricals
-    if (categoricalColumns.length >= 2) {
-      const secondCat = categoricalColumns.find(c => c !== bestBarCol && uniqueCount(data, c) <= 8) || categoricalColumns[1];
-      recs.push({
-        id: `stacked-${bestBarCol}-${secondCat}`,
-        type: "stacked_bar",
-        title: `${num} by ${bestBarCol} & ${secondCat}`,
-        description: `Stacked comparison across two categories`,
-        xColumn: bestBarCol, yColumn: num, sizeColumn: secondCat,
-        priority: priority--,
-      });
-    }
+    // (Removed per task requirements)
 
     // Second bar with different numeric
     if (numericColumns.length >= 2) {
@@ -122,43 +112,13 @@ export function recommendCharts(dataset: DatasetInfo): ChartRecommendation[] {
   }
 
   // ═══ FUNNEL ══════════════════════════════════════════════════════
-  const funnelCol = bestCatColumn(data, categoricalColumns, 8);
-  if (funnelCol && numericColumns.length > 0) {
-    recs.push({
-      id: `funnel-${funnelCol}-${num}`,
-      type: "funnel",
-      title: `${funnelCol} Funnel`,
-      description: `Funnel view of ${num} across ${funnelCol} stages`,
-      xColumn: funnelCol, yColumn: num,
-      priority: priority--,
-    });
-  }
+  // (Removed per task requirements)
 
   // ═══ RADAR ═══════════════════════════════════════════════════════
-  const radarCol = bestCatColumn(data, categoricalColumns, 6);
-  if (radarCol && numericColumns.length >= 3) {
-    recs.push({
-      id: `radar-${radarCol}`,
-      type: "radar",
-      title: `${radarCol} Multi-Metric Radar`,
-      description: `Radar comparison across metrics for ${radarCol}`,
-      xColumn: radarCol, columns: numericColumns.slice(0, 5),
-      priority: priority--,
-    });
-  }
+  // (Removed per task requirements)
 
   // ═══ TREEMAP ═════════════════════════════════════════════════════
-  const treemapCol = bestCatColumn(data, categoricalColumns, 20);
-  if (treemapCol && numericColumns.length > 0) {
-    recs.push({
-      id: `treemap-${treemapCol}-${num}`,
-      type: "treemap",
-      title: `${treemapCol} Treemap`,
-      description: `Size-mapped view of ${num} by ${treemapCol}`,
-      xColumn: treemapCol, yColumn: num,
-      priority: priority--,
-    });
-  }
+  // (Removed per task requirements)
 
   // ═══ TIME SERIES ═════════════════════════════════════════════════
   if (datetimeColumns.length > 0 && numericColumns.length > 0) {
@@ -176,23 +136,7 @@ export function recommendCharts(dataset: DatasetInfo): ChartRecommendation[] {
   }
 
   // ═══ SCATTER & BUBBLE ════════════════════════════════════════════
-  if (numericColumns.length >= 2) {
-    recs.push({
-      id: `scatter-${numericColumns[0]}-${numericColumns[1]}`, type: "scatter",
-      title: `${numericColumns[0]} vs ${numericColumns[1]}`,
-      description: `Relationship between two numeric variables`,
-      xColumn: numericColumns[0], yColumn: numericColumns[1], priority: priority--,
-    });
-    if (numericColumns.length >= 3) {
-      recs.push({
-        id: `bubble-${numericColumns[0]}-${numericColumns[1]}`, type: "bubble",
-        title: `${numericColumns[0]} vs ${numericColumns[1]} (size: ${numericColumns[2]})`,
-        description: `Bubble chart with three numeric dimensions`,
-        xColumn: numericColumns[0], yColumn: numericColumns[1], sizeColumn: numericColumns[2],
-        priority: priority--,
-      });
-    }
-  }
+  // (Removed per task requirements)
 
   // ═══ HISTOGRAM ═══════════════════════════════════════════════════
   if (numericColumns.length > 0) {

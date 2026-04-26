@@ -103,7 +103,7 @@ export default function DashboardFilters({ dataset, filters, onFilterChange }: P
           <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
             <Filter className="h-3.5 w-3.5 text-blue-600" />
           </div>
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Filters & Matrix Range</span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Global Filters</span>
           {activeFilterCount > 0 && (
             <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-200 shadow-sm">
               {activeFilterCount} ACTIVE

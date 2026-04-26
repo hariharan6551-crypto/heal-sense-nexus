@@ -192,12 +192,7 @@ export default function HeroSection({ dataset, analysis, dashboardTitle }: Props
       {/* Header Info */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1 relative z-10">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">
-            {dashboardTitle}
-          </h1>
-          <p className="text-slate-400 font-medium mt-2 flex items-center gap-2 text-sm">
-            Enterprise Analytics Suite • Real-time Population Overview
-          </p>
+          {/* Title removed per user request */}
         </motion.div>
         
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="hidden md:flex items-center gap-3">

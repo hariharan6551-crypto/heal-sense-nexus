@@ -21,9 +21,6 @@ interface Props {
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', color: '#3B82F6', bgColor: 'rgba(59,130,246,0.08)' },
   { icon: Shield, label: 'Risk Analysis', color: '#EF4444', bgColor: 'rgba(239,68,68,0.08)' },
-  { icon: Database, label: 'Dataset', color: '#22C55E', bgColor: 'rgba(34,197,94,0.08)' },
-  { icon: Bot, label: 'AI Assistant', color: '#8B5CF6', bgColor: 'rgba(139,92,246,0.08)' },
-  { icon: FileText, label: 'Reports', color: '#EAB308', bgColor: 'rgba(234,179,8,0.08)' },
   { icon: Settings, label: 'Settings', color: '#64748b', bgColor: 'rgba(100,116,139,0.08)' },
 ];
 
@@ -95,27 +92,7 @@ export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange,
               <Sparkles className="h-5 w-5 text-blue-600 relative z-20 drop-shadow-md" />
             </motion.div>
             <div className="min-w-0">
-              <h1 className="text-sm lg:text-[15px] font-black tracking-tight text-slate-800 leading-tight">
-                {dashboardTitle || 'Enterprise Analytics Platform'}
-              </h1>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Enterprise Suite</span>
-                {datasetName && (
-                  <>
-                    <span className="text-slate-300">•</span>
-                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold truncate max-w-[120px] sm:max-w-[200px]"
-                      style={{
-                        background: 'rgba(59,130,246,0.06)',
-                        border: '1px solid rgba(59,130,246,0.15)',
-                        color: '#2563EB',
-                      }}
-                    >
-                      <Database className="w-2.5 h-2.5" />
-                      {datasetName}
-                    </span>
-                  </>
-                )}
-              </div>
+              {/* Removed Title per user request */}
             </div>
           </div>
 
@@ -153,16 +130,7 @@ export default function PrimaryRibbon({ onDatasetLoaded, activeTab, onTabChange,
             {/* Live Clock — isolated memo'd component */}
             <LiveClock />
 
-            {/* Upload Dataset CTA */}
-            <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.json" onChange={handleFile} />
-            <GlowButton
-              onClick={() => fileRef.current?.click()}
-              className="hidden sm:flex items-center gap-2 py-2.5 px-6 rounded-full font-bold shadow-md"
-              variant="primary"
-            >
-              <Upload className="h-4 w-4" />
-              <span>Upload Dataset</span>
-            </GlowButton>
+            {/* Upload Dataset CTA Removed */}
 
             {/* Profile */}
             <div className="relative ml-2">

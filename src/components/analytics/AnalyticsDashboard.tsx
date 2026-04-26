@@ -8,13 +8,10 @@ import { generateInsights } from '@/lib/insightEngine';
 import { parseFile } from '@/lib/parseData';
 import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import PrimaryRibbon from '@/components/layout/PrimaryRibbon';
-import SecondaryRibbon from '@/components/layout/SecondaryRibbon';
 import AdminPanel3D from '@/components/admin/AdminPanel3D';
 import GlassCard from '@/components/core/GlassCard';
 import DynamicKPIs from './DynamicKPIs';
 import DynamicCharts from './DynamicCharts';
-import DashboardTable from './DashboardTable';
-import AIPanel from './AIPanel';
 import DashboardFilters from './DashboardFilters';
 import DataProfilePanel from './DataProfilePanel';
 import HeroSection from './HeroSection';
@@ -24,7 +21,6 @@ import PatientPanel from './PatientPanel';
 import FloatingActionButton from './FloatingActionButton';
 import HealthcareDashboard from '@/components/healthcare/HealthcareDashboard';
 import DashboardPreview from '@/components/dashboard/DashboardPreview';
-import PipelineView from '@/components/dashboard/PipelineView';
 import '@/components/dashboard/dashboard-theme.css';
 import { toast } from 'sonner';
 import { Database, Activity } from 'lucide-react';
@@ -162,7 +158,6 @@ export default function AnalyticsDashboard() {
   const handleRoleChange = useCallback((role: string) => {
     setUserRole(role);
     localStorage.setItem('dashboard-role', role);
-    window.dispatchEvent(new Event('dashboard-role-changed')); // Signal to DashboardTable
     toast.success(`Role instantly updated to ${role}`, { description: 'Data masking rules safely re-applied.' });
   }, []);
 
@@ -400,7 +395,6 @@ export default function AnalyticsDashboard() {
             dashboardTitle="Analytics Dashboard"
             datasetName=""
           />
-          <SecondaryRibbon />
         </div>
         <main className="max-w-[1800px] mx-auto p-4 lg:px-6 pt-[110px]" />
       </motion.div>
@@ -431,9 +425,6 @@ export default function AnalyticsDashboard() {
           dashboardTitle={dashboardTitle}
           datasetName={timeFilteredDataset.fileName}
         />
-        
-        {/* Secondary Ribbon (Advanced Analytics) */}
-        <SecondaryRibbon />
       </MorphContainer>
 
       {/* Loader removed */}
@@ -443,33 +434,7 @@ export default function AnalyticsDashboard() {
         {/* Hero Section */}
         <HeroSection dataset={timeFilteredDataset} analysis={analysis} dashboardTitle={dashboardTitle} />
 
-        {/* Dataset info bar */}
-        <div className="flex items-center gap-3 flex-wrap animate-fade-up relative z-10" style={{ animationDelay: '200ms' }}>
-          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm flex items-center gap-1.5 transition-colors">
-            <span className="text-blue-500">📊</span> <span className="font-semibold text-slate-800">{timeFilteredDataset.fileName}</span>
-          </div>
-          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm flex items-center gap-1.5">
-            <span className="text-blue-500">⚡</span> {timeFilteredDataset.totalRows.toLocaleString()} rows × {timeFilteredDataset.totalColumns} cols
-          </div>
-          <div className="bg-white rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] text-slate-600 shadow-sm">
-            <span className="text-teal-500">🔢</span> {timeFilteredDataset.numericColumns.length} numeric <span className="mx-1 text-slate-300">|</span> <span className="text-pink-500">📋</span> {timeFilteredDataset.categoricalColumns.length} categorical
-            {dataset.datetimeColumns.length > 0 && <><span className="mx-1 text-slate-300">|</span> <span className="text-amber-500">📅</span> {dataset.datetimeColumns.length} datetime</>}
-          </div>
-          {timeFilteredDataset.missingValueCount > 0 ? (
-            <div className="bg-amber-50 rounded-lg border border-amber-200 px-3 py-1.5 text-[11px] text-amber-700 font-bold flex items-center gap-1.5 shadow-sm" title="Data Quality Validator">
-              ⚠️ Data may be incomplete ({(100 - (timeFilteredDataset.missingValueCount / (timeFilteredDataset.totalRows * timeFilteredDataset.totalColumns)) * 100).toFixed(1)}% Fill)
-            </div>
-          ) : (
-            <div className="bg-emerald-50 rounded-lg border border-emerald-200 px-3 py-1.5 text-[11px] text-emerald-700 font-bold flex items-center gap-1.5 shadow-sm">
-              ✅ 100% Data Quality Validated
-            </div>
-          )}
-          {isOffline && (
-            <div className="bg-red-50 rounded-lg border border-red-200 px-3 py-1.5 text-[11px] text-red-700 font-bold flex items-center gap-1.5 animate-pulse shadow-sm">
-              ☁️ Offline Cache Mode Active
-            </div>
-          )}
-        </div>
+        {/* Dataset info bar removed per user request */}
 
         {/* Filters */}
         <div className="animate-fade-up" style={{ animationDelay: '300ms' }}>
@@ -482,21 +447,12 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Main grid */}
-        <div className={`grid grid-cols-1 ${activeTab === 'Dashboard' ? '' : 'xl:grid-cols-4'} gap-4 page-transition`}>
-          {/* Left columns (full width on Dashboard tab, 3/4 on other tabs) */}
-          <div className={`${activeTab === 'Dashboard' ? '' : 'xl:col-span-3'} space-y-4`}>
+        <div className="grid grid-cols-1 gap-4 page-transition">
+          <div className="space-y-4">
             {/* Tab: Dashboard */}
             {activeTab === 'Dashboard' && (
               <div className="space-y-6">
-                {/* ML Pipeline Flow Visualization */}
-                {mlResult ? (
-                  <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
-                ) : (
-                  <div className="rd-card" style={{ padding: 40, textAlign: 'center' }}>
-                    <Activity className="mx-auto mb-3" style={{ width: 24, height: 24, color: '#3B82F6', animation: 'spin 1s linear infinite' }} />
-                    <p className="text-sm font-bold text-slate-500">Running ML Pipeline...</p>
-                  </div>
-                )}
+                {/* ML Pipeline Flow Visualization removed per user request */}
 
                 {/* Dashboard Overview Panels */}
                 {mlResult ? (
@@ -678,13 +634,6 @@ export default function AnalyticsDashboard() {
               </GlassCard>
             )}
           </div>
-
-          {/* Right sidebar — AI Panel (hidden on Dashboard tab) */}
-          {activeTab !== 'Dashboard' && (
-            <div className="space-y-4">
-              <AIPanel dataset={timeFilteredDataset} analysis={analysis} insights={insights} />
-            </div>
-          )}
         </div>
       </main>
 
