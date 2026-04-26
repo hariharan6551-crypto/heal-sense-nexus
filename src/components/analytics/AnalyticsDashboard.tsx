@@ -10,6 +10,7 @@ import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import PrimaryRibbon from '@/components/layout/PrimaryRibbon';
 import AdminPanel3D from '@/components/admin/AdminPanel3D';
 import GlassCard from '@/components/core/GlassCard';
+import { useAdvancedStore } from '@/stores/advancedStore';
 import DynamicKPIs from './DynamicKPIs';
 import DynamicCharts from './DynamicCharts';
 import DashboardFilters from './DashboardFilters';
@@ -61,6 +62,7 @@ function useSessionTimeout(timeoutMinutes = 15) {
 
 export default function AnalyticsDashboard() {
   useSessionTimeout(15);
+  const toggleCopilot = useAdvancedStore((s) => s.toggleCopilot);
 
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [activeTab, setActiveTab] = useState(() => {
@@ -614,7 +616,7 @@ export default function AnalyticsDashboard() {
       {/* Floating Action Button */}
       <FloatingActionButton
         onExportCSV={handleExportCSV}
-        onOpenAI={() => setActiveTab('AI Assistant')}
+        onOpenAI={toggleCopilot}
         onScrollTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 

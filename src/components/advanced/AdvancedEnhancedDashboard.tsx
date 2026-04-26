@@ -93,14 +93,12 @@ export default function AdvancedEnhancedDashboard() {
         {filterBuilderOpen && <AdvancedFilterBuilder />}
         {drillDownOpen && <DrillDownPanel />}
 
-        {/* AI Copilot — floating chat (mount when toggled) */}
-        {copilotOpen && (
-          <AICopilot
-            datasetName={datasetCtx.name}
-            totalRows={datasetCtx.rows}
-            columns={datasetCtx.columns}
-          />
-        )}
+        {/* AI Copilot — floating chat (handles its own minimized/open state) */}
+        <AICopilot
+          datasetName={datasetCtx.name}
+          totalRows={datasetCtx.rows}
+          columns={datasetCtx.columns}
+        />
       </Suspense>
     </UltraContainer>
   );

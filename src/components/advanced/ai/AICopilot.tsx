@@ -79,22 +79,6 @@ export default function AICopilot({ datasetName, totalRows, columns }: Props) {
 
   return (
     <>
-      {/* Floating Copilot Button */}
-      {!copilotOpen && (
-        <motion.button
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={toggleCopilot}
-          className="fixed bottom-6 right-6 z-[55] w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-2xl shadow-purple-500/40 flex items-center justify-center group"
-        >
-          <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-400 border-2 border-white animate-pulse" />
-        </motion.button>
-      )}
-
       {/* Chat Panel */}
       <AnimatePresence>
         {copilotOpen && (
