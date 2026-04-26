@@ -1,0 +1,311 @@
+/* ═══════════════════════════════════════════════════════════════
+   Patient Readmission Risk Dashboard — Theme Variables
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Dark Theme (Default) ──────────────────────────────────── */
+[data-theme="dark"] .risk-dashboard,
+.risk-dashboard {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #1e293b;
+  --bg-card-hover: #253347;
+  --bg-surface: #0f172a;
+  --bg-nav: rgba(15, 23, 42, 0.95);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-accent: #38bdf8;
+  --border-color: rgba(148, 163, 184, 0.12);
+  --border-light: rgba(148, 163, 184, 0.06);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(56, 189, 248, 0.08);
+  --risk-high: #ef4444;
+  --risk-high-bg: rgba(239, 68, 68, 0.12);
+  --risk-medium: #f59e0b;
+  --risk-medium-bg: rgba(245, 158, 11, 0.12);
+  --risk-low: #10b981;
+  --risk-low-bg: rgba(16, 185, 129, 0.12);
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-purple: #8b5cf6;
+  --gradient-card: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(148, 163, 184, 0.1);
+}
+
+/* ── Light Theme ───────────────────────────────────────────── */
+[data-theme="light"] .risk-dashboard {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-surface: #e2e8f0;
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-accent: #2563eb;
+  --border-color: rgba(148, 163, 184, 0.25);
+  --border-light: rgba(148, 163, 184, 0.12);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.06);
+  --risk-high: #dc2626;
+  --risk-high-bg: rgba(220, 38, 38, 0.08);
+  --risk-medium: #d97706;
+  --risk-medium-bg: rgba(217, 119, 6, 0.08);
+  --risk-low: #059669;
+  --risk-low-bg: rgba(5, 150, 105, 0.08);
+  --accent-blue: #2563eb;
+  --accent-cyan: #0891b2;
+  --accent-purple: #7c3aed;
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.95));
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(148, 163, 184, 0.2);
+}
+
+/* ── Base Styles ───────────────────────────────────────────── */
+.risk-dashboard {
+  font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+.rd-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.rd-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--gradient-card);
+  pointer-events: none;
+  z-index: 0;
+}
+.rd-card > * { position: relative; z-index: 1; }
+
+.rd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  border-color: var(--text-accent);
+}
+
+/* ── Progress Bars ─────────────────────────────────────────── */
+.rd-progress-track {
+  height: 10px;
+  background: var(--border-color);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rd-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Risk Badges ───────────────────────────────────────────── */
+.rd-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.rd-badge-high {
+  background: var(--risk-high-bg);
+  color: var(--risk-high);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.rd-badge-medium {
+  background: var(--risk-medium-bg);
+  color: var(--risk-medium);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.rd-badge-low {
+  background: var(--risk-low-bg);
+  color: var(--risk-low);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* ── Navigation ────────────────────────────────────────────── */
+.rd-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-nav);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.4s ease;
+}
+
+.rd-nav-tab {
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.25s ease;
+  position: relative;
+}
+.rd-nav-tab:hover {
+  color: var(--text-primary);
+  background: var(--border-color);
+}
+.rd-nav-tab.active {
+  color: var(--text-accent);
+  background: rgba(56, 189, 248, 0.1);
+}
+.rd-nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--text-accent);
+}
+
+/* ── Metric Cards ──────────────────────────────────────────── */
+.rd-metric-value {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.rd-metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.rd-metric-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ── Patient Avatar ────────────────────────────────────────── */
+.rd-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.rd-avatar-female { background: rgba(236,72,153,0.15); color: #ec4899; }
+.rd-avatar-male { background: rgba(59,130,246,0.15); color: #3b82f6; }
+
+/* ── Pipeline Flow ─────────────────────────────────────────── */
+.rd-pipeline-step {
+  border-radius: 16px;
+  padding: 20px;
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.rd-pipeline-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 24px;
+  flex-shrink: 0;
+  padding: 0 8px;
+}
+.rd-pipeline-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(148,163,184,0.12);
+  color: var(--text-secondary);
+  margin: 2px;
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes rd-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes rd-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes rd-slide-right {
+  from { width: 0; }
+}
+.rd-animate-in {
+  animation: rd-fade-up 0.5s ease both;
+}
+.rd-animate-scale {
+  animation: rd-scale-in 0.4s ease both;
+}
+
+/* ── Theme Toggle ──────────────────────────────────────────── */
+.rd-theme-toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.rd-theme-toggle-knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme="dark"] .rd-theme-toggle-knob {
+  left: 24px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+[data-theme="light"] .rd-theme-toggle-knob {
+  left: 3px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+.risk-dashboard ::-webkit-scrollbar { width: 6px; height: 6px; }
+.risk-dashboard ::-webkit-scrollbar-track { background: transparent; }
+.risk-dashboard ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 999px; }
+.risk-dashboard ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

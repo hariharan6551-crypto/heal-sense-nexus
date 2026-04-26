@@ -141,52 +141,102 @@ function trainLogisticRegression(X: number[][], y: number[], lr = 0.01, epochs =
   };
 }
 
-// ── Decision Tree (Stump) ────────────────────────────────────────────
-interface TreeNode { featureIdx: number; threshold: number; leftProb: number; rightProb: number; gain: number }
+// ── Decision Tree (Depth-3) ──────────────────────────────────────────
+interface TreeNode {
+  featureIdx: number; threshold: number;
+  leftProb: number; rightProb: number; gain: number;
+  left?: TreeNode; right?: TreeNode;
+}
 
-function buildStump(X: number[][], y: number[], sampleWeights?: number[]): TreeNode {
-  const n = X.length;
+function findBestSplit(X: number[][], y: number[], indices: number[]): { featureIdx: number; threshold: number; leftIdx: number[]; rightIdx: number[]; gain: number } {
+  const n = indices.length;
   const nFeatures = X[0].length;
-  let bestGain = -Infinity, bestFeature = 0, bestThreshold = 0, bestLeftP = 0.5, bestRightP = 0.5;
+  let bestGain = -Infinity, bestFeature = 0, bestThreshold = 0;
+  let bestLeftIdx: number[] = [], bestRightIdx: number[] = [];
 
-  const w = sampleWeights || new Array(n).fill(1 / n);
+  // Random feature subset (sqrt(nFeatures)) for diversity
+  const nSub = Math.max(2, Math.floor(Math.sqrt(nFeatures)));
+  const featureSubset: number[] = [];
+  const allFeats = Array.from({ length: nFeatures }, (_, i) => i);
+  for (let i = allFeats.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allFeats[i], allFeats[j]] = [allFeats[j], allFeats[i]];
+  }
+  for (let i = 0; i < nSub; i++) featureSubset.push(allFeats[i]);
 
-  for (let f = 0; f < nFeatures; f++) {
-    const vals = X.map((x, i) => ({ v: x[f], y: y[i], w: w[i] })).sort((a, b) => a.v - b.v);
-    for (let t = 0; t < Math.min(vals.length - 1, 20); t++) {
-      const idx = Math.floor((t + 0.5) * vals.length / 20);
-      const threshold = vals[idx]?.v ?? 0;
-      let leftSum = 0, leftW = 0, rightSum = 0, rightW = 0;
-      for (const v of vals) {
-        if (v.v <= threshold) { leftSum += v.y * v.w; leftW += v.w; }
-        else { rightSum += v.y * v.w; rightW += v.w; }
-      }
-      const leftP = leftW > 0 ? leftSum / leftW : 0.5;
-      const rightP = rightW > 0 ? rightSum / rightW : 0.5;
-      const gain = Math.abs(leftP - rightP) * Math.min(leftW, rightW);
+  for (const f of featureSubset) {
+    const vals = indices.map(i => ({ idx: i, v: X[i][f] })).sort((a, b) => a.v - b.v);
+    const nTrials = Math.min(vals.length - 1, 15);
+    for (let t = 0; t < nTrials; t++) {
+      const splitAt = Math.floor((t + 0.5) * vals.length / nTrials);
+      const threshold = vals[splitAt]?.v ?? 0;
+      const leftIdx = vals.filter(v => v.v <= threshold).map(v => v.idx);
+      const rightIdx = vals.filter(v => v.v > threshold).map(v => v.idx);
+      if (leftIdx.length === 0 || rightIdx.length === 0) continue;
+      const leftP = leftIdx.reduce((s, i) => s + y[i], 0) / leftIdx.length;
+      const rightP = rightIdx.reduce((s, i) => s + y[i], 0) / rightIdx.length;
+      // Gini impurity reduction
+      const parentP = indices.reduce((s, i) => s + y[i], 0) / n;
+      const parentGini = 2 * parentP * (1 - parentP);
+      const leftGini = 2 * leftP * (1 - leftP);
+      const rightGini = 2 * rightP * (1 - rightP);
+      const gain = parentGini - (leftIdx.length / n * leftGini + rightIdx.length / n * rightGini);
       if (gain > bestGain) {
         bestGain = gain; bestFeature = f; bestThreshold = threshold;
-        bestLeftP = leftP; bestRightP = rightP;
+        bestLeftIdx = leftIdx; bestRightIdx = rightIdx;
       }
     }
   }
-  return { featureIdx: bestFeature, threshold: bestThreshold, leftProb: bestLeftP, rightProb: bestRightP, gain: bestGain };
+  return { featureIdx: bestFeature, threshold: bestThreshold, leftIdx: bestLeftIdx, rightIdx: bestRightIdx, gain: bestGain };
+}
+
+function buildTree(X: number[][], y: number[], indices: number[], depth: number, maxDepth = 3): TreeNode {
+  const prob = indices.length > 0 ? indices.reduce((s, i) => s + y[i], 0) / indices.length : 0.5;
+  if (depth >= maxDepth || indices.length < 10) {
+    return { featureIdx: 0, threshold: 0, leftProb: prob, rightProb: prob, gain: 0 };
+  }
+  const split = findBestSplit(X, y, indices);
+  if (split.gain <= 0 || split.leftIdx.length === 0 || split.rightIdx.length === 0) {
+    return { featureIdx: 0, threshold: 0, leftProb: prob, rightProb: prob, gain: 0 };
+  }
+  const leftChild = buildTree(X, y, split.leftIdx, depth + 1, maxDepth);
+  const rightChild = buildTree(X, y, split.rightIdx, depth + 1, maxDepth);
+  const leftProb = split.leftIdx.reduce((s, i) => s + y[i], 0) / split.leftIdx.length;
+  const rightProb = split.rightIdx.reduce((s, i) => s + y[i], 0) / split.rightIdx.length;
+  return {
+    featureIdx: split.featureIdx, threshold: split.threshold,
+    leftProb, rightProb, gain: split.gain,
+    left: leftChild, right: rightChild,
+  };
+}
+
+function predictTree(tree: TreeNode, x: number[]): number {
+  if (!tree.left && !tree.right) return tree.leftProb; // leaf
+  if (x[tree.featureIdx] <= tree.threshold) {
+    return tree.left ? predictTree(tree.left, x) : tree.leftProb;
+  } else {
+    return tree.right ? predictTree(tree.right, x) : tree.rightProb;
+  }
 }
 
 // ── Random Forest ────────────────────────────────────────────────────
-function trainRandomForest(X: number[][], y: number[], nTrees = 30) {
+function trainRandomForest(X: number[][], y: number[], nTrees = 50) {
   const trees: TreeNode[] = [];
   const n = X.length;
   const featureImportances = new Array(X[0].length).fill(0);
 
   for (let t = 0; t < nTrees; t++) {
     // Bootstrap sample
-    const indices = Array.from({ length: n }, () => Math.floor(Math.random() * n));
-    const Xb = indices.map(i => X[i]);
-    const yb = indices.map(i => y[i]);
-    const tree = buildStump(Xb, yb);
+    const bootstrapIndices = Array.from({ length: n }, () => Math.floor(Math.random() * n));
+    const tree = buildTree(X, y, bootstrapIndices, 0, 3);
     trees.push(tree);
-    featureImportances[tree.featureIdx] += tree.gain;
+    // Accumulate feature importances from all splits
+    const accImportance = (node: TreeNode) => {
+      if (node.gain > 0) featureImportances[node.featureIdx] += node.gain;
+      if (node.left) accImportance(node.left);
+      if (node.right) accImportance(node.right);
+    };
+    accImportance(tree);
   }
 
   // Normalize importances
@@ -196,7 +246,7 @@ function trainRandomForest(X: number[][], y: number[], nTrees = 30) {
   return {
     trees, featureImportances: normalizedImportances,
     predict: (X: number[][]) => X.map(x => {
-      const votes = trees.map(t => x[t.featureIdx] <= t.threshold ? t.leftProb : t.rightProb);
+      const votes = trees.map(t => predictTree(t, x));
       return votes.reduce((a, b) => a + b, 0) / votes.length;
     }),
   };
@@ -233,10 +283,17 @@ function evaluate(yTrue: number[], yProbs: number[], threshold = 0.5): ModelMetr
   return { modelName: '', accuracy, precision, recall, f1Score: f1, aucROC, confusionMatrix: { tp, fp, tn, fn } };
 }
 
-// ── Risk Category Assignment ─────────────────────────────────────────
-function assignRisk(prob: number): { category: 'LOW' | 'MEDIUM' | 'HIGH'; color: string } {
-  if (prob < 0.35) return { category: 'LOW', color: '#10B981' };
-  if (prob < 0.65) return { category: 'MEDIUM', color: '#F59E0B' };
+// ── Risk Category Assignment (Percentile-Adaptive) ───────────────────
+function computeAdaptiveThresholds(probs: number[]): { lowThreshold: number; highThreshold: number } {
+  const sorted = [...probs].sort((a, b) => a - b);
+  const p33 = sorted[Math.floor(sorted.length * 0.33)] ?? 0.35;
+  const p66 = sorted[Math.floor(sorted.length * 0.66)] ?? 0.65;
+  return { lowThreshold: p33, highThreshold: p66 };
+}
+
+function assignRisk(prob: number, lowT = 0.35, highT = 0.65): { category: 'LOW' | 'MEDIUM' | 'HIGH'; color: string } {
+  if (prob < lowT) return { category: 'LOW', color: '#10B981' };
+  if (prob < highT) return { category: 'MEDIUM', color: '#F59E0B' };
   return { category: 'HIGH', color: '#EF4444' };
 }
 
@@ -289,9 +346,11 @@ export function runMLPipeline(data: Record<string, unknown>[]): MLPipelineResult
 
   // Generate risk scores for ALL patients using RF (primary model)
   const allProbs = rf.predict(X);
+  // Compute adaptive thresholds so risk categories spread across the actual data distribution
+  const { lowThreshold, highThreshold } = computeAdaptiveThresholds(allProbs);
   const riskScores: RiskScore[] = data.map((row, i) => {
     const prob = allProbs[i];
-    const { category, color } = assignRisk(prob);
+    const { category, color } = assignRisk(prob, lowThreshold, highThreshold);
     const patientId = String(row.patient_id || row.patientId || `P${String(i + 1).padStart(5, '0')}`);
     const topFeats = featureImportance.slice(0, 3).map(f => ({
       name: f.feature, contribution: +(f.importance * prob / 100).toFixed(2),

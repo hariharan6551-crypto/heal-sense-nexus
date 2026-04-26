@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy } from "react";
 import { AnimatePresence } from "framer-motion";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 import NotFound from "./pages/NotFound.tsx";
 import ApiDataPage from "./pages/ApiData.tsx";
@@ -44,15 +45,17 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AnimatedRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;

@@ -90,6 +90,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: linear-gradient(180deg, #F8FBFF 0%, #EAF3FF 50%, #F1F5F9 100%);
+    transition: background 0.4s ease;
+  }
+  [data-theme="dark"] body {
+    background: #1a1a2e;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
