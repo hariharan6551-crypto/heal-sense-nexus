@@ -23,8 +23,11 @@ import DrilldownPanel from './DrilldownPanel';
 import PatientPanel from './PatientPanel';
 import FloatingActionButton from './FloatingActionButton';
 import HealthcareDashboard from '@/components/healthcare/HealthcareDashboard';
+import DashboardPreview from '@/components/dashboard/DashboardPreview';
+import PipelineView from '@/components/dashboard/PipelineView';
+import '@/components/dashboard/dashboard-theme.css';
 import { toast } from 'sonner';
-import { Database } from 'lucide-react';
+import { Database, Activity } from 'lucide-react';
 import MorphContainer from '@/components/core/MorphContainer';
 
 // --- Phase 16: Security & Session Management ---
@@ -479,25 +482,36 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Main grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 page-transition">
-          {/* Left 3 columns */}
-          <div className="xl:col-span-3 space-y-4">
+        <div className={`grid grid-cols-1 ${activeTab === 'Dashboard' ? '' : 'xl:grid-cols-4'} gap-4 page-transition`}>
+          {/* Left columns (full width on Dashboard tab, 3/4 on other tabs) */}
+          <div className={`${activeTab === 'Dashboard' ? '' : 'xl:col-span-3'} space-y-4`}>
             {/* Tab: Dashboard */}
             {activeTab === 'Dashboard' && (
-              <>
-                <DynamicCharts
-                  dataset={timeFilteredDataset}
-                  charts={charts}
-                  analysis={analysis}
-                  filters={filters}
-                  onDrilldown={handleDrilldown}
-                />
-                <DashboardTable
-                  dataset={timeFilteredDataset}
-                  filters={filters}
-                  onPatientClick={handlePatientClick}
-                />
-              </>
+              <div className="space-y-6">
+                {/* ML Pipeline Flow Visualization */}
+                {mlResult ? (
+                  <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
+                ) : (
+                  <div className="rd-card" style={{ padding: 40, textAlign: 'center' }}>
+                    <Activity className="mx-auto mb-3" style={{ width: 24, height: 24, color: '#3B82F6', animation: 'spin 1s linear infinite' }} />
+                    <p className="text-sm font-bold text-slate-500">Running ML Pipeline...</p>
+                  </div>
+                )}
+
+                {/* Dashboard Overview Panels */}
+                {mlResult ? (
+                  <DashboardPreview mlResult={mlResult} totalPatients={timeFilteredDataset.totalRows} />
+                ) : (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[1,2,3,4].map(i => (
+                      <div key={i} className="bg-white/60 rounded-2xl border border-slate-200 p-5 animate-pulse">
+                        <div className="h-3 w-24 bg-slate-200 rounded mb-3" />
+                        <div className="h-8 w-16 bg-slate-200 rounded" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Tab: Risk Analysis — Healthcare ML Dashboard (always mounted, CSS-hidden) */}
@@ -665,10 +679,12 @@ export default function AnalyticsDashboard() {
             )}
           </div>
 
-          {/* Right sidebar — AI Panel */}
-          <div className="space-y-4">
-            <AIPanel dataset={timeFilteredDataset} analysis={analysis} insights={insights} />
-          </div>
+          {/* Right sidebar — AI Panel (hidden on Dashboard tab) */}
+          {activeTab !== 'Dashboard' && (
+            <div className="space-y-4">
+              <AIPanel dataset={timeFilteredDataset} analysis={analysis} insights={insights} />
+            </div>
+          )}
         </div>
       </main>
 

@@ -1,9 +1,13 @@
 // ═══════════════════════════════════════════════════════════════
-// PipelineView — ML Pipeline Flow Visualization (matches Image 4)
+// PipelineView — ML Pipeline Flow Visualization (matches Image 1)
+// Renders inside the light-themed AnalyticsDashboard
 // ═══════════════════════════════════════════════════════════════
 import { motion } from 'framer-motion';
 import type { MLPipelineResult } from '@/lib/healthcareML';
-import { ArrowRight, Download } from 'lucide-react';
+import {
+  ArrowRight, Download, Database, Cpu, TreePine, Target,
+  Beaker, HeartPulse, BarChart3, Zap
+} from 'lucide-react';
 
 interface Props { mlResult: MLPipelineResult; onExportCSV: () => void; }
 
@@ -19,64 +23,86 @@ export default function PipelineView({ mlResult, onExportCSV }: Props) {
   const recall = mlResult.forestMetrics.recall > 0 ? mlResult.forestMetrics.recall.toFixed(2) : '0.78';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="flex flex-col gap-5">
       {/* ── Pipeline Flow ──────────────────────────────────── */}
-      <motion.div {...fadeUp(0)} style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
+      <motion.div {...fadeUp(0)} className="flex gap-3 overflow-x-auto pb-2">
         {/* Step 1: NHS Data Inputs */}
-        <div className="rd-pipeline-step" style={{ background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: '#22c55e', marginBottom: 4 }}>NHS data inputs</h4>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontStyle: 'italic' }}>Raw sources from HES & Compendium</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <span className="rd-pipeline-tag">Readmission CSV</span>
-            <span className="rd-pipeline-tag">HES summaries</span>
-            <span className="rd-pipeline-tag">Synthetic data</span>
+        <div className="flex-1 min-w-[200px] rounded-2xl p-5 border-2 border-emerald-200/60 bg-emerald-50/40 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-emerald-200/20 -translate-y-1/2 translate-x-1/2" />
+          <div className="flex items-center gap-2 mb-2 relative z-10">
+            <Database className="w-4 h-4 text-emerald-600" />
+            <h4 className="text-[14px] font-black text-emerald-700">NHS data inputs</h4>
+          </div>
+          <p className="text-[11px] text-emerald-600/70 mb-3 italic font-medium">Raw sources from HES & Compendium</p>
+          <div className="flex flex-wrap gap-1.5 relative z-10">
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">Readmission CSV</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">HES summaries</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">Synthetic data</span>
           </div>
         </div>
 
-        <div className="rd-pipeline-arrow"><ArrowRight size={20} /></div>
+        <div className="flex items-center justify-center text-slate-300 flex-shrink-0 px-1">
+          <ArrowRight className="w-5 h-5" />
+        </div>
 
         {/* Step 2: Python Pipeline */}
-        <div className="rd-pipeline-step" style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: '#f59e0b', marginBottom: 4 }}>Python pipeline</h4>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontStyle: 'italic' }}>Clean, encode & engineer features</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <span className="rd-pipeline-tag">pandas</span>
-            <span className="rd-pipeline-tag">sklearn</span>
-            <span className="rd-pipeline-tag">one-hot encoding</span>
+        <div className="flex-1 min-w-[200px] rounded-2xl p-5 border-2 border-amber-200/60 bg-amber-50/40 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-amber-200/20 -translate-y-1/2 translate-x-1/2" />
+          <div className="flex items-center gap-2 mb-2 relative z-10">
+            <Beaker className="w-4 h-4 text-amber-600" />
+            <h4 className="text-[14px] font-black text-amber-700">Python pipeline</h4>
+          </div>
+          <p className="text-[11px] text-amber-600/70 mb-3 italic font-medium">Clean, encode & engineer features</p>
+          <div className="flex flex-wrap gap-1.5 relative z-10">
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">pandas</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">sklearn</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">one-hot encoding</span>
           </div>
         </div>
 
-        <div className="rd-pipeline-arrow"><ArrowRight size={20} /></div>
+        <div className="flex items-center justify-center text-slate-300 flex-shrink-0 px-1">
+          <ArrowRight className="w-5 h-5" />
+        </div>
 
         {/* Step 3: Random Forest Model */}
-        <div className="rd-pipeline-step" style={{ background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: '#8b5cf6', marginBottom: 4 }}>Random forest model</h4>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontStyle: 'italic' }}>Binary classification: readmitted?</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <span className="rd-pipeline-tag">100 trees</span>
-            <span className="rd-pipeline-tag">AUC-ROC eval</span>
-            <span className="rd-pipeline-tag">feature importance</span>
+        <div className="flex-1 min-w-[200px] rounded-2xl p-5 border-2 border-violet-200/60 bg-violet-50/40 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-violet-200/20 -translate-y-1/2 translate-x-1/2" />
+          <div className="flex items-center gap-2 mb-2 relative z-10">
+            <TreePine className="w-4 h-4 text-violet-600" />
+            <h4 className="text-[14px] font-black text-violet-700">Random forest model</h4>
+          </div>
+          <p className="text-[11px] text-violet-600/70 mb-3 italic font-medium">Binary classification: readmitted?</p>
+          <div className="flex flex-wrap gap-1.5 relative z-10">
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200">100 trees</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200">AUC-ROC eval</span>
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200">feature importance</span>
           </div>
         </div>
 
-        <div className="rd-pipeline-arrow"><ArrowRight size={20} /></div>
+        <div className="flex items-center justify-center text-slate-300 flex-shrink-0 px-1">
+          <ArrowRight className="w-5 h-5" />
+        </div>
 
         {/* Step 4: Risk Score Output */}
-        <div className="rd-pipeline-step" style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: '#3b82f6', marginBottom: 4 }}>Risk score output</h4>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>0.0–1.0 probability → risk band</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} />
-              <span style={{ color: 'var(--text-secondary)' }}>0.65–1.0 → <strong>High</strong></span>
+        <div className="flex-1 min-w-[200px] rounded-2xl p-5 border-2 border-blue-200/60 bg-blue-50/40 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-blue-200/20 -translate-y-1/2 translate-x-1/2" />
+          <div className="flex items-center gap-2 mb-2 relative z-10">
+            <Target className="w-4 h-4 text-blue-600" />
+            <h4 className="text-[14px] font-black text-blue-700">Risk score output</h4>
+          </div>
+          <p className="text-[11px] text-blue-600/70 mb-3 font-medium">0.0–1.0 probability → risk band</p>
+          <div className="flex flex-col gap-1.5 relative z-10">
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm" />
+              <span className="text-slate-600 font-medium">0.65–1.0 → <strong className="text-red-600">High</strong></span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} />
-              <span style={{ color: 'var(--text-secondary)' }}>0.35–0.65 → <strong>Medium</strong></span>
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm" />
+              <span className="text-slate-600 font-medium">0.35–0.65 → <strong className="text-amber-600">Medium</strong></span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} />
-              <span style={{ color: 'var(--text-secondary)' }}>0.0–0.35 → <strong>Low</strong></span>
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm" />
+              <span className="text-slate-600 font-medium">0.0–0.35 → <strong className="text-emerald-600">Low</strong></span>
             </div>
           </div>
         </div>
@@ -84,24 +110,26 @@ export default function PipelineView({ mlResult, onExportCSV }: Props) {
 
       {/* ── Clinical & Social Features ─────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div {...fadeUp(1)} className="rd-card" style={{ padding: 24 }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 14 }}>
-            Clinical features used by model
-          </h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <motion.div {...fadeUp(1)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+          <div className="flex items-center gap-2 mb-4">
+            <Cpu className="w-4 h-4 text-blue-500" />
+            <h4 className="text-[14px] font-black text-slate-800">Clinical features used by model</h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
             {['Age group', 'Primary diagnosis', 'Length of stay', 'Prior admissions (12m)', 'Discharge destination'].map(f => (
-              <span key={f} style={{ padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, background: 'var(--border-color)', color: 'var(--text-secondary)' }}>{f}</span>
+              <span key={f} className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">{f}</span>
             ))}
           </div>
         </motion.div>
 
-        <motion.div {...fadeUp(2)} className="rd-card" style={{ padding: 24 }}>
-          <h4 style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 14 }}>
-            Social features used by model
-          </h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <motion.div {...fadeUp(2)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+          <div className="flex items-center gap-2 mb-4">
+            <HeartPulse className="w-4 h-4 text-pink-500" />
+            <h4 className="text-[14px] font-black text-slate-800">Social features used by model</h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
             {['Deprivation score', 'Follow-up arranged', 'Care plan on discharge', 'Social care referral'].map(f => (
-              <span key={f} style={{ padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, background: 'var(--border-color)', color: 'var(--text-secondary)' }}>{f}</span>
+              <span key={f} className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">{f}</span>
             ))}
           </div>
         </motion.div>
@@ -109,32 +137,44 @@ export default function PipelineView({ mlResult, onExportCSV }: Props) {
 
       {/* ── Evaluation Metrics ────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div {...fadeUp(3)} className="rd-card" style={{ textAlign: 'center', padding: 24 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 8 }}>AUC-ROC</p>
-          <p style={{ fontSize: 40, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: -2 }}>{aucROC}</p>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>Model accuracy</p>
-        </motion.div>
-
-        <motion.div {...fadeUp(4)} className="rd-card" style={{ textAlign: 'center', padding: 24 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 8 }}>Precision</p>
-          <p style={{ fontSize: 40, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: -2 }}>{precision}</p>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>Correct positives</p>
-        </motion.div>
-
-        <motion.div {...fadeUp(5)} className="rd-card" style={{ textAlign: 'center', padding: 24 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 8 }}>Recall</p>
-          <p style={{ fontSize: 40, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: -2 }}>{recall}</p>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>Catches most risks</p>
-        </motion.div>
-
-        <motion.div {...fadeUp(6)} className="rd-card" style={{ textAlign: 'center', padding: 24, cursor: 'pointer' }} onClick={onExportCSV}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 8 }}>Export</p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <span style={{ fontSize: 18, color: 'var(--text-primary)' }}>→</span>
-            <span style={{ fontSize: 24, fontWeight: 900, color: '#f59e0b' }}>Power BI</span>
+        <motion.div {...fadeUp(3)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(59,130,246,0.08)] hover:-translate-y-[2px] transition-all">
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <BarChart3 className="w-3.5 h-3.5 text-blue-400" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">AUC-ROC</p>
           </div>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-            <Download size={12} /> CSV scores to dashboard
+          <p className="text-4xl font-black text-slate-800 tracking-tight">{aucROC}</p>
+          <p className="text-[11px] text-slate-500 mt-2 font-medium">Model accuracy</p>
+        </motion.div>
+
+        <motion.div {...fadeUp(4)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(59,130,246,0.08)] hover:-translate-y-[2px] transition-all">
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <Zap className="w-3.5 h-3.5 text-emerald-400" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Precision</p>
+          </div>
+          <p className="text-4xl font-black text-slate-800 tracking-tight">{precision}</p>
+          <p className="text-[11px] text-slate-500 mt-2 font-medium">Correct positives</p>
+        </motion.div>
+
+        <motion.div {...fadeUp(5)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(59,130,246,0.08)] hover:-translate-y-[2px] transition-all">
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <Target className="w-3.5 h-3.5 text-violet-400" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Recall</p>
+          </div>
+          <p className="text-4xl font-black text-slate-800 tracking-tight">{recall}</p>
+          <p className="text-[11px] text-slate-500 mt-2 font-medium">Catches most risks</p>
+        </motion.div>
+
+        <motion.div {...fadeUp(6)} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-2xl p-6 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.12)] hover:-translate-y-[2px] transition-all cursor-pointer" onClick={onExportCSV}>
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <Download className="w-3.5 h-3.5 text-amber-400" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Export</p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-lg text-slate-400">→</span>
+            <span className="text-2xl font-black text-[#F2C811]">Power BI</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-2 font-medium flex items-center justify-center gap-1">
+            <Download className="w-3 h-3" /> CSV scores to dashboard
           </p>
         </motion.div>
       </div>

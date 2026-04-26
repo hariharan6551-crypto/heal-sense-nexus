@@ -1,7 +1,7 @@
-import NewMainDashboard from "@/components/dashboard/NewMainDashboard";
+import AdvancedEnhancedDashboard from "@/components/advanced/AdvancedEnhancedDashboard";
 
 const Index = () => {
-  return <NewMainDashboard />;
+  return <AdvancedEnhancedDashboard />;
 };
 
 export default Index;
