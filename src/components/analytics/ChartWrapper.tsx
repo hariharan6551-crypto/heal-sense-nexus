@@ -9,7 +9,7 @@ import type { ChartRecommendation } from '@/lib/chartRecommender';
 interface Props {
   chart: ChartRecommendation;
   children: React.ReactNode;
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   onDrilldown?: (chartId: string) => void;
 }
 
