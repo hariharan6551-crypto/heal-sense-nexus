@@ -482,6 +482,19 @@ export default function AnalyticsDashboard() {
               </div>
             )}
 
+            {/* Tab: Features (Dynamic Charts) */}
+            {activeTab === 'Features' && (
+              <div className="page-transition">
+                <DynamicCharts 
+                  dataset={timeFilteredDataset} 
+                  charts={charts} 
+                  analysis={analysis} 
+                  filters={filters} 
+                  onDrilldown={handleDrilldown} 
+                />
+              </div>
+            )}
+
             {/* Tab: AI Assistant */}
             {activeTab === 'AI Assistant' && (
               <GlassCard className="p-6 page-transition">
