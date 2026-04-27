@@ -464,19 +464,6 @@ export default function AnalyticsDashboard() {
                     onDrilldown={handleDrilldown} 
                   />
                 </div>
-                {/* Dashboard Overview Panels */}
-                {mlResult ? (
-                  <DashboardPreview mlResult={mlResult} totalPatients={timeFilteredDataset.totalRows} />
-                ) : (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="bg-white/60 rounded-2xl border border-slate-200 p-5 animate-pulse">
-                        <div className="h-3 w-24 bg-slate-200 rounded mb-3" />
-                        <div className="h-8 w-16 bg-slate-200 rounded" />
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
 

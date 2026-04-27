@@ -562,31 +562,46 @@ const RenderChart = memo(function RenderChart({ chart, data, analysis }: {
 // ═══════════════════════════════════════════════════════════════════════
 // Main Export
 // ═══════════════════════════════════════════════════════════════════════
-export default function DynamicCharts({ dataset, charts, analysis, filters, onDrilldown }: Props) {
+export default function DynamicCharts({ dataset, analysis, filters, onDrilldown }: Props) {
   const filteredData = useMemo(() => filterData(dataset.data, filters), [dataset.data, filters]);
-  const displayCharts = charts.slice(0, 9); // Show up to 9 charts in 3x3
-
-  const rows = [];
-  for (let i = 0; i < displayCharts.length; i += 3) {
-    rows.push(displayCharts.slice(i, i + 3));
-  }
+  
+  // Explicitly define the three requested dynamic cards
+  const targetCharts = [
+    {
+      id: 'gender-dist',
+      type: 'donut',
+      title: 'gender Distribution',
+      description: 'Distribution of gender across records',
+      columns: ['gender'],
+    },
+    {
+      id: 'age-group-breakdown',
+      type: 'pie',
+      title: 'age_group Breakdown',
+      description: 'Breakdown of age groups',
+      columns: ['age_group'],
+    },
+    {
+      id: 'los-by-gender',
+      type: 'bar',
+      title: 'length_of_stay by gender',
+      description: 'Average length of stay by gender',
+      columns: ['gender', 'length_of_stay'],
+    }
+  ];
 
   return (
-    <div className="space-y-4">
-      {rows.map((row, ri) => (
-        <div key={ri} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {row.map((chart, ci) => {
-            const Icon = CHART_ICON_MAP[chart.type] || Activity;
-            return (
-              <SectionCard key={chart.id} title={chart.title} icon={Icon} badge={chart.type.replace('_', ' ')} index={ri * 3 + ci}>
-                <ChartWrapper chart={chart} data={filteredData} onDrilldown={onDrilldown}>
-                  <RenderChart chart={chart} data={filteredData} analysis={analysis} />
-                </ChartWrapper>
-              </SectionCard>
-            );
-          })}
-        </div>
-      ))}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {targetCharts.map((chart, ci) => {
+        const Icon = CHART_ICON_MAP[chart.type] || Activity;
+        return (
+          <SectionCard key={chart.id} title={chart.title} icon={Icon} badge={chart.type.toUpperCase()} index={ci}>
+            <ChartWrapper chart={chart} data={filteredData} onDrilldown={onDrilldown}>
+              <RenderChart chart={chart} data={filteredData} analysis={analysis} />
+            </ChartWrapper>
+          </SectionCard>
+        );
+      })}
     </div>
   );
 }
