@@ -26,6 +26,7 @@ import '@/components/dashboard/dashboard-theme.css';
 import { toast } from 'sonner';
 import { Database, Activity } from 'lucide-react';
 import MorphContainer from '@/components/core/MorphContainer';
+import PowerBIReportPanel from '@/components/powerbi/PowerBIReportPanel';
 
 // --- Phase 16: Security & Session Management ---
 function useSessionTimeout(timeoutMinutes = 15) {
@@ -491,68 +492,13 @@ export default function AnalyticsDashboard() {
               </div>
             )}
 
-            {/* Tab: Reports & Power BI (Phase 19) */}
+            {/* Tab: Reports & Power BI — Full Integration */}
             {activeTab === 'Reports' && (
-              <div className="space-y-4 page-transition">
-                <GlassCard className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-black text-slate-800 tracking-tight">📊 Power BI Enterprise Integration</h2>
-                  </div>
-                  
-                  {/* Power BI Secure Embed Frame Mock */}
-                  <div className="w-full bg-white/50 backdrop-blur-sm rounded-xl border-2 border-dashed border-slate-200/60 p-8 text-center flex flex-col items-center justify-center min-h-[400px]">
-                    <div className="w-16 h-16 bg-[#F2C811]/10 rounded-2xl border border-[#F2C811]/30 flex items-center justify-center mb-4 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[#F2C811]/5 animate-pulse" />
-                      <span className="text-2xl font-black text-[#F2C811] relative z-10 font-mono">BI</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800 tracking-wide mb-1">Power BI Embed (Pro Mode)</h3>
-                    <p className="text-xs text-slate-500 max-w-sm mt-2 font-mono leading-relaxed">
-                      Secure Token-based embedding active. Filters applied automatically via URL params.
-                    </p>
-                    
-                    <div className="mt-6 flex flex-wrap gap-3 justify-center text-mono">
-                      <div className="px-4 py-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 flex items-center gap-2 tracking-wide">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Secure Token Handshake OK
-                      </div>
-                      <div className="px-4 py-2 bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-lg text-xs font-bold text-blue-700 tracking-wide">
-                        Sync Filter: TimeRange = {filters['__time_range__'] || 'All'}
-                      </div>
-                    </div>
-                  </div>
-                </GlassCard>
-
-                <GlassCard className="p-6">
-                  <div className="flex items-center justify-between mb-5">
-                    <h2 className="text-lg font-black text-slate-800 tracking-tight">📄 Internal Summary Report</h2>
-                    <button
-                      onClick={handleExportCSV}
-                      className="flex items-center gap-2 px-5 py-2.5 text-white text-xs font-bold font-mono tracking-wide uppercase rounded-xl hover:opacity-90 transition-all shadow-md"
-                      style={{ background: 'linear-gradient(135deg, #3B82F6, #6366F1)', boxShadow: '0 4px 15px rgba(59,130,246,0.3)' }}
-                    >
-                      Export Secure CSV
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-600 font-mono">
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/80">
-                      <p className="font-bold text-blue-700 mb-4 tracking-wide uppercase">Dataset Summary</p>
-                      <div className="space-y-2">
-                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">File:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.fileName}</span></p>
-                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Rows:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalRows.toLocaleString()}</span></p>
-                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Columns:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.totalColumns}</span></p>
-                        <p className="flex justify-between border-b border-slate-200/50 pb-2"><span className="text-slate-500">Missing:</span> <span className="text-slate-800 font-bold">{timeFilteredDataset.missingValueCount.toLocaleString()}</span></p>
-                      </div>
-                    </div>
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/80">
-                      <p className="font-bold text-violet-700 mb-4 tracking-wide uppercase">Column Matrix</p>
-                      <div className="space-y-2">
-                        <p className="flex flex-col gap-1 border-b border-slate-200/50 pb-2"><span className="text-slate-500">Numeric:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.numericColumns.join(', ') || 'None'}</span></p>
-                        <p className="flex flex-col gap-1 border-b border-slate-200/50 pb-2"><span className="text-slate-500">Categorical:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.categoricalColumns.join(', ') || 'None'}</span></p>
-                        <p className="flex flex-col gap-1 pb-1"><span className="text-slate-500">Datetime:</span> <span className="text-slate-800 font-bold max-w-full truncate">{timeFilteredDataset.datetimeColumns.join(', ') || 'None'}</span></p>
-                      </div>
-                    </div>
-                  </div>
-                </GlassCard>
-              </div>
+              <PowerBIReportPanel
+                dataset={timeFilteredDataset}
+                filters={filters}
+                onExportCSV={handleExportCSV}
+              />
             )}
 
             {/* Tab: Settings */}
