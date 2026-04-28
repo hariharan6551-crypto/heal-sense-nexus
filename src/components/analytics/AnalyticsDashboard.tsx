@@ -455,6 +455,11 @@ export default function AnalyticsDashboard() {
             {/* Tab: Dashboard */}
             {activeTab === 'Dashboard' && (
               <div className="space-y-6">
+                {mlResult && (
+                  <div className="animate-fade-up page-transition" style={{ animationDelay: '440ms' }}>
+                    <DashboardPreview mlResult={mlResult} totalPatients={timeFilteredDataset.totalRows} />
+                  </div>
+                )}
                 <div className="animate-fade-up page-transition" style={{ animationDelay: '450ms' }}>
                   <DynamicCharts 
                     dataset={timeFilteredDataset} 
