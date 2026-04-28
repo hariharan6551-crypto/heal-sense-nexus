@@ -13,7 +13,7 @@ import {
 interface Props { mlResult: MLPipelineResult; totalPatients: number; }
 
 // ── Stagger animation helper ─────────────────────────────────
-const stagger = (i: number) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { delay: i * 0.08, duration: 0.5, ease: [0.4, 0, 0.2, 1] } });
+const stagger = (i: number) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { delay: i * 0.08, duration: 0.5, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] } });
 
 // ── Human-readable feature name mapping ─────────────────────
 const FEATURE_LABELS: Record<string, string> = {
