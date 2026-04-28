@@ -566,13 +566,14 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
   const filteredData = useMemo(() => filterData(dataset.data, filters), [dataset.data, filters]);
   
   // Explicitly define the three requested dynamic cards
-  const targetCharts = [
+  const targetCharts: ChartRecommendation[] = [
     {
       id: 'gender-dist',
       type: 'donut',
       title: 'gender Distribution',
       description: 'Distribution of gender across records',
       columns: ['gender'],
+      priority: 1,
     },
     {
       id: 'age-group-breakdown',
@@ -580,6 +581,7 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
       title: 'age_group Breakdown',
       description: 'Breakdown of age groups',
       columns: ['age_group'],
+      priority: 2,
     },
     {
       id: 'los-by-gender',
@@ -587,6 +589,7 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
       title: 'length_of_stay by gender',
       description: 'Average length of stay by gender',
       columns: ['gender', 'length_of_stay'],
+      priority: 3,
     }
   ];
 
