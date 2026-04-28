@@ -12,6 +12,7 @@ import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
 import { useTheme } from '@/contexts/ThemeContext';
 import DashboardPreview from './DashboardPreview';
 import PipelineView from './PipelineView';
+import RiskAnalysisView from './RiskAnalysisView';
 import DynamicCharts from '../analytics/DynamicCharts';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
@@ -24,6 +25,7 @@ import './dashboard-theme.css';
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'pipeline', label: 'ML Pipeline', icon: GitBranch },
+  { id: 'riskanalysis', label: 'Risk Analysis', icon: Activity },
   { id: 'features', label: 'Features', icon: PieChart },
   { id: 'ai', label: 'AI Assistant', icon: Bot },
   { id: 'reports', label: 'Reports & Power BI', icon: FileBarChart },
@@ -268,6 +270,11 @@ export default function NewMainDashboard() {
           {activeTab === 'pipeline' && (
             <motion.div key="pipeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
               <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
+            </motion.div>
+          )}
+          {activeTab === 'riskanalysis' && (
+            <motion.div key="riskanalysis" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+              <RiskAnalysisView mlResult={mlResult} totalPatients={totalPatients} onExportCSV={handleExportCSV} />
             </motion.div>
           )}
           {activeTab === 'features' && dataset && analysis && (

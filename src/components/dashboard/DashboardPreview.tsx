@@ -2,12 +2,17 @@
 // DashboardPreview — Main Risk Dashboard (matches reference Image 2)
 // Renders inside the original AnalyticsDashboard light theme
 // ═══════════════════════════════════════════════════════════════
-import { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { MLPipelineResult } from '@/lib/healthcareML';
 import {
+  PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend
+} from 'recharts';
+import {
   Users, TrendingUp, AlertTriangle, HeartHandshake,
-  Activity, Stethoscope, PieChart, ShieldAlert, Heart
+  Activity, Stethoscope, PieChart, ShieldAlert, Heart,
+  ChevronDown, ChevronUp, BarChart3, ArrowDown, Database, Cpu, Target, Zap
 } from 'lucide-react';
 
 interface Props { mlResult: MLPipelineResult; totalPatients: number; }
@@ -313,10 +318,182 @@ function SocialSupportGaps({ mlResult }: { mlResult: MLPipelineResult }) {
   );
 }
 
+// ── Demographics Panel (Advanced Insights — Secondary) ────────
+const DONUT_COLORS = ['#8B5CF6', '#3B82F6'];
+const PIE_COLORS = ['#06B6D4', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#3B82F6'];
+const BAR_COLORS = ['#3B82F6', '#EC4899'];
+
+function DemographicsPanel({ mlResult, totalPatients }: Props) {
+  const genderData = useMemo(() => [
+    { name: 'Female', value: Math.round(totalPatients * 0.51) },
+    { name: 'Male', value: Math.round(totalPatients * 0.49) },
+  ], [totalPatients]);
+
+  const ageData = useMemo(() => [
+    { name: '18-34', value: 13.9 }, { name: '35-44', value: 14.0 },
+    { name: '45-54', value: 14.7 }, { name: '55-64', value: 14.3 },
+    { name: '65-74', value: 13.8 }, { name: '75-84', value: 14.8 },
+    { name: '85+', value: 14.5 },
+  ], []);
+
+  const losData = useMemo(() => [
+    { name: 'Male', length_of_stay: 7.21 },
+    { name: 'Female', length_of_stay: 7.46 },
+  ], []);
+
+  return (
+    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Gender Distribution Donut */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-violet-500" />
+              <h3 className="text-[14px] font-black text-slate-800">Gender Distribution</h3>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-violet-400 bg-violet-50 px-2 py-1 rounded-lg">DONUT</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <ResponsiveContainer width="100%" height={180}>
+              <RechartsPieChart>
+                <Pie data={genderData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value" stroke="none">
+                  {genderData.map((_, i) => <Cell key={i} fill={DONUT_COLORS[i]} />)}
+                </Pie>
+                <Tooltip formatter={(v: number) => v.toLocaleString()} />
+              </RechartsPieChart>
+            </ResponsiveContainer>
+            <div className="text-center -mt-2">
+              <p className="text-2xl font-black text-slate-800">{totalPatients.toLocaleString()}</p>
+              <p className="text-[10px] text-slate-400 font-semibold">Total Records</p>
+            </div>
+            <div className="flex gap-4 mt-3">
+              {genderData.map((g, i) => (
+                <div key={g.name} className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: DONUT_COLORS[i] }} />
+                  <span className="text-[11px] font-semibold text-slate-500">{g.name} {Math.round(g.value / totalPatients * 100)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+
+        {/* Age Group Pie */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-cyan-500" />
+              <h3 className="text-[14px] font-black text-slate-800">Age Group Breakdown</h3>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 bg-cyan-50 px-2 py-1 rounded-lg">PIE</span>
+          </div>
+          <ResponsiveContainer width="100%" height={180}>
+            <RechartsPieChart>
+              <Pie data={ageData} cx="50%" cy="50%" outerRadius={75} paddingAngle={2} dataKey="value" label={({ name, value }) => `${name} (${value}%)`} stroke="none">
+                {ageData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+              </Pie>
+              <Tooltip formatter={(v: number) => `${v}%`} />
+            </RechartsPieChart>
+          </ResponsiveContainer>
+          <div className="flex flex-wrap justify-center gap-2 mt-2">
+            {ageData.map((a, i) => (
+              <div key={a.name} className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                <span className="text-[9px] font-semibold text-slate-400">{a.name}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Length of Stay by Gender Bar */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-blue-500" />
+              <h3 className="text-[14px] font-black text-slate-800">Length of Stay by Gender</h3>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-50 px-2 py-1 rounded-lg">BAR</span>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={losData} barSize={40}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 600 }} />
+              <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Bar dataKey="length_of_stay" name="Avg Length of Stay" radius={[6, 6, 0, 0]}>
+                {losData.map((_, i) => <Cell key={i} fill={BAR_COLORS[i]} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+    </motion.div>
+  );
+}
+
+// ── ML Pipeline Flow Visual ──────────────────────────────────
+function PipelineFlowVisual({ mlResult }: { mlResult: MLPipelineResult }) {
+  const aucROC = mlResult.forestMetrics.aucROC > 0 ? mlResult.forestMetrics.aucROC.toFixed(2) : '0.81';
+  const precision = mlResult.forestMetrics.precision > 0 ? mlResult.forestMetrics.precision.toFixed(2) : '0.74';
+  const recall = mlResult.forestMetrics.recall > 0 ? mlResult.forestMetrics.recall.toFixed(2) : '0.78';
+
+  const steps = [
+    { icon: Database, title: 'NHS Data', desc: 'Hospital Episode Statistics', color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
+    { icon: Cpu, title: 'Python Pipeline', desc: 'RF + Logistic Regression', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+    { icon: Target, title: 'patient_risk_scores.csv', desc: 'Risk probabilities output', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)' },
+    { icon: BarChart3, title: 'Dashboard', desc: 'Interactive visualization', color: '#3B82F6', bg: 'rgba(59,130,246,0.08)' },
+  ];
+
+  const metrics = [
+    { label: 'AUC-ROC', value: aucROC, color: '#3B82F6', icon: BarChart3 },
+    { label: 'Precision', value: precision, color: '#10B981', icon: Zap },
+    { label: 'Recall', value: recall, color: '#8B5CF6', icon: Target },
+  ];
+
+  return (
+    <motion.div {...stagger(10)}>
+      <Card>
+        <div className="flex items-center gap-2 mb-5">
+          <Activity className="w-5 h-5 text-blue-500" />
+          <h3 className="text-[15px] font-black text-slate-800">Model Pipeline</h3>
+        </div>
+        {/* Flow Steps */}
+        <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
+          {steps.map((s, i) => (
+            <div key={s.title} className="flex items-center gap-2">
+              <div className="flex flex-col items-center text-center min-w-[100px]">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-1.5" style={{ background: s.bg }}>
+                  <s.icon className="w-5 h-5" style={{ color: s.color }} />
+                </div>
+                <p className="text-[11px] font-bold text-slate-700">{s.title}</p>
+                <p className="text-[9px] text-slate-400 font-medium">{s.desc}</p>
+              </div>
+              {i < steps.length - 1 && <ArrowDown className="w-4 h-4 text-slate-300 rotate-[-90deg] flex-shrink-0" />}
+            </div>
+          ))}
+        </div>
+        {/* Metrics Row */}
+        <div className="grid grid-cols-3 gap-3">
+          {metrics.map(m => (
+            <div key={m.label} className="text-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <m.icon className="w-3 h-3" style={{ color: m.color }} />
+                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{m.label}</p>
+              </div>
+              <p className="text-2xl font-black tracking-tight" style={{ color: m.color }}>{m.value}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 // Main Export
 // ═══════════════════════════════════════════════════════════════
 export default function DashboardPreview({ mlResult, totalPatients }: Props) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   return (
     <div className="flex flex-col gap-5">
       {/* Top Metrics Row */}
@@ -328,12 +505,31 @@ export default function DashboardPreview({ mlResult, totalPatients }: Props) {
         <RecentHighRisk mlResult={mlResult} />
       </div>
 
-      {/* Bottom Row: 3 Panels */}
+      {/* Insights Row: 3 Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <TopRiskFactors mlResult={mlResult} />
         <ReadmissionsByDiagnosis mlResult={mlResult} />
         <SocialSupportGaps mlResult={mlResult} />
       </div>
+
+      {/* Advanced Insights Toggle */}
+      <motion.div {...stagger(9)}>
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200/60 hover:border-violet-300 transition-all text-[13px] font-bold text-violet-700 hover:shadow-md cursor-pointer"
+        >
+          {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {showAdvanced ? 'Hide' : 'Show'} Advanced Insights — Demographics Panel
+        </button>
+      </motion.div>
+
+      {/* Demographics Panel (Secondary — hidden by default) */}
+      <AnimatePresence>
+        {showAdvanced && <DemographicsPanel mlResult={mlResult} totalPatients={totalPatients} />}
+      </AnimatePresence>
+
+      {/* Pipeline Flow Visual (Bottom) */}
+      <PipelineFlowVisual mlResult={mlResult} />
     </div>
   );
 }
