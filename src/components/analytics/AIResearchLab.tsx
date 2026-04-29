@@ -110,7 +110,7 @@ export default function AIResearchLab() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 p-6 overflow-y-auto space-y-6 bg-transparent custom-scrollbar relative">
+      <div className="flex-1 min-h-0 p-6 overflow-y-auto space-y-6 bg-transparent custom-scrollbar relative">
         {responses.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
             <div className="relative">
