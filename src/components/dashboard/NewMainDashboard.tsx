@@ -14,6 +14,7 @@ import DashboardPreview from './DashboardPreview';
 import PipelineView from './PipelineView';
 import RiskAnalysisView from './RiskAnalysisView';
 import DynamicCharts from '../analytics/DynamicCharts';
+import HealthcareDashboard from '../healthcare/HealthcareDashboard';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import {
@@ -286,7 +287,7 @@ export default function NewMainDashboard() {
           )}
           {activeTab === 'riskanalysis' && (
             <motion.div key="riskanalysis" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <RiskAnalysisView mlResult={mlResult} totalPatients={totalPatients} onExportCSV={handleExportCSV} />
+              <HealthcareDashboard mlResult={mlResult} />
             </motion.div>
           )}
           {activeTab === 'features' && dataset && analysis && (
