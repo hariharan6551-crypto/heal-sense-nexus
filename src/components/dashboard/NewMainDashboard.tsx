@@ -17,11 +17,12 @@ import DynamicCharts from '../analytics/DynamicCharts';
 import HealthcareDashboard from '../healthcare/HealthcareDashboard';
 import AIResearchLab from '../analytics/AIResearchLab';
 import PowerBIReportPanel from '../powerbi/PowerBIReportPanel';
+import GlassCard from '../core/GlassCard';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import {
   LayoutDashboard, GitBranch, Sun, Moon, LogOut,
-  ChevronDown, Activity, Sparkles, Database, Bot, FileBarChart, UploadCloud, PieChart
+  ChevronDown, Activity, Sparkles, Database, Bot, FileBarChart, UploadCloud, PieChart, Settings
 } from 'lucide-react';
 import './dashboard-theme.css';
 
@@ -31,6 +32,7 @@ const TABS = [
   { id: 'riskanalysis', label: 'Risk Analysis', icon: Activity },
   { id: 'ai', label: 'AI Assistant', icon: Bot },
   { id: 'reports', label: 'Reports & Power BI', icon: FileBarChart },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -80,7 +82,10 @@ export default function NewMainDashboard() {
   const [mlResult, setMlResult] = useState<MLPipelineResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [userRole, setUserRole] = useState('Admin');
   const mlDataRef = useRef<unknown[] | null>(null);
+
+  const handleRoleChange = (role: string) => setUserRole(role);
 
   const analysis = useMemo(() => dataset ? analyzeDataset(dataset) : null, [dataset]);
   const charts = useMemo(() => dataset ? recommendCharts(dataset) : [], [dataset]);
@@ -253,41 +258,92 @@ export default function NewMainDashboard() {
       {/* Click-away overlay for profile */}
       {profileOpen && <div style={{ position: 'fixed', inset: 0, zIndex: 99 }} onClick={() => setProfileOpen(false)} />}
 
-      {/* ── Main Content ───────────────────────────────── */}
+      {/* ── Main Content (Keep-Alive: all tabs rendered, only active visible) ── */}
       <main style={{ maxWidth: 1400, margin: '0 auto', padding: '88px 24px 40px' }}>
-        <AnimatePresence mode="wait">
-          {activeTab === 'dashboard' && (
-            <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="space-y-8">
-              <DashboardPreview mlResult={mlResult} totalPatients={totalPatients} />
-              
-              {dataset && analysis && (
-                <div className="mt-8 pt-8 border-t border-[var(--border-light)]">
-                  <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+          {/* Dashboard Tab */}
+          <div style={{ display: activeTab === 'dashboard' ? 'block' : 'none' }} className="space-y-8">
+            <DashboardPreview mlResult={mlResult} totalPatients={totalPatients} />
+            {dataset && analysis && (
+              <div className="mt-8 pt-8 border-t border-[var(--border-light)]">
+                <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+              </div>
+            )}
+          </div>
+
+          {/* Pipeline Tab */}
+          <div style={{ display: activeTab === 'pipeline' ? 'block' : 'none' }}>
+            <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
+          </div>
+
+          {/* Risk Analysis Tab */}
+          <div style={{ display: activeTab === 'riskanalysis' ? 'block' : 'none' }}>
+            <HealthcareDashboard mlResult={mlResult} />
+          </div>
+
+          {/* AI Assistant Tab */}
+          <div style={{ display: activeTab === 'ai' ? 'block' : 'none', height: '75vh' }}>
+            <AIResearchLab />
+          </div>
+
+          {/* Reports & Power BI Tab */}
+          <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }}>
+            {dataset && <PowerBIReportPanel dataset={dataset} filters={{}} onExportCSV={handleExportCSV} />}
+          </div>
+
+          {/* Settings Tab */}
+          <div style={{ display: activeTab === 'settings' ? 'block' : 'none' }}>
+            <GlassCard className="p-6">
+              <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
+                Enterprise Settings
+              </h2>
+              <div className="space-y-4 text-xs text-slate-600">
+                {/* Role-based Access Badge */}
+                <div className="bg-violet-50/80 backdrop-blur-sm rounded-xl border border-violet-100/80 p-5">
+                  <h4 className="font-bold text-violet-700 mb-3 text-sm flex items-center gap-2">
+                    👤 Role-Based Access Control
+                  </h4>
+                  <div className="flex gap-2 mb-3">
+                    {['Admin', 'Doctor', 'Analyst', 'Viewer'].map(role => (
+                      <button
+                        key={role}
+                        onClick={() => handleRoleChange(role)}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                          userRole === role 
+                            ? 'bg-violet-600 text-white shadow-sm' 
+                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 cursor-pointer'
+                        }`}
+                      >
+                        {role}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs font-medium text-slate-500">Configure access levels for different roles in the enterprise suite. Active: <strong className="text-violet-600">{userRole}</strong></p>
                 </div>
-              )}
-            </motion.div>
-          )}
-          {activeTab === 'pipeline' && (
-            <motion.div key="pipeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <PipelineView mlResult={mlResult} onExportCSV={handleExportCSV} />
-            </motion.div>
-          )}
-          {activeTab === 'riskanalysis' && (
-            <motion.div key="riskanalysis" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <HealthcareDashboard mlResult={mlResult} />
-            </motion.div>
-          )}
-          {activeTab === 'ai' && (
-            <motion.div key="ai" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{ height: '75vh' }}>
-              <AIResearchLab />
-            </motion.div>
-          )}
-          {activeTab === 'reports' && dataset && (
-            <motion.div key="reports" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <PowerBIReportPanel dataset={dataset} filters={{}} onExportCSV={handleExportCSV} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+                {/* API & Data Security */}
+                <div className="bg-emerald-50/80 backdrop-blur-sm rounded-xl border border-emerald-100/80 p-5">
+                  <h4 className="font-bold text-emerald-700 mb-2 text-sm flex items-center gap-2">
+                    🔒 Data Security & Compliance
+                  </h4>
+                  <p className="text-xs font-medium text-emerald-800 mb-2 font-mono leading-relaxed">
+                    - Data Masking: Enabled for PHI (Patient IDs, Names)<br/>
+                    - Audit Logging: Active for all filter/export events<br/>
+                    - Session Timeout: Auto-logout at 15m inactivity
+                  </p>
+                </div>
+
+                {/* Real-time simulation */}
+                <div className="bg-amber-50/80 backdrop-blur-sm rounded-xl border border-amber-100/80 p-5">
+                  <h4 className="font-bold text-amber-700 mb-2 text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    API Data Pipeline
+                  </h4>
+                  <p className="text-xs font-medium text-amber-800 font-mono">Time-based backend filtering is mocked for demonstration via deterministic row-dropping.</p>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
       </main>
 
       <footer style={{ textAlign: 'center', padding: '24px 0', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', borderTop: '1px solid var(--border-light)' }}>

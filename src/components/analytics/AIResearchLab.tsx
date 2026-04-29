@@ -151,7 +151,7 @@ export default function AIResearchLab() {
       </div>
 
       {/* Input Area */}
-      <div className="p-5 border-t border-white/50 bg-white/30 backdrop-blur-sm">
+      <div className="flex-none p-5 border-t border-white/50 bg-white/30 backdrop-blur-sm">
         <div className="flex gap-3 relative">
           <input
             type="text"
