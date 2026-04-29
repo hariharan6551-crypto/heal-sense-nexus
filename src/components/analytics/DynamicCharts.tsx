@@ -573,6 +573,7 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
       title: 'gender Distribution',
       description: 'Distribution of gender across records',
       columns: ['gender'],
+      xColumn: 'gender',
       priority: 1,
     },
     {
@@ -581,6 +582,7 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
       title: 'age_group Breakdown',
       description: 'Breakdown of age groups',
       columns: ['age_group'],
+      xColumn: 'age_group',
       priority: 2,
     },
     {
@@ -589,6 +591,8 @@ export default function DynamicCharts({ dataset, analysis, filters, onDrilldown 
       title: 'length_of_stay by gender',
       description: 'Average length of stay by gender',
       columns: ['gender', 'length_of_stay'],
+      xColumn: 'gender',
+      yColumn: 'length_of_stay',
       priority: 3,
     }
   ];

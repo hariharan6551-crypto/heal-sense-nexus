@@ -15,6 +15,8 @@ import PipelineView from './PipelineView';
 import RiskAnalysisView from './RiskAnalysisView';
 import DynamicCharts from '../analytics/DynamicCharts';
 import HealthcareDashboard from '../healthcare/HealthcareDashboard';
+import AIResearchLab from '../analytics/AIResearchLab';
+import PowerBIReportPanel from '../powerbi/PowerBIReportPanel';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
 import {
@@ -27,7 +29,6 @@ const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'pipeline', label: 'ML Pipeline', icon: GitBranch },
   { id: 'riskanalysis', label: 'Risk Analysis', icon: Activity },
-  { id: 'features', label: 'Features', icon: PieChart },
   { id: 'ai', label: 'AI Assistant', icon: Bot },
   { id: 'reports', label: 'Reports & Power BI', icon: FileBarChart },
 ] as const;
@@ -165,14 +166,6 @@ export default function NewMainDashboard() {
           >
             <Sparkles style={{ width: 18, height: 18, color: 'var(--text-accent)' }} />
           </motion.div>
-          <div>
-            <h1 style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: -0.3 }}>
-              Patient Readmission Risk
-            </h1>
-            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.5, color: 'var(--text-muted)' }}>
-              Prediction System
-            </p>
-          </div>
         </div>
 
         {/* Tabs */}
@@ -269,12 +262,6 @@ export default function NewMainDashboard() {
               
               {dataset && analysis && (
                 <div className="mt-8 pt-8 border-t border-[var(--border-light)]">
-                  <div className="mb-6 flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-black text-[var(--text-primary)]">Dynamic Demographics & Insights</h2>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-1">Real-time Dataset Visualizations</p>
-                    </div>
-                  </div>
                   <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
                 </div>
               )}
@@ -290,27 +277,20 @@ export default function NewMainDashboard() {
               <HealthcareDashboard mlResult={mlResult} />
             </motion.div>
           )}
-          {activeTab === 'features' && dataset && analysis && (
-            <motion.div key="features" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+          {activeTab === 'ai' && (
+            <motion.div key="ai" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{ height: '75vh' }}>
+              <AIResearchLab />
             </motion.div>
           )}
-          {(activeTab === 'ai' || activeTab === 'reports') && (
-            <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'var(--text-muted)' }}>
-              <div style={{ padding: 24, borderRadius: 16, background: 'var(--bg-card)', border: '1px solid var(--border-light)', textAlign: 'center' }}>
-                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
-                  {TABS.find(t => t.id === activeTab)?.label}
-                </h3>
-                <p style={{ fontSize: 14 }}>This module is currently being integrated and prepared for deployment.</p>
-              </div>
+          {activeTab === 'reports' && dataset && (
+            <motion.div key="reports" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+              <PowerBIReportPanel dataset={dataset} filters={{}} onExportCSV={handleExportCSV} />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      {/* ── Footer ─────────────────────────────────────── */}
       <footer style={{ textAlign: 'center', padding: '24px 0', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', borderTop: '1px solid var(--border-light)' }}>
-        Patient Readmission Risk Prediction System v1.0 · Healthcare AI Analytics
       </footer>
     </div>
   );
