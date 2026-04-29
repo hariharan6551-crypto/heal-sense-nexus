@@ -263,8 +263,20 @@ export default function NewMainDashboard() {
       <main style={{ maxWidth: 1400, margin: '0 auto', padding: '88px 24px 40px' }}>
         <AnimatePresence mode="wait">
           {activeTab === 'dashboard' && (
-            <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+            <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="space-y-8">
               <DashboardPreview mlResult={mlResult} totalPatients={totalPatients} />
+              
+              {dataset && analysis && (
+                <div className="mt-8 pt-8 border-t border-[var(--border-light)]">
+                  <div className="mb-6 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xl font-black text-[var(--text-primary)]">Dynamic Demographics & Insights</h2>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-1">Real-time Dataset Visualizations</p>
+                    </div>
+                  </div>
+                  <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+                </div>
+              )}
             </motion.div>
           )}
           {activeTab === 'pipeline' && (
