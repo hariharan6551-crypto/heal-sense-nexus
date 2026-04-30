@@ -14,6 +14,7 @@ import {
 } from './PowerBIConfig';
 import { acquireEmbedToken, getTokenStatus, triggerDatasetRefresh, clearTokenCache } from './PowerBITokenService';
 import { PowerBILoadingSkeleton, PowerBIErrorFallback, PowerBIConfigWizard } from './PowerBIFallback';
+import InternalReportView from './InternalReportView';
 
 interface Props {
   report: PowerBIReportConfig;
@@ -39,7 +40,7 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const reportInstanceRef = useRef<any>(null);
 
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'rendering' | 'ready' | 'error'>('loading');
   const [error, setError] = useState<string>('');
   const [isRetrying, setIsRetrying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -48,20 +49,25 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [showFallback, setShowFallback] = useState(false);
+  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const configured = isConfigured();
   const tokenStatus = getTokenStatus();
 
   // Build embed URL with current filters
   const embedUrl = useMemo(() => {
+    // Prefer the report's publicUrl for demo mode
+    if (report.publicUrl) return report.publicUrl;
     if (!report.reportId || !report.groupId) return '';
     return buildEmbedUrl(report.reportId, report.groupId, filters);
-  }, [report.reportId, report.groupId, filters]);
+  }, [report.reportId, report.groupId, report.publicUrl, filters]);
 
   const serviceUrl = useMemo(() => {
+    if (report.publicUrl) return report.publicUrl;
     if (!report.reportId || !report.groupId) return '';
     return buildServiceUrl(report.reportId, report.groupId);
-  }, [report.reportId, report.groupId]);
+  }, [report.reportId, report.groupId, report.publicUrl]);
 
   // SDK-based embedding
   const embedWithSDK = useCallback(async () => {
@@ -131,11 +137,16 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
 
       // Event handlers
       reportInstance.on('loaded', () => {
+        setStatus('rendering');
+        console.log('[PowerBI SDK] Report loaded, waiting for render...');
+      });
+
+      reportInstance.on('rendered', () => {
         setStatus('ready');
         setLastRefresh(new Date());
         setRetryCount(0);
         onReportLoaded?.();
-        console.log('[PowerBI SDK] Report loaded successfully');
+        console.log('[PowerBI SDK] Report rendered successfully');
       });
 
       reportInstance.on('error', (event: any) => {
@@ -144,10 +155,6 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
         setError(errorMsg);
         setStatus('error');
         onError?.(errorMsg);
-      });
-
-      reportInstance.on('rendered', () => {
-        console.log('[PowerBI SDK] Report rendered');
       });
 
     } catch (err) {
@@ -167,47 +174,65 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
     }
   }, [report, embedUrl, filters, showFilters, onReportLoaded, onError, embedMode]);
 
-  // iframe-based embedding (simpler, more reliable fallback)
+  // iframe-based embedding (simpler, more reliable for public reports)
   const embedWithIframe = useCallback(() => {
     if (!embedUrl) {
       setError('No embed URL available. Check report configuration.');
       setStatus('error');
-      return;
+      return undefined;
     }
 
     setStatus('loading');
+    console.log('[PowerBI iframe] Loading:', embedUrl.substring(0, 80) + '...');
 
-    // The iframe will handle loading via onLoad/onError
-    // Set a timeout in case iframe doesn't trigger events
-    const loadTimeout = setTimeout(() => {
-      setStatus((prevStatus) => {
-        if (prevStatus === 'loading') {
+    // Return undefined — the iframe onLoad handler will transition status
+    return undefined;
+  }, [embedUrl]);
+
+  // Listen for postMessage events from Power BI iframe
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Only process messages from Power BI domains
+      if (!event.origin.includes('powerbi.com') && !event.origin.includes('powerapps.com')) return;
+
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+
+        if (data?.event === 'loaded' || data?.type === 'loaded') {
+          console.log('[PowerBI postMessage] Report loaded');
+          setStatus('rendering');
+        }
+
+        if (data?.event === 'rendered' || data?.type === 'rendered') {
+          console.log('[PowerBI postMessage] Report rendered');
+          setStatus('ready');
           setLastRefresh(new Date());
           onReportLoaded?.();
-          return 'ready';
         }
-        return prevStatus;
-      });
-    }, 5000);
 
-    // Return the timeout ID so we can clear it if needed
-    return loadTimeout;
-  }, [embedUrl, onReportLoaded]);
+        if (data?.event === 'error' || data?.type === 'error') {
+          console.warn('[PowerBI postMessage] Error:', data);
+        }
+      } catch {
+        // Not a JSON message, ignore
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onReportLoaded]);
 
   // Initialize embed
   useEffect(() => {
     if (!configured) return;
 
-    let iframeTimeout: NodeJS.Timeout | number | undefined;
-
     if (embedMode === 'sdk') {
       embedWithSDK();
     } else {
-      iframeTimeout = embedWithIframe();
+      embedWithIframe();
     }
 
     return () => {
-      if (iframeTimeout) clearTimeout(iframeTimeout);
       // Cleanup SDK instance
       if (reportInstanceRef.current) {
         try {
@@ -294,6 +319,8 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
     );
   }
 
+  const isLoading = status === 'loading' || status === 'rendering';
+
   return (
     <div className="flex flex-col gap-3">
       {/* Toolbar */}
@@ -304,14 +331,18 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold border ${
               status === 'ready'
                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : status === 'rendering'
+                ? 'bg-amber-50 text-amber-700 border-amber-200'
                 : status === 'loading'
                 ? 'bg-blue-50 text-blue-700 border-blue-200'
                 : 'bg-red-50 text-red-700 border-red-200'
             }`}>
               {status === 'ready' ? (
                 <><Wifi className="w-3 h-3" /> Connected</>
+              ) : status === 'rendering' ? (
+                <><RefreshCw className="w-3 h-3 animate-spin" /> Rendering visuals…</>
               ) : status === 'loading' ? (
-                <><RefreshCw className="w-3 h-3 animate-spin" /> Loading...</>
+                <><RefreshCw className="w-3 h-3 animate-spin" /> Loading…</>
               ) : (
                 <><WifiOff className="w-3 h-3" /> Disconnected</>
               )}
@@ -396,42 +427,91 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
       <div
         ref={containerRef}
         className="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm"
-        style={{ height, minHeight: '400px' }}
+        style={{ minHeight: '400px' }}
       >
-        {/* Loading overlay */}
-        <AnimatePresence>
-          {status === 'loading' && (
-            <motion.div
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10"
-            >
-              <PowerBILoadingSkeleton />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Show Internal Report Fallback when iframe can't render Power BI visuals */}
+        {showFallback ? (
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <span className="text-[12px] font-bold text-slate-600">Internal Analytics View</span>
+                <span className="text-[10px] text-slate-400 ml-2">Powered by your dataset</span>
+              </div>
+              <button
+                onClick={() => { setShowFallback(false); setStatus('loading'); embedWithIframe(); }}
+                className="text-[10px] font-bold text-blue-500 hover:text-blue-700 flex items-center gap-1 transition-colors"
+              >
+                <RefreshCw className="w-3 h-3" /> Retry Power BI
+              </button>
+            </div>
+            <InternalReportView reportId={report.reportId} />
+          </div>
+        ) : (
+          <>
+            {/* Loading overlay — only during initial 'loading' phase */}
+            <AnimatePresence>
+              {status === 'loading' && (
+                <motion.div
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                  className="absolute inset-0 z-10"
+                >
+                  <PowerBILoadingSkeleton />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {/* iframe embed mode */}
-        {embedMode === 'iframe' && embedUrl && (
-          <iframe
-            ref={iframeRef}
-            title={report.name}
-            src={embedUrl}
-            frameBorder="0"
-            allowFullScreen
-            className="w-full h-full border-0"
-            style={{ minHeight: '400px' }}
-            onLoad={() => {
-              setStatus('ready');
-              setLastRefresh(new Date());
-              setRetryCount(0);
-              onReportLoaded?.();
-            }}
-            onError={() => {
-              setError('iframe failed to load the Power BI report');
-              setStatus('error');
-            }}
-          />
+            {/* Rendering indicator — subtle, doesn't block the iframe */}
+            <AnimatePresence>
+              {status === 'rendering' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 shadow-lg"
+                >
+                  <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
+                  <span className="text-[11px] font-bold text-slate-600">Rendering Power BI visuals…</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* iframe embed mode */}
+            {embedMode === 'iframe' && embedUrl && (
+              <iframe
+                ref={iframeRef}
+                title={report.name}
+                src={embedUrl}
+                frameBorder="0"
+                allowFullScreen
+                className="w-full h-full border-0"
+                style={{ minHeight: '600px', height }}
+                onLoad={() => {
+                  console.log('[PowerBI iframe] onLoad fired — HTML loaded, visuals still rendering');
+                  setStatus('rendering');
+                  // Start fallback timer: if Power BI JS doesn't render visuals within 12s, show internal reports
+                  if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+                  fallbackTimerRef.current = setTimeout(() => {
+                    setStatus(prev => {
+                      if (prev === 'rendering' || prev === 'loading') {
+                        console.log('[PowerBI iframe] Power BI visuals did not render — switching to internal analytics');
+                        setShowFallback(true);
+                        setLastRefresh(new Date());
+                        onReportLoaded?.();
+                        return 'ready';
+                      }
+                      return prev;
+                    });
+                  }, 12000);
+                }}
+                onError={() => {
+                  setError('iframe failed to load the Power BI report');
+                  setStatus('error');
+                }}
+              />
+            )}
+          </>
         )}
       </div>
 
