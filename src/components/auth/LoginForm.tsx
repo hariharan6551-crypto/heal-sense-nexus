@@ -43,7 +43,7 @@ export default function LoginForm({ onMorphStart }: Props) {
     if (!validate()) return;
 
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 200));
 
     // Validate credentials: Admin / Health2026
     if (username.trim() !== 'Admin' || password !== 'Health2026') {
@@ -58,15 +58,13 @@ export default function LoginForm({ onMorphStart }: Props) {
     sessionStorage.setItem('dashboard-user', username.trim());
     localStorage.removeItem('isAuthenticated'); // Clear any legacy persist
     toast.success('Authentication Successful', {
-      description: 'Morphing to Healthcare Analytics Dashboard…',
+      description: 'Entering Dashboard...',
       icon: <Zap className="w-4 h-4 text-blue-500" />,
     });
 
-    await new Promise((r) => setTimeout(r, 400));
-
     if (onMorphStart) {
       onMorphStart();
-      setTimeout(() => navigate('/'), 900);
+      setTimeout(() => navigate('/'), 400);
     } else {
       navigate('/');
     }
