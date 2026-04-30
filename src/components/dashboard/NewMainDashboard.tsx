@@ -3,26 +3,28 @@
 // Replaces the old AdvancedEnhancedDashboard with a clean,
 // dark-mode-first design matching the user's reference images.
 // ═══════════════════════════════════════════════════════════════
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { parseFile } from '@/lib/parseData';
 import type { DatasetInfo } from '@/lib/parseData';
-import { runMLPipeline, type MLPipelineResult } from '@/lib/healthcareML';
+import type { MLPipelineResult } from '@/lib/healthcareML';
+import { useMLWorker } from '@/hooks/useMLWorker';
 import { useTheme } from '@/contexts/ThemeContext';
 import DashboardPreview from './DashboardPreview';
 import PipelineView from './PipelineView';
-import RiskAnalysisView from './RiskAnalysisView';
-import DynamicCharts from '../analytics/DynamicCharts';
-import HealthcareDashboard from '../healthcare/HealthcareDashboard';
-import AIResearchLab from '../analytics/AIResearchLab';
-import PowerBIReportPanel from '../powerbi/PowerBIReportPanel';
 import GlassCard from '../core/GlassCard';
 import { analyzeDataset } from '@/lib/analyzeData';
 import { recommendCharts } from '@/lib/chartRecommender';
+
+// ── Lazy-loaded heavy components (code-split per tab) ──
+const DynamicCharts = lazy(() => import('../analytics/DynamicCharts'));
+const HealthcareDashboard = lazy(() => import('../healthcare/HealthcareDashboard'));
+const AIResearchLab = lazy(() => import('../analytics/AIResearchLab'));
+const PowerBIReportPanel = lazy(() => import('../powerbi/PowerBIReportPanel'));
 import {
   LayoutDashboard, GitBranch, Sun, Moon, LogOut,
-  ChevronDown, Activity, Sparkles, Database, Bot, FileBarChart, UploadCloud, PieChart, Settings
+  ChevronDown, Activity, Sparkles, Bot, FileBarChart, UploadCloud, Settings
 } from 'lucide-react';
 import './dashboard-theme.css';
 
@@ -73,17 +75,28 @@ function DashboardSkeleton() {
   );
 }
 
+/* ── Tab Suspense Fallback ─────────────────────────────────── */
+function TabLoader({ label }: { label: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 60 }}>
+      <Activity style={{ width: 18, height: 18, color: 'var(--text-accent)', animation: 'spin 1s linear infinite' }} />
+      <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>Loading {label}…</p>
+    </div>
+  );
+}
+
 /* ── Main Dashboard ────────────────────────────────────────── */
 export default function NewMainDashboard() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
-  const [mlResult, setMlResult] = useState<MLPipelineResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const [userRole, setUserRole] = useState('Admin');
-  const mlDataRef = useRef<unknown[] | null>(null);
+
+  // ── ML Pipeline via Web Worker ──────────────────────────
+  const { result: mlResult, isRunning: mlRunning } = useMLWorker(dataset?.data ?? null);
 
   const handleRoleChange = (role: string) => setUserRole(role);
 
@@ -117,23 +130,6 @@ export default function NewMainDashboard() {
     };
     loadData();
   }, []);
-
-  // ── Run ML Pipeline async ───────────────────────────────
-  useEffect(() => {
-    if (!dataset?.data?.length) { setMlResult(null); mlDataRef.current = null; return; }
-    if (mlDataRef.current === dataset.data) return;
-
-    let cancelled = false;
-    setMlResult(null);
-    const timerId = setTimeout(() => {
-      if (cancelled) return;
-      try {
-        const result = runMLPipeline(dataset.data);
-        if (!cancelled) { mlDataRef.current = dataset.data; setMlResult(result); }
-      } catch (e) { console.error('ML Pipeline error:', e); }
-    }, 0);
-    return () => { cancelled = true; clearTimeout(timerId); };
-  }, [dataset]);
 
   // ── Export CSV ──────────────────────────────────────────
   const handleExportCSV = useCallback(() => {
@@ -265,7 +261,9 @@ export default function NewMainDashboard() {
             <DashboardPreview mlResult={mlResult} totalPatients={totalPatients} />
             {dataset && analysis && (
               <div className="mt-8 pt-8 border-t border-[var(--border-light)]">
-                <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+                <Suspense fallback={<TabLoader label="Charts" />}>
+                  <DynamicCharts dataset={dataset} charts={charts} analysis={analysis} filters={{}} />
+                </Suspense>
               </div>
             )}
           </div>
@@ -277,17 +275,23 @@ export default function NewMainDashboard() {
 
           {/* Risk Analysis Tab */}
           <div style={{ display: activeTab === 'riskanalysis' ? 'block' : 'none' }}>
-            <HealthcareDashboard mlResult={mlResult} />
+            <Suspense fallback={<TabLoader label="Risk Analysis" />}>
+              <HealthcareDashboard mlResult={mlResult} />
+            </Suspense>
           </div>
 
           {/* AI Assistant Tab */}
           <div style={{ display: activeTab === 'ai' ? 'block' : 'none', height: '75vh' }}>
-            <AIResearchLab />
+            <Suspense fallback={<TabLoader label="AI Assistant" />}>
+              <AIResearchLab />
+            </Suspense>
           </div>
 
           {/* Reports & Power BI Tab */}
           <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }}>
-            {dataset && <PowerBIReportPanel dataset={dataset} filters={{}} onExportCSV={handleExportCSV} />}
+            <Suspense fallback={<TabLoader label="Reports" />}>
+              {dataset && <PowerBIReportPanel dataset={dataset} filters={{}} onExportCSV={handleExportCSV} />}
+            </Suspense>
           </div>
 
           {/* Settings Tab */}

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import MorphContainer from '@/components/core/MorphContainer';
 
-/* ───── Light Theme Sky Blue Particle System (Optimized) ───── */
+/* ───── Light Theme Sky Blue Particle System (Ultra-Optimized) ───── */
 function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -15,85 +15,52 @@ function ParticleField() {
     if (!ctx) return;
 
     let animationId: number;
-    let frameCount = 0;
-    // Updated palette to Sky Blue premium
+    let lastTime = 0;
+    const TARGET_INTERVAL = 1000 / 30; // Cap at 30fps
     const COLORS = ['#3B82F6', '#38BDF8', '#60A5FA', '#93C5FD', '#FFFFFF'];
+    const PARTICLE_COUNT = 25;
     const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; color: string }[] = [];
-    const PARTICLE_COUNT = 40; // Reduced from 60 for smoother animation
-    const CONN_DIST = 120; // Reduced from 140
-    const CONN_DIST_SQ = CONN_DIST * CONN_DIST;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 4 + 1,
-        opacity: Math.random() * 0.4 + 0.1,
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 3.5 + 1.5, opacity: Math.random() * 0.35 + 0.1,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
       });
     }
 
-    const draw = () => {
+    const draw = (now: number) => {
+      animationId = requestAnimationFrame(draw);
+      if (now - lastTime < TARGET_INTERVAL) return;
+      lastTime = now;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      frameCount++;
-      const drawConns = frameCount % 2 === 0; // Draw connections every 2nd frame
+      const w = canvas.width, h = canvas.height;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
         ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, 6.2832);
         ctx.fill();
-
-        // Draw connections (optimized with squared distance)
-        if (drawConns) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const dx = p.x - particles[j].x;
-            const dy = p.y - particles[j].y;
-            const distSq = dx * dx + dy * dy;
-            if (distSq < CONN_DIST_SQ) {
-              const dist = Math.sqrt(distSq);
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.globalAlpha = 0.05 * (1 - dist / CONN_DIST);
-              ctx.strokeStyle = '#3B82F6';
-              ctx.lineWidth = 1;
-              ctx.stroke();
-            }
-          }
-        }
       }
       ctx.globalAlpha = 1;
-
-      animationId = requestAnimationFrame(draw);
     };
-    draw();
+    animationId = requestAnimationFrame(draw);
 
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', resize);
-    };
+    return () => { cancelAnimationFrame(animationId); window.removeEventListener('resize', resize); };
   }, []);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" style={{ opacity: 0.8 }} />;
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" style={{ opacity: 0.7 }} />;
 }
 
 export default function Login() {

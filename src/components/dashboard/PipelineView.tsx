@@ -117,7 +117,13 @@ export default function PipelineView({ mlResult, onExportCSV }: Props) {
           </div>
           <div className="flex flex-wrap gap-2">
             {['Age group', 'Primary diagnosis', 'Length of stay', 'Prior admissions (12m)', 'Discharge destination'].map(f => (
-              <span key={f} className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">{f}</span>
+              <span 
+                key={f} 
+                onClick={() => alert(`Feature details for ${f} coming soon!`)}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all"
+              >
+                {f}
+              </span>
             ))}
           </div>
         </motion.div>
@@ -129,7 +135,13 @@ export default function PipelineView({ mlResult, onExportCSV }: Props) {
           </div>
           <div className="flex flex-wrap gap-2">
             {['Deprivation score', 'Follow-up arranged', 'Care plan on discharge', 'Social care referral'].map(f => (
-              <span key={f} className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">{f}</span>
+              <span 
+                key={f} 
+                onClick={() => alert(`Feature details for ${f} coming soon!`)}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 transition-all"
+              >
+                {f}
+              </span>
             ))}
           </div>
         </motion.div>

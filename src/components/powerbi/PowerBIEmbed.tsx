@@ -180,27 +180,34 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
     // The iframe will handle loading via onLoad/onError
     // Set a timeout in case iframe doesn't trigger events
     const loadTimeout = setTimeout(() => {
-      if (status === 'loading') {
-        setStatus('ready');
-        setLastRefresh(new Date());
-        onReportLoaded?.();
-      }
-    }, 10000);
+      setStatus((prevStatus) => {
+        if (prevStatus === 'loading') {
+          setLastRefresh(new Date());
+          onReportLoaded?.();
+          return 'ready';
+        }
+        return prevStatus;
+      });
+    }, 5000);
 
-    return () => clearTimeout(loadTimeout);
-  }, [embedUrl, onReportLoaded, status]);
+    // Return the timeout ID so we can clear it if needed
+    return loadTimeout;
+  }, [embedUrl, onReportLoaded]);
 
   // Initialize embed
   useEffect(() => {
     if (!configured) return;
 
+    let iframeTimeout: NodeJS.Timeout | number | undefined;
+
     if (embedMode === 'sdk') {
       embedWithSDK();
     } else {
-      embedWithIframe();
+      iframeTimeout = embedWithIframe();
     }
 
     return () => {
+      if (iframeTimeout) clearTimeout(iframeTimeout);
       // Cleanup SDK instance
       if (reportInstanceRef.current) {
         try {
@@ -424,7 +431,6 @@ const PowerBIEmbed = memo(function PowerBIEmbed({
               setError('iframe failed to load the Power BI report');
               setStatus('error');
             }}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-popups-to-escape-sandbox"
           />
         )}
       </div>
